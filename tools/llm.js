@@ -85,8 +85,25 @@ async function chat(messages, opts = {}) {
     temperature: opts.temperature !== undefined ? opts.temperature : 0.3,
   };
   const headers = { Authorization: `Bearer ${cfg.apiKey}` };
-  const j = await postJSON(`${cfg.baseUrl.replace(/\/$/, "")}/v1/chat/completions`, body, headers, cfg.timeout);
-  return j.choices?.[0]?.message?.content || "";
+  const url = `${cfg.baseUrl.replace(/\/$/, "")}/v1/chat/completions`;
+  const maxRetries = opts.retries || 3;
+  let lastError;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const j = await postJSON(url, body, headers, cfg.timeout);
+      return j.choices?.[0]?.message?.content || "";
+    } catch (e) {
+      lastError = e;
+      // 只对网络错误重试，不对配置错误重试
+      if (e.message.includes("未配置") || e.message.includes("HTTP 4")) {
+        throw e;
+      }
+      // 指数退避：100ms, 200ms, 400ms
+      const delay = Math.pow(2, attempt) * 100;
+      await new Promise(r => setTimeout(r, delay));
+    }
+  }
+  throw lastError;
 }
 
 // 决策 prompt 构造（上下文预算≤150 token）
