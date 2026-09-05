@@ -1,0 +1,19 @@
+{
+  "task": "T-2008",
+  "ts": "2026-09-05T13:24:11.784Z",
+  "total": 2,
+  "passed": 1,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks/T-2008/result/summary.json 存在"
+    },
+    {
+      "type": "json_path",
+      "passed": false,
+      "detail": "ERR: 非法 op: gte"
+    }
+  ],
+  "verdict": "FAIL"
+}
