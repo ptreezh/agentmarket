@@ -1,0 +1,10 @@
+---
+event: claimed
+task: T-2008
+worker: AG-R1
+op_id: R1-0801
+ts: 2026-09-05T13:23:30.971Z
+signer: SHA256:GEDZJUcRr2gu5Han+dAyYtQKCnB4yp8z9oBA0kTUY1A=
+signature: d2068d1c32b5d56ffd862cb681e8cbf99c2c6b9512045fa1d6e360d5088ace81d7b96902aa8c61d537469b0a45450bc0f72579ac0c514b690373e189abe4c602
+---
+AG-R1 认领 T-2008。
