@@ -28,8 +28,10 @@ fs.chmodSync(path.join(keyDir, "private.pem"), 0o600);
 
 // 更新 agent.md：key_fingerprint + public_key（保留其它字段）
 let text = fs.readFileSync(agentFile, "utf-8");
-text = text.replace(/^key_fingerprint:.*$/m, `key_fingerprint: ${fp}`);
-text = text.replace(/^key_type:.*$/m, "key_type: ed25519");
+if (/^key_fingerprint:/m.test(text)) text = text.replace(/^key_fingerprint:.*$/m, `key_fingerprint: ${fp}`);
+else text += `key_fingerprint: ${fp}\n`;
+if (/^key_type:/m.test(text)) text = text.replace(/^key_type:.*$/m, "key_type: ed25519");
+else text += `key_type: ed25519\n`;
 if (!/^public_key:/m.test(text)) text += `public_key: ${pubPem.replace(/\n/g, "\\n")}\n`;
 else text = text.replace(/^public_key:.*$/m, `public_key: ${pubPem.replace(/\n/g, "\\n")}`);
 fs.writeFileSync(agentFile, text);
