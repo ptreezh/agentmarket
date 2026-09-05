@@ -34,3 +34,9 @@
 - **跨 worktree 并发认领**：claim.js 复用，A 先到先得、B 回滚放弃；T-2003 仅 1 owner。
 - T-2003 执行→L0 2/2→结算 L-0007；三端一致、healthcheck 全绿。
 - 至此开放市场底座完备：多电脑=clone+remote（M2），单机多 agent=worktree（M2.1）。
+
+## 2026-09-05 · M3 上线运营准备
+- 权威参数 `market-config.json` + 版本历史 `ops/configs/config-vN.json`（append-only，指针切换即回滚）。
+- `tools/onboard.js` 开放准入：AG-ONB01（真实 ED25519）加入 → probation（并发上限1），档案回读校验通过。
+- `tools/metrics.js` 先行指标：空转率/完成率/报酬比(Vickrey 0.85 确认)/预算合规/试水数；独立重算一致。
+- `tools/calibrate.js` 双旋钮真实调参：空转率0偏低 → 税3%→2%、锚1.0→1.1；审计 audit-20260905T063508 + config-v4；回滚演示通过。
