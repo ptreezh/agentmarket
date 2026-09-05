@@ -18,6 +18,13 @@ const g = c => execSync(c, { encoding: "utf-8" }).trim();
 const [cmd, ...rest] = process.argv.slice(2);
 const TASK_RE = /^T-\d+$/;
 
+// D-19：事件写盘后自动用 agent 私钥签名（sig.js sign）
+function signEvent(id, file) {
+  const sig = path.join(__dirname, "sig.js");
+  const r = require("child_process").spawnSync(process.execPath, [sig, "sign", id, file], { encoding: "utf-8" });
+  if (r.status !== 0) { console.error("签名失败: " + (r.stderr || r.stdout || "?")); process.exit(1); }
+}
+
 function taskState(t) {
   const ev = path.join("tasks", t, "events");
   if (!fs.existsSync(ev)) return "unknown";
@@ -53,6 +60,7 @@ function doClaim(t, id, opid) {
   const fn = `claimed-${opid}-${id}.md`;
   fs.writeFileSync(path.join(evDir, fn),
     `---\nevent: claimed\ntask: ${t}\nworker: ${id}\nop_id: ${opid}\nts: ${new Date().toISOString()}\n---\n${id} 认领 ${t}。\n`);
+  signEvent(id, path.join(evDir, fn));   // D-19 签名
   g(`git add tasks/${t}/events/${fn}`);
   g(`git commit -q -m "claim ${t} by ${id}"`);
   try { g("git pull --rebase origin main"); } catch (e) {}
@@ -76,6 +84,7 @@ function doSubmit(t, id, opid, desc) {
   const fn = `submitted-${opid}-${id}.md`;
   fs.writeFileSync(path.join(evDir, fn),
     `---\nevent: submitted\ntask: ${t}\nworker: ${id}\nop_id: ${opid}\nts: ${new Date().toISOString()}\n---\n${desc || ""}\n`);
+  signEvent(id, path.join(evDir, fn));   // D-19 签名
   g(`git add tasks/${t}/events/${fn}`);
   g(`git commit -q -m "submit ${t} by ${id}"`);
   g("git push origin HEAD:main");

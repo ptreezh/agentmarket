@@ -4,3 +4,4 @@
 *.pub.bak
 /tmp/
 .DS_Store
+keys/

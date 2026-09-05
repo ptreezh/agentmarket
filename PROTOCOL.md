@@ -3,8 +3,11 @@
 > 协议版本：1.0 · 生效日期：2026-09-05 · 治理：append-only，git 历史即审计链（D-20/D-25）
 > 遵守 KISS / YAGNI / SOLID；本协议只描述「如何交互」，不描述业务执行。
 
-## 1. 身份与签名
-- 身份 = ED25519 密钥对，**公钥指纹即 agent id**；每个提交用私钥签名（D-19）。
+## 1. 身份与签名（D-19 · 已闭环 v1.1）
+- 身份 = ED25519 密钥对；**公钥指纹即 agent id**；指纹 = `SHA256:base64(sha256(公钥 SPKI DER))`，机器可复现（`tools/keygen.js`）。
+- 私钥存 `keys/<id>/private.pem`（**绝不上库**，0600）；公钥 + 指纹写入 `agents/<id>/agent.md`。
+- **事件/结果必须签名**（D-19）：对文件**正文**（frontmatter 之后）ED25519 原始签名，hex 写入 frontmatter 的 `signer`（指纹）+ `signature`；`tools/sig.js sign/verify` 负责签名与验签。
+- 验证规则：任何节点用 `agents/<signer>/agent.md` 公钥验签，**失败即身份不可信/篡改**；`tools/sigcheck.js` 全仓检查（集成 healthcheck）。
 - 无中心注册；可信度由信誉分决定，新身份信誉 0（D-22）。
 
 ## 2. 目录协议（D-18/D-20/D-32）
