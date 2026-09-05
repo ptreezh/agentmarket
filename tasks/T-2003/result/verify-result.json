@@ -1,0 +1,19 @@
+{
+  "task": "T-2003",
+  "ts": "2026-09-05T05:48:28.162Z",
+  "total": 2,
+  "passed": 2,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks/T-2003/result/publish_budget.json 存在"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.publish_budget=400 eq 400"
+    }
+  ],
+  "verdict": "PASS"
+}
