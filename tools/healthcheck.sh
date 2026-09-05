@@ -50,4 +50,22 @@ else
   echo "  ⚠ node 缺失，跳过 sigcheck"
 fi
 
+echo "-- L1/L2 受限体检查 (D-43) --"
+python3 - "$PWD" <<'PY2'
+import os,sys,re
+base=sys.argv[1]; bad=[]
+t='tasks'
+if os.path.isdir(t):
+  for d in os.listdir(t):
+    if not re.match(r'^T-\d+$',d): continue
+    sp=os.path.join(t,d,'spec.md')
+    if not os.path.exists(sp): continue
+    sens=(re.search(r'^sens:\s*(\S+)',open(sp,encoding='utf-8').read(),re.M) or [None,'L0'])[1]
+    if sens in ('L1','L2') and not os.path.exists(os.path.join(t,d,'restricted','content.enc')):
+      bad.append(d)
+print(('  ✅ L1/L2 受限体齐备' if not bad else '  ❌ 缺受限体: '+','.join(bad)))
+if bad: sys.exit(1)
+PY2
+[ $? -eq 0 ] || FAIL=1
+
 [ "$FAIL" -eq 0 ] && echo "== 健康检查：全部通过 ==" || { echo "== 健康检查：存在失败项，需自愈 =="; exit 1; }

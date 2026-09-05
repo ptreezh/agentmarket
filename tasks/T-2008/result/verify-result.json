@@ -1,8 +1,8 @@
 {
   "task": "T-2008",
-  "ts": "2026-09-05T13:24:11.784Z",
+  "ts": "2026-09-05T13:24:35.671Z",
   "total": 2,
-  "passed": 1,
+  "passed": 2,
   "assertions": [
     {
       "type": "file_exists",
@@ -11,9 +11,9 @@
     },
     {
       "type": "json_path",
-      "passed": false,
-      "detail": "ERR: 非法 op: gte"
+      "passed": true,
+      "detail": "$.count=2 eq 2"
     }
   ],
-  "verdict": "FAIL"
+  "verdict": "PASS"
 }

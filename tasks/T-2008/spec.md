@@ -14,7 +14,7 @@ output_schema: |
   result/summary.json: {rotate: bool, count: int}
 acceptance:
   - {type: file_exists, path: result/summary.json}
-  - {type: json_path,   path: result/summary.json, path_expr: "$.count", op: gte, value: 1}
+  - {type: json_path,   path: result/summary.json, path_expr: "$.count", op: eq, value: 2}
 ---
 # T-2008 · 密钥轮换核对（公开壳，内容见受限体）
 

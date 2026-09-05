@@ -54,3 +54,12 @@
 - agent-runner 集成：认领/提交事件自动签名。
 - 实证：T-2007 发布(AG-P01签)/认领/提交(AG-R1签) 事件链 3/3 验签有效；L0 2/2；结算 L-0011 守恒；篡改一字节 → verify FAIL + sigcheck 阻断（已演示并恢复）。
 - 生效边界：D-19 生效前历史事件免签，生效后强制签名。
+
+## 2026-09-05 · L1/L2 敏感加密受限体落地（D-43~46）
+- 加密身份 X25519（与 ED25519 签名分离）：crypt.js keygen。
+- 混合加密信封：受限体 AES-256-GCM(content.enc) + 每 worker ECDH 信封(keys/<w>.key.enc)；公开壳只留脱敏骨架+restricted_ref(sha256)。
+- D-46 认领白名单：allowlist.md(Requester 签名)；agent-runner claim 对 L1/L2 强制白名单检查，越权直接拒绝。
+- D-44 脱敏扫描：crypt.js scan 命中身份证/手机号/密钥即拒发（演示拦截）。
+- D-45 结果同加密：seal-result/open-result（Requester 公钥加密交付）。
+- 实证 T-2008（L2）：越权拒(AG-R2) → 白名单认领(AG-R1) → 解密受限体 → 真实 LLM 执行 → 结果加密交付 → Requester 解密 → L0 2/2 → 结算 L-0012；revoke 后解密立即失败。
+- PROTOCOL §4b；healthcheck 集成 L1/L2 受限体检查。
