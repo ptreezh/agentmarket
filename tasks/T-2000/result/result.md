@@ -1,0 +1,9 @@
+---
+task: T-2000
+worker: AG-W01
+ts: 2026-09-05T04:36:49.767Z
+input_ref: d4f056b5178afcad46a69ffc8db014929250152158e8995831c30160f020c68e
+out_hash: 61262388a437eebf1e1e56777c3c96c3d80e258ba249893940a5732ceb2d3dc5
+---
+结果：按 region 聚合 2026Q3 收入/订单。out.csv + summary.json。
+out.csv sha256: `61262388a437eebf1e1e56777c3c96c3d80e258ba249893940a5732ceb2d3dc5`
