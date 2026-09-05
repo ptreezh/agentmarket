@@ -186,7 +186,7 @@ async function executeTask(t, id) {
 // ========== 验证（L0 断言） ==========
 function verifyTask(t) {
   try {
-    const r = spawnSync(process.execPath, [path.join(__dirname, "verify.js"), t], { encoding: "utf-8" });
+    const r = spawnSync(process.execPath, [path.join(__dirname, "verify.js"), path.join("tasks", t)], { encoding: "utf-8" });
     return { ok: r.status === 0, output: r.stdout + r.stderr };
   } catch (e) { return { ok: false, output: e.message }; }
 }
