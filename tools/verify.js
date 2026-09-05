@@ -48,9 +48,10 @@ const jsonGet = (obj, expr) => expr.replace(/^\$\.?/,"").split(".").reduce((o,k)
 }, obj);
 
 function cmp(a, op, b){
+  const isNum = x => x !== "" && x !== null && x !== undefined && !isNaN(Number(x));
   switch(op){
-    case "eq": return num(a) === num(b);
-    case "ne": return num(a) !== num(b);
+    case "eq": return isNum(a) && isNum(b) ? Number(a) === Number(b) : String(a) === String(b);
+    case "ne": return isNum(a) && isNum(b) ? Number(a) !== Number(b) : String(a) !== String(b);
     case "gt": return num(a) >  num(b);
     case "ge": return num(a) >= num(b);
     case "lt": return num(a) <  num(b);

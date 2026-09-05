@@ -1,0 +1,49 @@
+{
+  "task": "T-2001",
+  "ts": "2026-09-05T05:00:52.751Z",
+  "total": 8,
+  "passed": 8,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks/T-2001/result/extract.json 存在"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.company=示例能源科技有限公司 eq 示例能源科技有限公司"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.notice_type=战略采购协议 eq 战略采购协议"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.publish_date=2026-08-30 eq 2026-08-30"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.contract_amount_wan=12800 eq 12800"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.contract_amount_wan=12800 gt 10000"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.first_installment_wan=4000 eq 4000"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.counterparty=示例储能股份有限公司 eq 示例储能股份有限公司"
+    }
+  ],
+  "verdict": "PASS"
+}
