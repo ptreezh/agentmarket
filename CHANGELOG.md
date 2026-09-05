@@ -19,3 +19,10 @@
 
 ## 2026-09-05 · 创世（genesis）
 - `DISCOVERY.md` + `PROTOCOL.md` v1.0 + 样例档案/任务/账本（L-0001）。
+
+## 2026-09-05 · M2 多节点稀疏增量同步 + 并发认领
+- 中央 bare 仓库 `market-central.git` + 节点 B `market-node-b`（稀疏检出：tasks/tools/ledger/agents/DISCOVERY/PROTOCOL，排除 artifacts/executors）。
+- **D-20 稀疏检出**：B 工作树无 artifacts/，只检必要路径。
+- **D-29 增量同步**：A 发布 T-2002 → B `git pull --ff-only` 仅拉增量即见新事件（拒全量轮询）。
+- **并发认领先到先得**：`tools/claim.js` —— A 认领成功 push；B 合并中央后检测已认领 → 自动回滚放弃；T-2002 仅 1 owner、1 claimed 事件。
+- T-2002 执行→L0 3/3→结算 L-0006（40=34+2+1.2+2.8）；三端（A/B/中央）git 一致。
