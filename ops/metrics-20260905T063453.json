@@ -1,0 +1,18 @@
+{
+  "ts": "2026-09-05T06:34:53.593Z",
+  "tasks": {
+    "total": 5,
+    "open": 0,
+    "active": 5,
+    "settled": 4,
+    "claimed": 5
+  },
+  "turnover": 0,
+  "completion_rate": 80,
+  "reward_ratio_avg": 0.85,
+  "budget_compliance": {
+    "ok": 5,
+    "bad": 0
+  },
+  "probation_count": 1
+}
