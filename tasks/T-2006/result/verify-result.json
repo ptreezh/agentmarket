@@ -1,0 +1,19 @@
+{
+  "task": "T-2006",
+  "ts": "2026-09-05T07:13:44.710Z",
+  "total": 2,
+  "passed": 2,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks/T-2006/result/budget.json 存在"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.value=80 eq 80"
+    }
+  ],
+  "verdict": "PASS"
+}
