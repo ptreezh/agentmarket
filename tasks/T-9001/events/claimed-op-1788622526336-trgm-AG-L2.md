@@ -1,0 +1,10 @@
+---
+event: claimed
+task: T-9001
+worker: AG-L2
+op_id: op-1788622526336-trgm
+ts: 2026-09-05T15:35:26.424Z
+signer: SHA256:0ZkkPG7cEzdU3EXb3CYZXNbw0C3fhwOq9OJyioSXogI=
+signature: fd21b21b868d118b32d65a3e5408858f149893e5252c22d3017ed487534ed89fb75e64752f8cb8049d9ea3c9dc056a4a3969ef18c9b7a28d56b019e4e3d32f06
+---
+AG-L2 认领 T-9001。
