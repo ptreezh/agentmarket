@@ -55,6 +55,15 @@ function doClaim(t, id, opid) {
   if (!TASK_RE.test(t) || !/^[A-Za-z0-9_-]+$/.test(id)) { console.error("非法参数"); process.exit(2); }
   const st = taskState(t);
   if (st !== "published") { console.log(`[${id}] ${t} 不可认领（state=${st}）`); process.exit(1); }
+  // D-46 认领白名单：L1/L2 任务仅 allowlist 内 worker 可认领
+  const spec = fs.readFileSync(path.join("tasks", t, "spec.md"), "utf-8");
+  const sens = (spec.match(/^sens:\s*(\S+)/m) || [])[1] || "L0";
+  if (sens === "L1" || sens === "L2") {
+    const al = path.join("tasks", t, "restricted", "allowlist.md");
+    const fp = fs.readFileSync(path.join("agents", id, "agent.md"), "utf-8").match(/^key_fingerprint:\s*(\S+)/m)[1];
+    const inList = fs.existsSync(al) && new RegExp("^" + id + "\\s+" + fp.replace(/[.+?^${}()|[\]\\]/g, "\\$&") + "$", "m").test(fs.readFileSync(al, "utf-8"));
+    if (!inList) { console.log(`[${id}] ${t} 为 ${sens} 机密任务，不在 Requester 白名单内 → 拒绝认领`); process.exit(1); }
+  }
   const evDir = path.join("tasks", t, "events");
   fs.mkdirSync(evDir, { recursive: true });
   const fn = `claimed-${opid}-${id}.md`;

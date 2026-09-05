@@ -1,0 +1,10 @@
+{
+  "task": "T-2008",
+  "requester": "AG-P01",
+  "workers": [
+    "AG-P01"
+  ],
+  "alg": "X25519+AES-256-GCM",
+  "created": "2026-09-05T13:22:59.035Z",
+  "hash": "5271bf11ce0cfc8225209d03a9f1d0c261ca88db202f4af9f4a9fe6e0233f907"
+}

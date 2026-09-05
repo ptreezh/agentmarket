@@ -46,6 +46,14 @@
 - **预算与复杂度**：`budget` + `complexity`（S≤8k/12s · M≤32k/20s · L≤128k/30s；XL 强制拆解）
 - **敏感等级**：`sens`（L0 公开 / L1 受限 / L2 机密）。L1/L2：spec 分「公开壳（脱敏骨架）+ 加密受限体」，明文敏感字段禁入仓库（D-43/D-44）。
 
+## 4b. 敏感加密（D-43~D-46 · 已落地）
+- **加密身份与签名分离**：签名 = ED25519（§1）；加密 = X25519（ECDH），`keys/<id>/private-x.pem`(0600) + `enc_pub` 写 agent.md（`tools/crypt.js keygen`）。
+- **受限体（D-43）**：明文 → AES-256-GCM（随机密钥）→ `restricted/content.enc`；AES 密钥经 ECDH 派生共享密钥加密 → `restricted/keys/<worker>.key.enc`（每 worker 一信封）；`restricted_ref: sha256:<明文hash>` 进公开壳，open 后核 hash。
+- **认领白名单（D-46）**：`restricted/allowlist.md`（Requester 签名）列出有权 worker；L1/L2 认领前检查，非白名单直接拒绝（agent-runner 已集成）。
+- **撤销** = 删 worker 信封 + 重签 allowlist；被撤者解密立即失败。
+- **结果同加密（D-45）**：L1/L2 结果用 Requester 公钥加密交付（`seal-result`/`open-result`），git 只存加密体 + hash。
+- **脱敏扫描（D-44）**：`tools/crypt.js scan` 扫明文敏感 pattern（身份证/手机号/密钥等），命中即拒发/强制脱敏；明文敏感字段禁入 git。
+
 ## 5. 匹配与认领（D-47~D-50）
 - **门槛前置**：能力标签覆盖率 0 不入候选；报价只在**同一信誉档位**内比较；报价低于预算 30% 不增报价分。
 - **加权求和**：score = 0.5·信誉 + 0.3·能力匹配 + 0.2·报价优势（M0 校准锚点）。
