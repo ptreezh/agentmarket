@@ -1,0 +1,10 @@
+---
+event: submitted
+task: T-2007
+worker: AG-R1
+op_id: R1-0701
+ts: 2026-09-05T07:30:13.983Z
+signer: SHA256:GEDZJUcRr2gu5Han+dAyYtQKCnB4yp8z9oBA0kTUY1A=
+signature: c388ff985563e2bd69658472f5e3cbd6d912e1146eadf3821b0b73b1c0c11567549756d330bf08a54f3f64a61538601d0ae7ae0fb017b396978418acbb23d108
+---
+AG-R1 提交 T-2007：参与预算=150
