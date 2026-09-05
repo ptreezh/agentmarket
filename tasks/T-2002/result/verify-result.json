@@ -1,0 +1,24 @@
+{
+  "task": "T-2002",
+  "ts": "2026-09-05T05:31:14.171Z",
+  "total": 3,
+  "passed": 3,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks/T-2002/result/version.json 存在"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.protocol_version=1.0 eq 1.0"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.discovery_anchor=协议版本：1.0（参见 PROTOCOL.md 的 protocol_version） ne "
+    }
+  ],
+  "verdict": "PASS"
+}
