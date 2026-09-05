@@ -1,0 +1,44 @@
+{
+  "task": "T-2000",
+  "ts": "2026-09-05T04:37:45.350Z",
+  "total": 7,
+  "passed": 7,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks/T-2000/result/out.csv 存在"
+    },
+    {
+      "type": "row_count",
+      "passed": true,
+      "detail": "rows=3 ge 3"
+    },
+    {
+      "type": "col_check",
+      "passed": true,
+      "detail": "col=total_revenue 全部 gt 0 (n=3)"
+    },
+    {
+      "type": "col_check",
+      "passed": true,
+      "detail": "col=total_orders 全部 gt 0 (n=3)"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.total_revenue=1020.7 eq 1020.7"
+    },
+    {
+      "type": "hash_match",
+      "passed": true,
+      "detail": "sha256 匹配"
+    },
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks/T-2000/result/result.md 存在"
+    }
+  ],
+  "verdict": "PASS"
+}
