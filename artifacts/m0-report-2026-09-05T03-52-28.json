@@ -1,0 +1,123 @@
+{
+  "title": "M0 模拟结果 · 智能体协同市场",
+  "ts": "2026-09-05T03:52:28.421Z",
+  "seed": "20260905",
+  "ticks": 240,
+  "result": {
+    "paid": 57,
+    "total": 57,
+    "timedOut": 0,
+    "rejected": 0,
+    "openNow": 0,
+    "activeNow": 0,
+    "seedRetired": true,
+    "sumBal": 13000,
+    "totalMinted": 13000,
+    "conservationOK": true,
+    "driftLast": -16.1,
+    "completionRate": "100.0%",
+    "turnoverNow": "0%",
+    "ctxTotal": 40189,
+    "ctxBreach": 0,
+    "sysRemaining": 5736,
+    "seedRewardSpent": 264,
+    "agents": [
+      {
+        "id": "AG-01",
+        "rep": 76.80000000000004,
+        "pts": 559,
+        "tier": "normal",
+        "done": 17,
+        "pub": 3,
+        "breaches": 0
+      },
+      {
+        "id": "AG-02",
+        "rep": 74.40000000000003,
+        "pts": 220,
+        "tier": "normal",
+        "done": 15,
+        "pub": 8,
+        "breaches": 0
+      },
+      {
+        "id": "AG-03",
+        "rep": 77.4,
+        "pts": 211,
+        "tier": "normal",
+        "done": 2,
+        "pub": 10,
+        "breaches": 0
+      },
+      {
+        "id": "AG-04",
+        "rep": 84.4,
+        "pts": 186,
+        "tier": "normal",
+        "done": 2,
+        "pub": 10,
+        "breaches": 0
+      },
+      {
+        "id": "AG-05",
+        "rep": 91.10000000000002,
+        "pts": 958,
+        "tier": "normal",
+        "done": 9,
+        "pub": 0,
+        "breaches": 0
+      },
+      {
+        "id": "AG-06",
+        "rep": 69.7,
+        "pts": 368,
+        "tier": "probation",
+        "done": 4,
+        "pub": 0,
+        "breaches": 0
+      },
+      {
+        "id": "AG-07",
+        "rep": 98.70000000000002,
+        "pts": 942,
+        "tier": "normal",
+        "done": 7,
+        "pub": 0,
+        "breaches": 0
+      },
+      {
+        "id": "AG-08",
+        "rep": 77.70000000000002,
+        "pts": 968,
+        "tier": "normal",
+        "done": 7,
+        "pub": 0,
+        "breaches": 0
+      }
+    ],
+    "finalParams": {
+      "TAX": 0.04,
+      "ANCHOR": 0.9,
+      "W": {
+        "rep": 0.5,
+        "cap": 0.3,
+        "price": 0.2
+      }
+    },
+    "audits": [
+      "创世种子池耗尽并被真实供需替代 → 自然退役（D-38）",
+      "AG-01 试水完成3单 → 信誉60 解锁普通市场（D-37）",
+      "AG-02 试水完成3单 → 信誉60 解锁普通市场（D-37）",
+      "空转率1.00偏高 → 税率↑至4% 锚价↓×0.90（D-53）"
+    ]
+  },
+  "checks": {
+    "经济守恒：账户余额和 == 发行总量": true,
+    "完成率 ≥ 90%": true,
+    "上下文预算零超限（D-33）": true,
+    "冷启动：种子池耗尽并被真实供需替代（D-38）": true,
+    "信誉爬坡：试水 Agent 已解锁普通市场（D-37）": true,
+    "匹配非纯低价：存在报价>预算70%仍成交（D-48）": true
+  },
+  "verdict": "PASS (6/6)"
+}
