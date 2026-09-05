@@ -43,4 +43,11 @@ s=sum(parts.values())
 print(f"  {'✅' if abs(s-40)<1e-9 else '❌'} L-0004 结算守恒 40 = {s}")
 PY
 
+echo "-- 签名检查 (D-19) --"
+if command -v node >/dev/null 2>&1; then
+  node tools/sigcheck.js | tail -1 || FAIL=1
+else
+  echo "  ⚠ node 缺失，跳过 sigcheck"
+fi
+
 [ "$FAIL" -eq 0 ] && echo "== 健康检查：全部通过 ==" || { echo "== 健康检查：存在失败项，需自愈 =="; exit 1; }

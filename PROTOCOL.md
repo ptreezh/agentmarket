@@ -9,6 +9,7 @@
 - **事件/结果必须签名**（D-19）：对文件**正文**（frontmatter 之后）ED25519 原始签名，hex 写入 frontmatter 的 `signer`（指纹）+ `signature`；`tools/sig.js sign/verify` 负责签名与验签。
 - 验证规则：任何节点用 `agents/<signer>/agent.md` 公钥验签，**失败即身份不可信/篡改**；`tools/sigcheck.js` 全仓检查（集成 healthcheck）。
 - 无中心注册；可信度由信誉分决定，新身份信誉 0（D-22）。
+- **生效边界**：D-19 于 2026-09-05 生效；生效前事件为历史事件免签，生效后事件必须签名（sigcheck 强制，篡改即阻断）。
 
 ## 2. 目录协议（D-18/D-20/D-32）
 | 路径 | 内容 | 谁可写 |

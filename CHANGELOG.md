@@ -47,3 +47,10 @@
 - 冲突决策：T-2006 双节点竞争 → 先到先得 AG-R1 胜出，AG-R2 感知已认领放弃。
 - 结算 L-0008/0009/0010 守恒；三端一致；账本独立重放 7/7。
 - 说明：本轮真实 LLM = 当前会话推理驱动；接入独立 LLM API（模式B）后即为真·自主多节点。
+
+## 2026-09-05 · D-19 补丁：ED25519 签名验证闭环
+- 工具：keygen.js（ED25519 PKCS8/SPKI + 指纹=SPKI SHA256）、sig.js（sign/verify/test+篡改检测）、sigcheck.js（全仓签名检查，集成 healthcheck）。
+- 规范：事件/结果正文 ED25519 签名，signer(指纹)+signature(hex) 入 frontmatter；验签失败=身份不可信/篡改；PROTOCOL §1 v1.1。
+- agent-runner 集成：认领/提交事件自动签名。
+- 实证：T-2007 发布(AG-P01签)/认领/提交(AG-R1签) 事件链 3/3 验签有效；L0 2/2；结算 L-0011 守恒；篡改一字节 → verify FAIL + sigcheck 阻断（已演示并恢复）。
+- 生效边界：D-19 生效前历史事件免签，生效后强制签名。

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* D-19 全仓签名检查 · sigcheck.js
  * 用法: node tools/sigcheck.js [--strict]
- * 扫描: tasks/*/events/*.md 与 tasks/*/result/result.md
+ * 扫描: 各任务目录下 events 目录的全部 md 与 result 目录的 result.md
  * 通过条件: 事件文件必须已签名且验签有效；result.md 建议签名（strict 时必签）
  * 退出码: 0=全过 1=有未签/无效
  */
