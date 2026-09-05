@@ -1,0 +1,6 @@
+# 密钥与本地临时（永不入库）
+*.pem
+*.key
+*.pub.bak
+/tmp/
+.DS_Store
