@@ -26,3 +26,11 @@
 - **D-29 增量同步**：A 发布 T-2002 → B `git pull --ff-only` 仅拉增量即见新事件（拒全量轮询）。
 - **并发认领先到先得**：`tools/claim.js` —— A 认领成功 push；B 合并中央后检测已认领 → 自动回滚放弃；T-2002 仅 1 owner、1 claimed 事件。
 - T-2002 执行→L0 3/3→结算 L-0006（40=34+2+1.2+2.8）；三端（A/B/中央）git 一致。
+
+## 2026-09-05 · M2.1 git worktree 单机多工作树变体
+- `git worktree add -B wt-b` 创建第二工作树（共享对象库、隔离工作树）；主工作树分支统一为 main。
+- **隔离验证**：B 未提交改动不影响 A；对象库共享（A git log 见 B 提交）。
+- **增量同步**：B（AG-B01，发布者）发布 T-2003 → push wt-b:main → A pull 增量可见。
+- **跨 worktree 并发认领**：claim.js 复用，A 先到先得、B 回滚放弃；T-2003 仅 1 owner。
+- T-2003 执行→L0 2/2→结算 L-0007；三端一致、healthcheck 全绿。
+- 至此开放市场底座完备：多电脑=clone+remote（M2），单机多 agent=worktree（M2.1）。
