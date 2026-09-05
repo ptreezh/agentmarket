@@ -141,7 +141,7 @@ function submitTask(t, id, opid, desc) {
 }
 
 // ========== 执行任务（LLM 推理 + 写 result） ==========
-function executeTask(t, id) {
+async function executeTask(t, id) {
   const spec = specMeta(t);
   const specFull = fs.readFileSync(path.join("tasks", t, "spec.md"), "utf-8");
   // 读 input_ref
@@ -161,7 +161,7 @@ function executeTask(t, id) {
   }
   // 构造执行 prompt
   const prompt = llm.buildExecutionPrompt(spec, inputContent);
-  const result = llm.chat([{ role: "user", content: prompt }], { maxTokens: 2000, temperature: 0.2 });
+  const result = await llm.chat([{ role: "user", content: prompt }], { maxTokens: 2000, temperature: 0.2 });
   // 写 result
   const resultDir = path.join("tasks", t, "result");
   fs.mkdirSync(resultDir, { recursive: true });
@@ -314,7 +314,7 @@ async function loop(id, opts) {
 
       // 5. execute
       log(id, `执行 ${decision}...`);
-      const execRes = executeTask(decision, id);
+      const execRes = await executeTask(decision, id);
       log(id, `执行完成: ${execRes.resultFile}`);
 
       // 6. verify
