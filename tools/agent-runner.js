@@ -78,9 +78,33 @@ function specMeta(t) {
            output_schema: (s.match(/^output_schema:\s*([\s\S]*?)(?=\n[a-z_]+:|\n---|$)/m) || [])[1]?.trim() };
 }
 function discover() {
+  // HCA: 增量 fetch（partial clone 只拉元数据，不拉 blob）
+  try { execSync("git fetch --filter=blob:none origin main --quiet", { encoding: "utf-8", stdio: "pipe", timeout: 15000 }); } catch (e) {}
+  try { execSync("git reset --hard origin/main --quiet", { encoding: "utf-8", stdio: "pipe", timeout: 10000 }); } catch (e) {}
   return (fs.existsSync("tasks") ? fs.readdirSync("tasks").filter(d => TASK_RE.test(d)) : [])
     .filter(t => taskState(t) === "published")
+    .filter(t => !refCheck(t)) // HCA: 排除已被 ref 锁认领的任务
     .map(t => Object.assign({ task: t, state: "published" }, specMeta(t)));
+}
+
+// ========== HCA: Git refs 原子认领锁（D-84/D-85） ==========
+// 检查任务是否已被认领（只读 ls-remote，~103字节，不修改本地）
+function refCheck(t) {
+  try {
+    const out = execSync(`git ls-remote origin refs/claims/${t}`, { encoding: "utf-8" }).trim();
+    return out.length > 0; // 有输出 = ref 存在 = 已被认领
+  } catch (e) { return false; } // ls-remote 失败时保守认为未认领（走旧逻辑）
+}
+
+// 原子认领：push ref，成功=认领，失败(non-fast-forward)=已被认领
+function refClaim(t, id) {
+  try {
+    execSync(`git push origin HEAD:refs/claims/${t}`, { encoding: "utf-8", stdio: "pipe" });
+    return true;
+  } catch (e) {
+    // non-fast-forward = ref 已存在 = 已被认领
+    return false;
+  }
 }
 
 // ========== 认领（重构为返回值，loop 可用） ==========
@@ -99,6 +123,11 @@ function claimTask(t, id, opid) {
     const inList = fs.existsSync(al) && new RegExp("^" + id + "\\s+" + fp.replace(/[.+?^${}()|[\]\\]/g, "\\$&") + "$", "m").test(fs.readFileSync(al, "utf-8"));
     if (!inList) return { ok: false, reason: `${sens} 机密任务不在白名单` };
   }
+  // HCA: 先用 ref 原子锁认领（D-85）
+  if (refCheck(t)) return { ok: false, reason: "ref 检查：已被认领" };
+  if (!refClaim(t, id)) return { ok: false, reason: "ref 原子认领失败（他人先占）" };
+  log(id, `[hca] ref 原子认领成功 ${t}`);
+
   const evDir = path.join("tasks", t, "events");
   fs.mkdirSync(evDir, { recursive: true });
   const fn = `claimed-${opid}-${id}.md`;
