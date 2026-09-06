@@ -101,6 +101,16 @@ const BUDGET_BY_COMPLEXITY = { S: 40, M: 70, L: 110, XL: 200 };
   const estMin = parseInt(await ask("预估最短时间（分钟）", "1"), 10) || 1;
   const estMax = parseInt(await ask("预估最长时间（分钟）", "3"), 10) || 3;
 
+  // 3b. 竞价模式（M4.1 Vickrey 二价，opt-in）
+  const useBidding = (await askChoice("是否启用 Vickrey 竞价（最低报价中标，按第二价结算）", ["n", "y"], "n")).toLowerCase() === "y";
+  let biddingDeadline = "", minBid = 0, maxBid = 0;
+  if (useBidding) {
+    biddingDeadline = await ask("竞价截止时间（ISO 8601，必须早于任务截止时间，留空=12h后）", isoDeadline(12));
+    minBid = parseInt(await ask("最低报价（积分）", "1"), 10) || 1;
+    maxBid = parseInt(await ask(`最高报价（积分，默认=预算 ${budget}）`, String(budget)), 10) || budget;
+    if (maxBid > budget) { console.warn(`  ⚠️  最高报价 ${maxBid} > 预算 ${budget}，已调整为 ${budget}`); maxBid = budget; }
+  }
+
   // 4. 输入文件
   const inputFile = await ask("输入文件路径（留空=无输入文件）");
   let inputRef = "none";
@@ -198,6 +208,10 @@ deadline: "${deadline}"
 timeout_penalty: ${timeoutPenalty}
 publisher: ${publisher}
 input_ref: ${inputRef}
+${useBidding ? `bidding: true
+bidding_deadline: "${biddingDeadline}"
+min_bid: ${minBid}
+max_bid: ${maxBid}` : "bidding: false"}
 output_schema: |
 ${outputSchema}
 acceptance:

@@ -23,6 +23,16 @@ function findTaskDir(id) {
 const taskDir = findTaskDir(taskId);
 if (!taskDir) { console.error("任务不存在: " + taskId); process.exit(2); }
 
+// 0. 竞价任务检测：bidding:true 的任务不能用 claim.js，必须用 bid.js 报价
+const specContent = fs.readFileSync(path.join(taskDir, "spec.md"), "utf-8");
+const specMatch = specContent.match(/^bidding:\s*(true|false)/m);
+if (specMatch && specMatch[1] === "true") {
+  console.error(`❌ 任务 ${taskId} 是竞价任务（bidding:true），不能用 claim.js 认领`);
+  console.error(`   请使用 bid.js 提交报价: node tools/bid.js ${taskId} <worker> <amount>`);
+  console.error(`   竞价截止后运行 award.js 选标`);
+  process.exit(1);
+}
+
 const g = (c) => execSync(c, { encoding: "utf-8", stdio: "pipe" }).trim();
 
 // 1. ref 检查（只读，~103字节）
