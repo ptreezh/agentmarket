@@ -1,0 +1,14 @@
+{
+  "task": "T-V01",
+  "ts": "2026-09-06T05:23:26.588Z",
+  "total": 1,
+  "passed": 1,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "T-V01/result/result.md 存在"
+    }
+  ],
+  "verdict": "PASS"
+}
