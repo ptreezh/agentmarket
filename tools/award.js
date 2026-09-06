@@ -36,7 +36,10 @@ function parseSpec(specPath) {
     if (kv) {
       let v = kv[2].trim();
       if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
-      if (v === "true") v = true;
+      // 数组解析：[item1, item2]
+      if (v.startsWith("[") && v.endsWith("]")) {
+        v = v.slice(1, -1).split(",").map(s => s.trim()).filter(s => s);
+      } else if (v === "true") v = true;
       else if (v === "false") v = false;
       else if (!isNaN(parseFloat(v)) && v !== "" && !/^\d{4}-\d{2}-\d{2}/.test(v)) v = parseFloat(v);
       spec[kv[1]] = v;
@@ -100,16 +103,110 @@ if (fs.existsSync(bidsDir)) {
   }
 }
 
-// 4. 按报价升序排序，平局按提交时间最早→Worker ID 字典序
-bids.sort((a, b) => {
+// 3b. 能力预筛选（D-103）
+const requiredCaps = spec.required_capabilities;
+const validBids = [];
+const rejectedBids = [];
+let capThreshold = 50;
+try {
+  const config = JSON.parse(fs.readFileSync("market-config.json", "utf-8"));
+  capThreshold = config.capability_threshold || 50;
+} catch (e) {}
+
+if (requiredCaps && Array.isArray(requiredCaps) && requiredCaps.length > 0) {
+  console.log(`\n🔍 能力预筛选: required_capabilities=[${requiredCaps.join(", ")}], threshold=${capThreshold}`);
+  for (const bid of bids) {
+    // 读取投标者 rep_by_cap
+    const agentPath = path.join("agents", bid.worker, "agent.md");
+    let repByCap = {};
+    if (fs.existsSync(agentPath)) {
+      const agentContent = fs.readFileSync(agentPath, "utf-8");
+      const repBlock = agentContent.match(/rep_by_cap:\n((?:  \w+:\s*\d+\n?)*)/);
+      if (repBlock) {
+        for (const line of repBlock[1].split("\n")) {
+          const m = line.match(/^\s+(\w+):\s*(\d+)/);
+          if (m) repByCap[m[1]] = parseInt(m[2]);
+        }
+      }
+    }
+    // 检查所有 required_capabilities
+    let pass = true;
+    const failCaps = [];
+    for (const cap of requiredCaps) {
+      const rep = repByCap[cap] || 50; // 缺失默认50
+      if (rep < capThreshold) {
+        pass = false;
+        failCaps.push(`${cap}=${rep}(<${capThreshold})`);
+      }
+    }
+    if (pass) {
+      validBids.push(bid);
+      console.log(`   ✅ ${bid.worker}: 通过 (${requiredCaps.map(c => `${c}=${repByCap[c]||50}`).join(", ")})`);
+    } else {
+      rejectedBids.push({ worker: bid.worker, amount: bid.amount, reason: `能力声誉不足: ${failCaps.join(", ")}` });
+      console.log(`   ❌ ${bid.worker}: 被拒 (${failCaps.join(", ")})，押金退还`);
+      // 立即退还押金
+      try {
+        ledger.writeEntry({
+          kind: "deposit_refund",
+          amount: bid.deposit,
+          from: `escrow-${taskId}-deposit`,
+          to: bid.worker,
+          note: `任务 ${taskId} 能力预筛选未通过，押金退还`,
+          signer: "operator",
+          privKeyPath: path.join("keys", "operator", "private.pem")
+        });
+      } catch (e) { console.warn(`   [warn] 押金退还失败: ${e.message}`); }
+    }
+  }
+} else {
+  // 无 required_capabilities，所有报价有效
+  for (const bid of bids) validBids.push(bid);
+  console.log(`\nℹ️ 任务无 required_capabilities，跳过能力预筛选`);
+}
+
+// 4. 按报价升序排序，平局按能力匹配度→总声誉→提交时间→Worker ID
+function getAgentRep(workerId) {
+  const agentPath = path.join("agents", workerId, "agent.md");
+  if (!fs.existsSync(agentPath)) return { total: 50, caps: {} };
+  const content = fs.readFileSync(agentPath, "utf-8");
+  const totalMatch = content.match(/^reputation:\s*(\d+)/m);
+  const total = totalMatch ? parseInt(totalMatch[1]) : 50;
+  const caps = {};
+  const repBlock = content.match(/rep_by_cap:\n((?:  \w+:\s*\d+\n?)*)/);
+  if (repBlock) {
+    for (const line of repBlock[1].split("\n")) {
+      const m = line.match(/^\s+(\w+):\s*(\d+)/);
+      if (m) caps[m[1]] = parseInt(m[2]);
+    }
+  }
+  return { total, caps };
+}
+
+validBids.sort((a, b) => {
   if (a.amount !== b.amount) return a.amount - b.amount;
+  // 平局：能力匹配度高者优先（required_capabilities 对应标签声誉总和）
+  if (requiredCaps && Array.isArray(requiredCaps) && requiredCaps.length > 0) {
+    const repA = getAgentRep(a.worker);
+    const repB = getAgentRep(b.worker);
+    const capSumA = requiredCaps.reduce((s, c) => s + (repA.caps[c] || 50), 0);
+    const capSumB = requiredCaps.reduce((s, c) => s + (repB.caps[c] || 50), 0);
+    if (capSumA !== capSumB) return capSumB - capSumA;
+    if (repA.total !== repB.total) return repB.total - repA.total;
+  }
   if (a.submitted_at !== b.submitted_at) return a.submitted_at.localeCompare(b.submitted_at);
   return a.worker.localeCompare(b.worker);
 });
 
-console.log(`📋 报价列表（按金额升序）:`);
-for (const b of bids) {
+console.log(`\n📋 有效报价（按金额升序，平局能力优先）:`);
+for (const b of validBids) {
   console.log(`   ${b.worker}: ${b.amount}（押金 ${b.deposit}，提交 ${b.submitted_at}）`);
+}
+if (rejectedBids.length > 0) {
+  console.log(`\n🚫 被拒报价（能力预筛选）:`);
+  for (const r of rejectedBids) {
+    console.log(`   ${r.worker}: ${r.amount} — ${r.reason}`);
+  }
 }
 
 // 5. ref 原子锁（防止并发选标）
@@ -125,14 +222,15 @@ try {
 let awardObj;
 const now = new Date().toISOString();
 
-if (bids.length === 0) {
+if (validBids.length === 0) {
   // 0 候选：流拍
   awardObj = {
     status: "no_bids",
     task_id: taskId,
     candidates: [],
+    rejected_bids: rejectedBids,
     awarded_at: now,
-    note: "竞价截止无报价，任务流拍，退还 Publisher 托管"
+    note: "竞价截止无有效报价（可能被能力预筛选全部拒绝），任务流拍，退还 Publisher 托管"
   };
   console.log(`⚠️  流拍：无有效报价，退还 Publisher 托管 ${spec.budget}`);
 
@@ -146,9 +244,9 @@ if (bids.length === 0) {
     signer: "operator",
     privKeyPath: path.join("keys", "operator", "private.pem")
   });
-} else if (bids.length === 1) {
+} else if (validBids.length === 1) {
   // 1 候选：回退预算 × 85%
-  const winner = bids[0];
+  const winner = validBids[0];
   const payment = Math.round(spec.budget * 0.85 * 100) / 100;
   awardObj = {
     status: "awarded",
@@ -157,15 +255,16 @@ if (bids.length === 0) {
     payment: payment,
     second_bid: null,
     mode: "single_candidate_fallback",
-    candidates: bids.map(b => ({ worker: b.worker, amount: b.amount })),
-    tie_break: bids.length > 1 ? "amount→submitted_at→worker_id" : null,
+    candidates: validBids.map(b => ({ worker: b.worker, amount: b.amount })),
+    rejected_bids: rejectedBids,
+    tie_break: validBids.length > 1 ? "amount→capability→reputation→submitted_at→worker_id" : null,
     awarded_at: now
   };
   console.log(`✅ 选标（单候选回退）: winner=${winner.worker}, payment=${payment}（预算×85%）`);
 } else {
   // ≥2 候选：Vickrey 二价
-  const winner = bids[0];
-  const second = bids[1];
+  const winner = validBids[0];
+  const second = validBids[1];
   const payment = second.amount;
   awardObj = {
     status: "awarded",
@@ -175,8 +274,9 @@ if (bids.length === 0) {
     second_bid: second.amount,
     second_bidder: second.worker,
     mode: "vickrey_second_price",
-    candidates: bids.map(b => ({ worker: b.worker, amount: b.amount })),
-    tie_break: "amount→submitted_at→worker_id",
+    candidates: validBids.map(b => ({ worker: b.worker, amount: b.amount })),
+    rejected_bids: rejectedBids,
+    tie_break: "amount→capability→reputation→submitted_at→worker_id",
     awarded_at: now
   };
   console.log(`✅ 选标（Vickrey 二价）: winner=${winner.worker}（报价 ${winner.amount}）, payment=${payment}（第二价 ${second.worker}=${second.amount}）`);
@@ -189,7 +289,7 @@ fs.writeFileSync(awardPath, JSON.stringify(awardObj, null, 2) + "\n");
 
 // 8. 未中标者押金退还
 if (awardObj.status === "awarded") {
-  for (const b of bids) {
+  for (const b of validBids) {
     if (b.worker !== awardObj.winner) {
       ledger.writeEntry({
         kind: "deposit_refund",

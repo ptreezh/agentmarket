@@ -36,7 +36,10 @@ function parseSpec(specPath) {
     if (kv) {
       let v = kv[2].trim();
       if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
-      if (v === "true") v = true;
+      // 数组解析：[item1, item2]
+      if (v.startsWith("[") && v.endsWith("]")) {
+        v = v.slice(1, -1).split(",").map(s => s.trim()).filter(s => s);
+      } else if (v === "true") v = true;
       else if (v === "false") v = false;
       else if (!isNaN(parseFloat(v)) && v !== "" && !/^\d{4}-\d{2}-\d{2}/.test(v)) v = parseFloat(v);
       spec[kv[1]] = v;
@@ -207,9 +210,182 @@ conservation: payment+tax+refund=${escrowTotal}=budget
 const settledSig = signOperator(settledBody);
 fs.writeFileSync(settledPath, `---\n${settledBody}sig: ${settledSig}\n---\n任务结算完成，守恒验证通过。\n`);
 
+// 7b. 声誉更新（分标签能力声誉，D-103）
+function updateReputation(taskId, winner, spec, verifyResult) {
+  const requiredCaps = spec.required_capabilities;
+  if (!requiredCaps || !Array.isArray(requiredCaps) || requiredCaps.length === 0) {
+    console.log(`   📊 声誉: 任务无 required_capabilities，跳过声誉更新`);
+    return;
+  }
+
+  // 读取 market-config.json
+  let config = {};
+  try {
+    config = JSON.parse(fs.readFileSync("market-config.json", "utf-8"));
+  } catch (e) {
+    config = { rep_delta: { S: 2, M: 3, L: 5, XL: 8 }, probation: { unlock_done: 3, unlock_rep: 60, full_rep: 70 } };
+  }
+  const repDelta = config.rep_delta || { S: 2, M: 3, L: 5, XL: 8 };
+  const probation = config.probation || { unlock_done: 3, unlock_rep: 60, full_rep: 70 };
+  const complexity = spec.complexity || "M";
+  const delta = repDelta[complexity] || 3;
+
+  // 确定 verdict
+  const passed = verifyResult.passed || 0;
+  const total = verifyResult.total || 1;
+  const ratio = passed / total;
+  let verdict, repChange;
+  if (ratio >= 0.8) { verdict = "pass"; repChange = delta; }
+  else if (ratio < 0.3) { verdict = "fail"; repChange = -delta; }
+  else { verdict = "partial"; repChange = Math.round(delta / 2); }
+
+  // 读取中标者 agent.md
+  const agentPath = path.join("agents", winner, "agent.md");
+  if (!fs.existsSync(agentPath)) {
+    console.warn(`   [warn] 声誉更新: agent.md 不存在: ${agentPath}`);
+    return;
+  }
+  const agentContent = fs.readFileSync(agentPath, "utf-8");
+  const fmMatch = agentContent.match(/^---\n([\s\S]*?)\n---/);
+  if (!fmMatch) {
+    console.warn(`   [warn] 声誉更新: agent.md 无 frontmatter`);
+    return;
+  }
+
+  // 解析现有 frontmatter
+  const fm = {};
+  for (const line of fmMatch[1].split("\n")) {
+    const kv = line.match(/^(\w+):\s*(.*)$/);
+    if (kv) {
+      let v = kv[2].trim();
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+      if (v === "true") v = true;
+      else if (v === "false") v = false;
+      else if (!isNaN(parseFloat(v)) && v !== "" && !/^\d{4}-\d{2}-\d{2}/.test(v)) v = parseFloat(v);
+      fm[kv[1]] = v;
+    }
+  }
+
+  // 解析 rep_by_cap（YAML map 格式）
+  let repByCap = {};
+  let capCounts = {};
+  const repBlock = agentContent.match(/rep_by_cap:\n((?:  \w+:\s*\d+\n?)*)/);
+  if (repBlock) {
+    for (const line of repBlock[1].split("\n")) {
+      const m = line.match(/^\s+(\w+):\s*(\d+)/);
+      if (m) repByCap[m[1]] = parseInt(m[2]);
+    }
+  }
+  const countBlock = agentContent.match(/cap_counts:\n((?:  \w+:\s*\d+\n?)*)/);
+  if (countBlock) {
+    for (const line of countBlock[1].split("\n")) {
+      const m = line.match(/^\s+(\w+):\s*(\d+)/);
+      if (m) capCounts[m[1]] = parseInt(m[2]);
+    }
+  }
+
+  // 更新每个 required_capability
+  const changes = [];
+  for (const cap of requiredCaps) {
+    const oldRep = repByCap[cap] || 50;
+    const newRep = Math.max(0, Math.min(100, oldRep + repChange));
+    repByCap[cap] = newRep;
+    capCounts[cap] = (capCounts[cap] || 0) + 1;
+    changes.push(`${cap}: ${oldRep}→${newRep} (${repChange >= 0 ? "+" : ""}${repChange})`);
+  }
+
+  // 重新计算总声誉（加权平均与最高标签取较高者）
+  let totalCount = 0;
+  let weightedSum = 0;
+  let maxRep = 0;
+  for (const cap of Object.keys(repByCap)) {
+    const count = capCounts[cap] || 0;
+    const rep = repByCap[cap];
+    if (count > 0) {
+      totalCount += count;
+      weightedSum += rep * count;
+    }
+    if (rep > maxRep) maxRep = rep;
+  }
+  const weightedAvg = totalCount > 0 ? Math.round(weightedSum / totalCount) : 50;
+  let totalRep = Math.max(weightedAvg, maxRep);
+
+  // probation 升级（保底声誉）
+  let tier = fm.tier || "probation";
+  if (tier === "probation" && totalCount >= probation.unlock_done) {
+    tier = "normal";
+    if (totalRep < probation.unlock_rep) totalRep = probation.unlock_rep;
+    console.log(`   🎖️ probation 升级: normal (保底声誉 ${probation.unlock_rep})`);
+  } else if (tier === "normal" && totalCount >= 10) {
+    tier = "full";
+    if (totalRep < probation.full_rep) totalRep = probation.full_rep;
+    console.log(`   🎖️ probation 升级: full (保底声誉 ${probation.full_rep})`);
+  }
+
+  // 构建新的 frontmatter
+  const newFmLines = [];
+  const existingKeys = new Set();
+  for (const line of fmMatch[1].split("\n")) {
+    const kv = line.match(/^(\w+):/);
+    if (kv) {
+      const key = kv[1];
+      if (key === "rep_by_cap" || key === "cap_counts" || key === "reputation" || key === "tier") {
+        continue; // 这些字段重新生成
+      }
+      existingKeys.add(key);
+      newFmLines.push(line);
+    }
+  }
+  // 添加 reputation
+  newFmLines.push(`reputation: ${totalRep}`);
+  // 添加 tier
+  newFmLines.push(`tier: ${tier}`);
+  // 添加 rep_by_cap
+  newFmLines.push(`rep_by_cap:`);
+  for (const cap of Object.keys(repByCap).sort()) {
+    newFmLines.push(`  ${cap}: ${repByCap[cap]}`);
+  }
+  // 添加 cap_counts
+  newFmLines.push(`cap_counts:`);
+  for (const cap of Object.keys(capCounts).sort()) {
+    newFmLines.push(`  ${cap}: ${capCounts[cap]}`);
+  }
+
+  // 写回 agent.md
+  const newFm = newFmLines.join("\n");
+  const newAgentContent = agentContent.replace(/^---\n[\s\S]*?\n---/, `---\n${newFm}\n---`);
+  fs.writeFileSync(agentPath, newAgentContent);
+
+  // 写声誉变动事件
+  const repEventPath = path.join(eventsDir, `rep-update-${new Date().toISOString().replace(/[:.]/g, "")}.md`);
+  const repEventBody = `task: ${taskId}
+agent: ${winner}
+verdict: ${verdict}
+complexity: ${complexity}
+delta: ${repChange}
+required_capabilities: [${requiredCaps.join(", ")}]
+changes:
+${changes.map(c => `  - ${c}`).join("\n")}
+total_reputation: ${totalRep}
+tier: ${tier}
+updated_at: ${new Date().toISOString()}
+`;
+  fs.writeFileSync(repEventPath, `---\n${repEventBody}---\n声誉更新完成。\n`);
+
+  console.log(`   📊 声誉更新: verdict=${verdict}, delta=${repChange >= 0 ? "+" : ""}${repChange}`);
+  console.log(`   📊 分标签: ${changes.join(", ")}`);
+  console.log(`   📊 总声誉: ${totalRep} (tier=${tier})`);
+}
+
+try {
+  updateReputation(taskId, winner, spec, verifyResult);
+} catch (e) {
+  console.warn(`   [warn] 声誉更新失败: ${e.message}`);
+}
+
 // 8. commit + push
 try {
-  g(`git add ledger/ "${settledPath}" && git commit -q -m "settle: ${taskId} 结算完成 winner=${winner} payment=${payment} tax=${tax} refund=${refund}" && git push origin HEAD:main`);
+  g(`git add ledger/ "${settledPath}" "agents/${winner}/agent.md" && git commit -q -m "settle: ${taskId} 结算完成 winner=${winner} payment=${payment} tax=${tax} refund=${refund} rep_update" && git push origin HEAD:main`);
 } catch (e) {
   console.warn(`   [warn] git push 失败：${e.message}`);
 }

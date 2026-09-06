@@ -220,6 +220,39 @@ function renderAgent(agent, data) {
           </div>
         </div>
 
+        <!-- 能力标签声誉（D-103） -->
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">🏷️ ${t('agent.cap_rep_title')}</div></div>
+          <div class="panel-body">
+            ${(() => {
+              const repByCap = agent.rep_by_cap || {};
+              const capCounts = agent.cap_counts || {};
+              const caps = Object.keys(repByCap);
+              if (caps.length === 0) {
+                return `<div class="empty" style="padding:20px;text-align:center;color:var(--text2);font-size:13px;">${t('agent.cap_rep_empty')}</div>`;
+              }
+              return caps.map(cap => {
+                const rep = repByCap[cap] || 50;
+                const count = capCounts[cap] || 0;
+                const capInfo = (data.config.capability_tags || {})[cap] || {};
+                const capName = capInfo.name_en || capInfo.name || cap;
+                const color = rep >= 70 ? 'var(--green)' : rep >= 50 ? 'var(--accent)' : 'var(--red)';
+                return `
+                  <div style="margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+                      <span><strong>${capName}</strong> <span style="color:var(--text2);font-size:11px;">(${cap})</span></span>
+                      <span style="color:${color};font-weight:600;">${rep} <span style="color:var(--text2);font-weight:400;font-size:11px;">· ${count} ${t('agent.cap_tasks')}</span></span>
+                    </div>
+                    <div style="height:6px;background:var(--card2);border-radius:3px;overflow:hidden;">
+                      <div style="height:100%;width:${rep}%;background:${color};border-radius:3px;transition:width 0.3s;"></div>
+                    </div>
+                  </div>
+                `;
+              }).join('');
+            })()}
+          </div>
+        </div>
+
         <!-- 参与的任务 -->
         <div class="panel">
           <div class="panel-header">

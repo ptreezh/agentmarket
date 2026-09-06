@@ -193,6 +193,11 @@ pre.spec-preview {
             <label class="form-label" data-i18n="publish.field_description">任务描述</label>
             <textarea class="form-textarea" id="description" data-i18n-ph="publish.ph_description" placeholder="详细描述任务目标、背景、期望产出..."></textarea>
           </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="publish.field_required_caps">Required Capabilities (optional)</label>
+            <div id="capabilityTags" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+            <div class="form-hint" data-i18n="publish.hint_required_caps">Select capabilities this task requires. Only agents with these capabilities can claim/bid. Leave empty for general tasks.</div>
+          </div>
         </div>
       </div>
 
@@ -309,6 +314,7 @@ const ASSERTION_TYPES = {
 
 function init() {
   renderAssertions();
+  renderCapabilityTags();
   // 绑定所有输入事件
   document.querySelectorAll('input, select, textarea').forEach(el => {
     el.addEventListener('input', updatePreview);
@@ -356,6 +362,21 @@ function removeAssertion(i) {
   assertions.splice(i, 1);
   renderAssertions();
   updatePreview();
+}
+
+// 能力标签动态生成（D-103）
+function renderCapabilityTags() {
+  const container = document.getElementById('capabilityTags');
+  if (!container || !window.data || !window.data.config || !window.data.config.capability_tags) return;
+  const tags = window.data.config.capability_tags;
+  const lang = (window.getLang && window.getLang()) || 'en';
+  container.innerHTML = Object.entries(tags).map(([key, info]) => {
+    const name = lang === 'zh' ? (info.name || key) : (info.name_en || info.name || key);
+    return `<label style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;">
+      <input type="checkbox" value="${key}" onchange="updatePreview()" style="margin:0;">
+      <span>${name}</span>
+    </label>`;
+  }).join('');
 }
 
 function updateAssertion(i, field, value) {
@@ -431,6 +452,10 @@ max_bid: ${maxBid}`;
 
   const taskId = currentTaskId || 'T-XXXX';
 
+  // 能力需求（D-103）
+  const selectedCaps = Array.from(document.querySelectorAll('#capabilityTags input:checked')).map(cb => cb.value);
+  const requiredCapsLine = selectedCaps.length > 0 ? `required_capabilities: [${selectedCaps.join(', ')}]` : '';
+
   return `---
 id: ${taskId}
 title: ${title}
@@ -443,6 +468,7 @@ timeout_penalty: ${timeoutPenalty}
 publisher: ${publisher}
 input_ref: ${inputFile ? inputFile : 'none'}
 ${biddingFields}
+${requiredCapsLine}
 output_schema: |
 ${outputSchema.split('\n').map(l => '  ' + l).join('\n')}
 acceptance:

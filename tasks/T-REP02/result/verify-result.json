@@ -1,0 +1,1 @@
+{"verdict":"PASS","passed":1,"total":1,"assertions":[{"type":"file_exists","path":"result/result.md","passed":true}]}

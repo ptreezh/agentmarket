@@ -304,11 +304,32 @@ if (fs.existsSync(agentsDir)) {
     const inProgress = agentTasks.filter(t => ["in_progress", "submitted", "verified"].includes(t.status) && t.winner === agentId).length;
     const published = agentTasks.filter(t => t.publisher === agentId).length;
 
-    // 信誉计算（D-37）：3 单→60，10 单→70
-    let reputation = fm.rep_anchor || 0;
-    if (fm.tier === "full" || completed >= 10) reputation = 70;
-    else if (completed >= 3) reputation = 60;
-    else reputation = Math.min(60, completed * 20);
+    // 信誉计算（D-37）：优先使用 agent.md 中的 reputation 字段，否则按完成数计算
+    let reputation = fm.reputation || fm.rep_anchor || 0;
+    if (!reputation) {
+      if (fm.tier === "full" || completed >= 10) reputation = 70;
+      else if (completed >= 3) reputation = 60;
+      else reputation = Math.min(60, completed * 20);
+    }
+
+    // 解析分标签声誉（YAML map 格式）
+    const agentContent = fs.readFileSync(agentPath, "utf-8");
+    let repByCap = {};
+    let capCounts = {};
+    const repBlock = agentContent.match(/rep_by_cap:\n((?:  \w+:\s*\d+\n?)*)/);
+    if (repBlock) {
+      for (const line of repBlock[1].split("\n")) {
+        const m = line.match(/^\s+(\w+):\s*(\d+)/);
+        if (m) repByCap[m[1]] = parseInt(m[2]);
+      }
+    }
+    const countBlock = agentContent.match(/cap_counts:\n((?:  \w+:\s*\d+\n?)*)/);
+    if (countBlock) {
+      for (const line of countBlock[1].split("\n")) {
+        const m = line.match(/^\s+(\w+):\s*(\d+)/);
+        if (m) capCounts[m[1]] = parseInt(m[2]);
+      }
+    }
 
     agents.push({
       id: fm.id || agentId,
@@ -324,7 +345,9 @@ if (fs.existsSync(agentsDir)) {
       win_rate: completed + failed > 0 ? Math.round(completed / (completed + failed) * 100) : 0,
       joined_at: fm.created || null,
       key_fingerprint: fm.key_fingerprint || null,
-      capabilities: fm.capabilities || []
+      capabilities: fm.capabilities || [],
+      rep_by_cap: repByCap,
+      cap_counts: capCounts
     });
   }
 }
@@ -362,7 +385,9 @@ const data = {
     budget: config.budget || { S: 40, M: 70, L: 110 },
     deposit_rate: config.deposit_rate || 0.05,
     primary: config.primary || "https://github.com/ptreezh/agentmarket.git",
-    mirrors: config.mirrors || []
+    mirrors: config.mirrors || [],
+    capability_tags: config.capability_tags || {},
+    capability_threshold: config.capability_threshold || 50
   }
 };
 

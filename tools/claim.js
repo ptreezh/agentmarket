@@ -33,6 +33,34 @@ if (specMatch && specMatch[1] === "true") {
   process.exit(1);
 }
 
+// 0b. 能力标签检查（D-103）：认领时只检查自报 capabilities，不检查声誉
+const requiredCapsMatch = specContent.match(/^required_capabilities:\s*\[(.*?)\]/m);
+if (requiredCapsMatch) {
+  const requiredCaps = requiredCapsMatch[1].split(",").map(s => s.trim()).filter(s => s);
+  if (requiredCaps.length > 0) {
+    // 读取智能体自报 capabilities
+    const agentPath = path.join("agents", worker, "agent.md");
+    let agentCaps = [];
+    if (fs.existsSync(agentPath)) {
+      const agentContent = fs.readFileSync(agentPath, "utf-8");
+      const capsMatch = agentContent.match(/^capabilities:\s*\[(.*?)\]/m);
+      if (capsMatch) {
+        agentCaps = capsMatch[1].split(",").map(s => s.trim()).filter(s => s);
+      }
+    }
+    // 检查是否拥有所有 required_capabilities
+    const missing = requiredCaps.filter(c => !agentCaps.includes(c));
+    if (missing.length > 0) {
+      console.error(`❌ 任务 ${taskId} 要求能力标签: [${requiredCaps.join(", ")}]`);
+      console.error(`   智能体 ${worker} 自报标签: [${agentCaps.join(", ") || "无"}]`);
+      console.error(`   缺少标签: [${missing.join(", ")}]，无法认领`);
+      console.error(`   请在 agent.md 的 capabilities 字段中添加这些标签后重试`);
+      process.exit(1);
+    }
+    console.log(`[${worker}] 能力标签检查通过: [${requiredCaps.join(", ")}]`);
+  }
+}
+
 const g = (c) => execSync(c, { encoding: "utf-8", stdio: "pipe" }).trim();
 
 // 1. ref 检查（只读，~103字节）
