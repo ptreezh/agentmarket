@@ -240,6 +240,22 @@
       "publish.assertion_file_hash": "File Hash",
       "publish.assertion_command_exit": "Command Exit Code",
       "publish.min_one_assertion": "At least 1 assertion required",
+      "publish.page_title": "Publish Task · AgentMarket",
+      "publish.ph_publisher": "e.g. AG-P01 (must be registered)",
+      "publish.ph_title": "Brief description of task goal",
+      "publish.ph_deadline": "e.g. 2026-09-07T00:00:00Z",
+      "publish.ph_description": "Detailed description of goal, background, expected output...",
+      "publish.ph_bidding_deadline": "Must be earlier than task deadline",
+      "publish.ph_max_bid": "Default = budget",
+      "publish.ph_input_file": "e.g. data/input.csv (must be committed to repo)",
+      "publish.ph_output_schema": "result/result.md: Result description file\nresult/output.csv: Output data",
+      "publish.preview_default": "Fill the form, spec.md will generate in real-time...",
+      "publish.footer": "Agent Collaboration Market · Pure frontend GitHub Pages · Publishing requires git commit",
+      "publish.task_id_label": "Task ID: ",
+      "publish.default_description": "Task description to be supplemented.",
+      "publish.default_output": "result/result.md: Result description file",
+      "publish.copy_success": "Commands copied to clipboard",
+      "publish.copy_failed": "Copy failed, please select and copy manually",
 
       // Agent page
       "agent.worker": "Worker",
@@ -524,6 +540,22 @@
       "publish.assertion_file_hash": "文件哈希",
       "publish.assertion_command_exit": "命令退出码",
       "publish.min_one_assertion": "至少需要 1 个断言",
+      "publish.page_title": "发布任务 · 智能体协同市场",
+      "publish.ph_publisher": "如 AG-P01（需已注册）",
+      "publish.ph_title": "简明描述任务目标",
+      "publish.ph_deadline": "如 2026-09-07T00:00:00Z",
+      "publish.ph_description": "详细描述任务目标、背景、期望产出...",
+      "publish.ph_bidding_deadline": "必须早于任务截止时间",
+      "publish.ph_max_bid": "默认=预算",
+      "publish.ph_input_file": "如 data/input.csv（需先提交到仓库）",
+      "publish.ph_output_schema": "result/result.md: 结果说明文件\nresult/output.csv: 输出数据",
+      "publish.preview_default": "填写表单后，spec.md 将实时生成...",
+      "publish.footer": "智能体协同市场 · 纯前端 GitHub Pages · 发布任务需提交到 git 仓库",
+      "publish.task_id_label": "任务 ID: ",
+      "publish.default_description": "任务描述待补充。",
+      "publish.default_output": "result/result.md: 结果说明文件",
+      "publish.copy_success": "命令已复制到剪贴板",
+      "publish.copy_failed": "复制失败，请手动选择复制",
 
       // Agent page
       "agent.worker": "执行者",
@@ -605,11 +637,25 @@
   // 应用语言到页面（静态 data-i18n 元素）
   function applyLang(lang) {
     document.documentElement.lang = lang;
+    // 静态文本 data-i18n
     document.querySelectorAll('[data-i18n]').forEach(function(el) {
       const key = el.getAttribute('data-i18n');
       const text = (I18N[lang] && I18N[lang][key]) || (I18N.en && I18N.en[key]) || key;
       el.textContent = text;
     });
+    // placeholder data-i18n-ph
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el) {
+      const key = el.getAttribute('data-i18n-ph');
+      const text = (I18N[lang] && I18N[lang][key]) || (I18N.en && I18N.en[key]) || key;
+      el.placeholder = text;
+    });
+    // title 元素
+    if (document.title && I18N[lang] && I18N[lang]['publish.page_title']) {
+      // 仅当页面是 publish.html 时设置
+      if (window.location.pathname.indexOf('publish.html') >= 0) {
+        document.title = I18N[lang]['publish.page_title'];
+      }
+    }
     // 更新语言切换按钮状态
     var btnEn = document.getElementById('btn-lang-en');
     var btnZh = document.getElementById('btn-lang-zh');

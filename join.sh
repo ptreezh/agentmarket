@@ -15,6 +15,8 @@
 #   --llm auto|mock|manual  LLM 模式（默认 auto：有 key 用真实，无 key 用 manual）
 #   --mirror <URL>     备用镜像仓地址（只读故障转移，默认从 market-config.json 读取）
 #   --daemon            worker 后台运行（nohup + PID 文件 + 日志）
+#   --faucet            注册后自动领取初始积分（默认 100，防 Sybil 限制）
+#   --backup <目录>     注册后自动备份密钥到指定目录（AES-256-GCM 加密）
 #   --help              显示帮助
 #
 # 幂等: 重复运行不破坏已有状态；已注册的 agent 跳过创建，直接启动/提示。
@@ -33,6 +35,7 @@ LLM_MODE="auto"
 DAEMON=false
 STRICT_SIGN="${AGENTMARKET_STRICT_SIGN:-false}"
 BACKUP_DIR=""
+AUTO_FAUCET=false
 
 # 严格模式判断：接受 true/1/yes（不区分大小写）
 is_strict_sign() {
@@ -53,6 +56,7 @@ while [[ $# -gt 0 ]]; do
     --daemon)   DAEMON=true; shift ;;
     --strict-sign) STRICT_SIGN=true; shift ;;
     --backup)   BACKUP_DIR="$2"; shift 2 ;;
+    --faucet)   AUTO_FAUCET=true; shift ;;
     --help|-h)
       sed -n '2,30p' "$0"
       exit 0
@@ -297,6 +301,35 @@ echo "   指纹:    ${FINGERPRINT}"
 echo "   目录:    $(pwd)"
 echo "   私钥:    $(pwd)/keys/${AGENT_ID}/private.pem（0600, 已 gitignore, 请备份！）"
 echo "════════════════════════════════════════════════════════════"
+echo ""
+
+# ---------- 自动 faucet 领取（--faucet）----------
+if [[ "$AUTO_FAUCET" == "true" ]]; then
+  if [[ -f "faucet.sh" ]]; then
+    info "自动领取初始积分（--faucet）..."
+    FAUCET_OUTPUT=$(bash faucet.sh "$AGENT_ID" 2>&1)
+    FAUCET_RC=$?
+    if [[ $FAUCET_RC -eq 0 ]]; then
+      ok "初始积分领取成功"
+      echo "$FAUCET_OUTPUT" | grep -i "积分\|balance\|points\|领取" | head -3
+    else
+      warn "初始积分领取失败（不影响注册）: $(echo "$FAUCET_OUTPUT" | tail -1)"
+    fi
+  else
+    warn "faucet.sh 不存在，跳过自动领取"
+  fi
+else
+  # 未指定 --faucet 时，检测余额并提示
+  if [[ -f "tools/ledger.js" ]]; then
+    BALANCE=$(node tools/ledger.js balance "$AGENT_ID" 2>/dev/null | grep -oP '总余额:\s*\K[\d.]+' || echo "0")
+    if [[ "$BALANCE" == "0" || -z "$BALANCE" ]]; then
+      info "新账户余额为 0，领取初始积分：bash faucet.sh ${AGENT_ID}"
+      info "（或重新运行 join.sh 时加 --faucet 参数自动领取）"
+    else
+      ok "当前积分余额: ${BALANCE}"
+    fi
+  fi
+fi
 echo ""
 
 if [[ "$ROLE" == "worker" ]]; then
