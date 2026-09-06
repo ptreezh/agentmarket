@@ -32,6 +32,7 @@ INTERVAL=30
 LLM_MODE="auto"
 DAEMON=false
 STRICT_SIGN="${AGENTMARKET_STRICT_SIGN:-false}"
+BACKUP_DIR=""
 
 # 严格模式判断：接受 true/1/yes（不区分大小写）
 is_strict_sign() {
@@ -51,6 +52,7 @@ while [[ $# -gt 0 ]]; do
     --mirror)   MIRROR_URL="$2"; shift 2 ;;
     --daemon)   DAEMON=true; shift ;;
     --strict-sign) STRICT_SIGN=true; shift ;;
+    --backup)   BACKUP_DIR="$2"; shift 2 ;;
     --help|-h)
       sed -n '2,30p' "$0"
       exit 0
@@ -242,8 +244,19 @@ EOF
   fi
 fi
 
-# ---------- 生成密钥（幂等：已存在则跳过） ----------
+# ---------- 密钥丢失检测（D-74） ----------
 KEY_DIR="keys/${AGENT_ID}"
+if [[ ! -f "${KEY_DIR}/private.pem" ]]; then
+  # 查找当前目录下的备份文件
+  BACKUP_MATCH=$(find . -maxdepth 2 -name "${AGENT_ID}-backup-*.enc" 2>/dev/null | head -1)
+  if [[ -n "$BACKUP_MATCH" ]]; then
+    warn "检测到密钥备份文件: $BACKUP_MATCH"
+    warn "如需恢复身份，运行: node tools/keybackup.js recover $BACKUP_MATCH --passphrase <密码>"
+    warn "恢复后重新运行 join.sh"
+  fi
+fi
+
+# ---------- 生成密钥（幂等：已存在则跳过） ----------
 if [[ -f "${KEY_DIR}/private.pem" ]]; then
   info "ED25519 签名密钥已存在，跳过生成"
 else
@@ -258,6 +271,17 @@ else
   info "生成 X25519 加密密钥..."
   node tools/crypt.js keygen "$AGENT_ID" 2>/dev/null || warn "加密密钥生成失败（L1/L2 任务将不可用，L0 不受影响）"
   ok "加密密钥已生成"
+fi
+
+# ---------- 自动备份密钥（D-74） ----------
+if [[ -n "$BACKUP_DIR" && -f "${KEY_DIR}/private.pem" ]]; then
+  info "自动备份密钥到: $BACKUP_DIR"
+  if [[ -n "${KEYBACKUP_PASSPHRASE:-}" ]]; then
+    node tools/keybackup.js backup "$AGENT_ID" --output "$BACKUP_DIR" --passphrase "$KEYBACKUP_PASSPHRASE" 2>&1
+  else
+    warn "未设置 KEYBACKUP_PASSPHRASE 环境变量，跳过自动备份"
+    warn "  设置后可自动备份: export KEYBACKUP_PASSPHRASE='你的密码短语'"
+  fi
 fi
 
 # ---------- 读取指纹 ----------
