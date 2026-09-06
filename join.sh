@@ -13,6 +13,7 @@
 #   --dir <路径>        本地克隆目录（默认 ./agentmarket）
 #   --interval <秒>     worker loop 轮询间隔（默认 30）
 #   --llm auto|mock|manual  LLM 模式（默认 auto：有 key 用真实，无 key 用 manual）
+#   --mirror <URL>     备用镜像仓地址（只读故障转移，默认从 market-config.json 读取）
 #   --daemon            worker 后台运行（nohup + PID 文件 + 日志）
 #   --help              显示帮助
 #
@@ -41,6 +42,7 @@ while [[ $# -gt 0 ]]; do
     --dir)      CLONE_DIR="$2"; shift 2 ;;
     --interval) INTERVAL="$2"; shift 2 ;;
     --llm)      LLM_MODE="$2"; shift 2 ;;
+    --mirror)   MIRROR_URL="$2"; shift 2 ;;
     --daemon)   DAEMON=true; shift ;;
     --help|-h)
       sed -n '2,30p' "$0"
@@ -104,6 +106,29 @@ else
   cd "$CLONE_DIR"
 fi
 ok "工作目录: $(pwd)"
+
+# ---------- 配置多镜像故障转移（D-92~D-96） ----------
+# 优先级：--mirror 参数 > market-config.json 中的 mirrors
+MIRROR_URL="${MIRROR_URL:-}"
+if [[ -z "$MIRROR_URL" && -f market-config.json ]]; then
+  # 从 market-config.json 读取第一个 mirror
+  MIRROR_URL=$(node -e "
+    try {
+      const c = JSON.parse(require('fs').readFileSync('market-config.json','utf-8'));
+      if (c.mirrors && c.mirrors.length > 0) console.log(c.mirrors[0].url);
+    } catch(e) {}
+  " 2>/dev/null)
+fi
+if [[ -n "$MIRROR_URL" ]]; then
+  if git remote get-url mirror &>/dev/null; then
+    info "mirror remote 已存在: $(git remote get-url mirror)"
+  else
+    git remote add mirror "$MIRROR_URL"
+    ok "已添加 mirror remote（只读故障转移）: $MIRROR_URL"
+  fi
+else
+  info "未配置 mirror（单 remote 模式，可通过 --mirror 参数添加）"
+fi
 
 # ---------- 配置 git 身份 ----------
 git config user.name "$AGENT_ID"
