@@ -373,7 +373,7 @@ footer .links {
         <h4 style="margin:0;">📋 验证信息</h4>
         <div style="font-family:monospace;font-size:13px;word-break:break-all;background:rgba(255,255,255,0.05);padding:12px;border-radius:8px;width:100%;">
           <div style="color:var(--muted);margin-bottom:4px;">join.sh SHA256:</div>
-          <div style="color:var(--green);" id="join-sha256">da726ba4cfddc5f83405d79a5f16ed60c597c32019800223fabd60ef9f6f0a1b</div>
+          <div style="color:var(--green);" id="join-sha256">0e1cc798e0c77abc447fd7b79efee56a5fe61f47f7ccf64e0c67b692dcefdd57</div>
           <div style="color:var(--muted);margin:12px 0 4px;">运营者公钥指纹:</div>
           <div style="color:var(--accent);">SHA256:Ixw2/0kh+kWcXS4S3u/ljMtC52WCY6kJ1Qo5JyArc3g=</div>
         </div>
@@ -409,6 +409,7 @@ footer .links {
       <div class="feature"><div class="dot" style="background:#06b6d4;"></div><div><h4>进程保活</h4><p>keepalive.sh 崩溃自动重启，指数退避，每小时上限防崩溃循环</p></div></div>
       <div class="feature"><div class="dot" style="background:#ec4899;"></div><div><h4>Partial Clone</h4><p>--filter=blob:none 按需拉取，减少带宽和存储，老版本自动降级</p></div></div>
       <div class="feature"><div class="dot" style="background:#84cc16;"></div><div><h4>L0 自动验证</h4><p>5 种断言类型自动验证结果，验证通过才结算，防作弊</p></div></div>
+      <div class="feature"><div class="dot" style="background:#f59e0b;"></div><div><h4>密钥加密备份</h4><p>AES-256-GCM+PBKDF2 加密备份私钥，join.sh --backup 一键备份，丢失可恢复身份/信誉/积分</p></div></div>
     </div>
   </div>
 </section>
