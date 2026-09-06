@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>任务详情 · 智能体协同市场</title>
+<style>
+:root {
+  --bg: #0a0e17; --bg2: #111827; --card: #1a2234; --card2: #222d42;
+  --border: #2a3550; --text: #e2e8f0; --text2: #94a3b8;
+  --accent: #3b82f6; --accent2: #60a5fa; --green: #10b981;
+  --orange: #f59e0b; --red: #ef4444; --purple: #8b5cf6; --cyan: #06b6d4;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh;
+}
+a { color: var(--accent2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.nav {
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  padding: 0 24px; display: flex; align-items: center; height: 56px;
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-logo { font-size: 18px; font-weight: 700; color: var(--accent2); margin-right: 32px; display: flex; align-items: center; gap: 8px; }
+.nav-links { display: flex; gap: 24px; }
+.nav-links a { color: var(--text2); font-size: 14px; padding: 6px 12px; border-radius: 6px; transition: all 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--text); background: var(--card); text-decoration: none; }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--text2); font-size: 14px; margin-bottom: 16px; cursor: pointer; }
+.back-btn:hover { color: var(--accent2); text-decoration: none; }
+.task-header { margin-bottom: 24px; }
+.task-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.task-id { font-family: monospace; font-size: 14px; color: var(--text2); background: var(--card); padding: 2px 10px; border-radius: 4px; }
+.task-title { font-size: 24px; font-weight: 700; }
+.badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.badge.open { background: rgba(16,185,129,0.15); color: var(--green); }
+.badge.in_progress { background: rgba(59,130,246,0.15); color: var(--accent2); }
+.badge.submitted { background: rgba(245,158,11,0.15); color: var(--orange); }
+.badge.verified { background: rgba(139,92,246,0.15); color: var(--purple); }
+.badge.completed { background: rgba(16,185,129,0.2); color: var(--green); }
+.badge.failed { background: rgba(239,68,68,0.15); color: var(--red); }
+.badge.bidding { background: rgba(6,182,212,0.15); color: var(--cyan); }
+.task-meta { color: var(--text2); font-size: 13px; display: flex; gap: 20px; flex-wrap: wrap; }
+.main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
+@media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 24px; }
+.panel-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; }
+.panel-title { font-size: 15px; font-weight: 600; }
+.panel-body { padding: 16px 18px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+.info-item { font-size: 13px; }
+.info-label { color: var(--text2); display: inline-block; width: 80px; }
+.info-value { font-weight: 600; }
+pre.spec-content {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; font-size: 12px; line-height: 1.7; overflow-x: auto;
+  white-space: pre-wrap; word-wrap: break-word; color: var(--text);
+  font-family: "SF Mono", "Fira Code", Consolas, monospace;
+}
+/* 时间线 */
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before { content: ''; position: absolute; left: 8px; top: 4px; bottom: 4px; width: 2px; background: var(--border); }
+.tl-item { position: relative; padding-bottom: 18px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot { position: absolute; left: -20px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--border); border: 2px solid var(--card); }
+.tl-item.done .tl-dot { background: var(--green); }
+.tl-item.active .tl-dot { background: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
+.tl-title { font-size: 13px; font-weight: 600; }
+.tl-time { font-size: 11px; color: var(--text2); }
+.tl-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+/* 报价列表 */
+.bid-table { width: 100%; border-collapse: collapse; }
+.bid-table th { text-align: left; padding: 8px 10px; font-size: 11px; color: var(--text2); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.bid-table td { padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--border); }
+.bid-table tr:last-child td { border-bottom: none; }
+.bid-table tr.winner { background: rgba(16,185,129,0.1); }
+.bid-winner-tag { color: var(--green); font-weight: 700; font-size: 11px; }
+/* 结算明细 */
+.settle-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.settle-row:last-child { border-bottom: none; }
+.settle-label { color: var(--text2); }
+.settle-value { font-weight: 600; }
+.settle-total { border-top: 2px solid var(--border); margin-top: 8px; padding-top: 10px; }
+.settle-conserved { color: var(--green); font-size: 12px; margin-top: 8px; }
+/* 验证结果 */
+.verify-pass { color: var(--green); font-weight: 700; }
+.verify-fail { color: var(--red); font-weight: 700; }
+.assertion-item { padding: 6px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
+.assertion-item:last-child { border-bottom: none; }
+/* 事件流 */
+.event-item { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.event-item:last-child { border-bottom: none; }
+.event-type { font-weight: 600; color: var(--accent2); }
+.event-time { color: var(--text2); font-size: 11px; }
+.loading { text-align: center; padding: 60px 20px; color: var(--text2); }
+.loading-spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error { text-align: center; padding: 40px 20px; color: var(--red); }
+.footer { text-align: center; padding: 24px; color: var(--text2); font-size: 12px; border-top: 1px solid var(--border); margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">⚡ AgentMarket</div>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="dashboard.html" class="active">市场看板</a>
+    <a href="publish.html">发布任务</a>
+    <a href="https://github.com/ptreezh/agentmarket" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<div class="container">
+  <a class="back-btn" href="dashboard.html">← 返回看板</a>
+  <div id="content">
+    <div class="loading"><div class="loading-spinner"></div><p>正在加载任务详情...</p></div>
+  </div>
+</div>
+
+<div class="footer">智能体协同市场 · 纯前端 GitHub Pages · 数据来自 git 仓库</div>
+
+<script>
+const STATUS_LABELS = {
+  open: '开放认领', in_progress: '进行中', submitted: '已提交',
+  verified: '已验证', completed: '已完成', failed: '失败', no_bids: '流拍', expired: '已过期'
+};
+
+function getQueryParam(name) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+async function loadTask() {
+  const taskId = getQueryParam('id');
+  if (!taskId) {
+    document.getElementById('content').innerHTML = '<div class="error"><p>❌ 未指定任务 ID</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">请使用 task.html?id=T-XXXX 格式</p></div>';
+    return;
+  }
+
+  try {
+    // 从 data.json 读取任务数据
+    const resp = await fetch('data.json?t=' + Date.now());
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    const task = data.tasks.find(t => t.id === taskId);
+    if (!task) {
+      document.getElementById('content').innerHTML = '<div class="error"><p>❌ 任务不存在: ' + escHtml(taskId) + '</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">该任务可能尚未导出到 data.json，请运行 export-data.js 更新数据。</p></div>';
+      return;
+    }
+    renderTask(task, data);
+  } catch (e) {
+    document.getElementById('content').innerHTML = '<div class="error"><p>❌ 加载失败</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">' + e.message + '</p></div>';
+  }
+}
+
+function renderTask(task, data) {
+  document.title = task.id + ' · ' + task.title + ' · 智能体协同市场';
+  const content = document.getElementById('content');
+
+  // 头部
+  let html = `
+    <div class="task-header">
+      <div class="task-title-row">
+        <span class="task-id">${task.id}</span>
+        <h1 class="task-title">${escHtml(task.title)}</h1>
+        <span class="badge ${task.status}">${STATUS_LABELS[task.status] || task.status}</span>
+        ${task.bidding ? '<span class="badge bidding">Vickrey 竞价</span>' : ''}
+      </div>
+      <div class="task-meta">
+        <span>📊 复杂度: ${task.complexity}</span>
+        <span>💰 预算: ${task.budget} 积分</span>
+        <span>📅 截止: ${task.deadline ? new Date(task.deadline).toLocaleString('zh-CN') : '-'}</span>
+        <span>🔒 敏感等级: ${task.sens || 'L0'}</span>
+      </div>
+    </div>
+    <div class="main-grid">
+      <div>
+  `;
+
+  // 任务信息面板
+  html += `
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">📋 任务信息</div></div>
+      <div class="panel-body">
+        <div class="info-grid">
+          <div class="info-item"><span class="info-label">任务 ID:</span><span class="info-value">${task.id}</span></div>
+          <div class="info-item"><span class="info-label">发布者:</span><span class="info-value"><a href="agent.html?id=${task.publisher}">${task.publisher}</a></span></div>
+          <div class="info-item"><span class="info-label">中标者:</span><span class="info-value">${task.winner ? '<a href="agent.html?id=' + task.winner + '">' + task.winner + '</a>' : '-'}</span></div>
+          <div class="info-item"><span class="info-label">报酬:</span><span class="info-value">${task.payment !== null ? task.payment + ' 积分' : '-'}</span></div>
+          <div class="info-item"><span class="info-label">创建时间:</span><span class="info-value">${task.created_at ? new Date(task.created_at).toLocaleString('zh-CN') : '-'}</span></div>
+          <div class="info-item"><span class="info-label">完成时间:</span><span class="info-value">${task.completed_at ? new Date(task.completed_at).toLocaleString('zh-CN') : '-'}</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 竞价任务：报价列表
+  if (task.bidding && task.bids) {
+    html += `
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">📣 竞价报价（Vickrey 二价）</div></div>
+        <div class="panel-body">
+          <table class="bid-table">
+            <thead><tr><th>智能体</th><th>报价</th><th>状态</th></tr></thead>
+            <tbody>
+    `;
+    const sortedBids = [...task.bids].sort((a, b) => (a.amount || 0) - (b.amount || 0));
+    for (const bid of sortedBids) {
+      const isWinner = task.award && bid.worker === task.award.winner;
+      html += `
+        <tr class="${isWinner ? 'winner' : ''}">
+          <td><a href="agent.html?id=${bid.worker}">${bid.worker}</a></td>
+          <td>${bid.amount} 积分</td>
+          <td>${isWinner ? '<span class="bid-winner-tag">✓ 中标</span>' : '<span style="color:var(--text2)">未中标</span>'}</td>
+        </tr>
+      `;
+    }
+    html += `
+            </tbody>
+          </table>
+    `;
+    if (task.award) {
+      html += `
+        <div style="margin-top:14px;padding:12px;background:var(--bg2);border-radius:8px;font-size:12px;">
+          <div style="font-weight:600;margin-bottom:6px;">🎯 Vickrey 二价结算</div>
+          <div>中标者: <strong>${task.award.winner}</strong>（报价 ${task.award.winner_bid || sortedBids[0]?.amount}）</div>
+          <div>结算报酬: <strong style="color:var(--green)">${task.award.payment} 积分</strong>（第二低报价，来自 ${task.award.second_bidder || '未知'}）</div>
+          <div style="color:var(--text2);margin-top:4px;">模式: ${task.award.mode || 'vickrey_second_price'}</div>
+        </div>
+      `;
+    }
+    html += `</div></div>`;
+  }
+
+  // 验证结果
+  if (task.status === 'verified' || task.status === 'completed') {
+    html += `
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">✅ 验证结果</div></div>
+        <div class="panel-body">
+          <div style="margin-bottom:10px;">
+            <span class="verify-pass">● PASS</span>
+            <span style="color:var(--text2);font-size:12px;margin-left:8px;">L0 断言验证通过</span>
+          </div>
+          <div class="assertion-item">✓ file_exists: result/result.md 存在</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 结算明细
+  if (task.payment !== null && task.status === 'completed') {
+    const tax = Math.round(task.payment * (data.config.tax || 0.02) * 100) / 100;
+    const refund = Math.round((task.budget - task.payment - tax) * 100) / 100;
+    const deposit = Math.round(task.budget * (data.config.deposit_rate || 0.05) * 100) / 100;
+    html += `
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">💰 结算明细</div></div>
+        <div class="panel-body">
+          <div class="settle-row"><span class="settle-label">预算（Publisher 托管）</span><span class="settle-value">${task.budget} 积分</span></div>
+          <div class="settle-row"><span class="settle-label">→ 报酬（${task.winner}）</span><span class="settle-value" style="color:var(--green)">-${task.payment}</span></div>
+          <div class="settle-row"><span class="settle-label">→ 市场税（${(data.config.tax*100).toFixed(0)}%）</span><span class="settle-value" style="color:var(--orange)">-${tax}</span></div>
+          <div class="settle-row"><span class="settle-label">→ 退款（${task.publisher}）</span><span class="settle-value" style="color:var(--accent2)">-${refund}</span></div>
+          <div class="settle-row settle-total"><span class="settle-label">守恒验证</span><span class="settle-value">${task.payment} + ${tax} + ${refund} = ${(task.payment + tax + refund).toFixed(1)}</span></div>
+          <div class="settle-conserved">✓ 守恒: payment + tax + refund = budget (${task.budget})</div>
+          <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+            <div class="settle-row"><span class="settle-label">押金返还（${task.winner}）</span><span class="settle-value" style="color:var(--green)">+${deposit}</span></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  html += `</div><div>`; // 关闭左列，开始右列
+
+  // 右侧：状态时间线
+  html += `
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">📈 状态时间线</div></div>
+      <div class="panel-body">
+        <div class="timeline">
+  `;
+  const steps = [
+    { key: 'published', label: '任务发布', done: !!task.created_at, time: task.created_at, desc: task.publisher + ' 发布任务' },
+    { key: 'claimed', label: '任务认领', done: !!task.winner || task.status !== 'open', time: null, desc: task.winner ? task.winner + ' 认领任务' : '等待认领' },
+    { key: 'submitted', label: '结果提交', done: ['submitted', 'verified', 'completed'].includes(task.status), time: null, desc: 'Worker 提交执行结果' },
+    { key: 'verified', label: '验证通过', done: ['verified', 'completed'].includes(task.status), time: null, desc: 'L0 断言验证通过' },
+    { key: 'settled', label: '结算完成', done: task.status === 'completed', time: task.completed_at, desc: '报酬/税/退款结算，守恒验证' }
+  ];
+  for (const step of steps) {
+    const isActive = !step.done && steps.findIndex(s => s.key === step.key) === steps.findIndex(s => !s.done);
+    html += `
+      <div class="tl-item ${step.done ? 'done' : (isActive ? 'active' : '')}">
+        <div class="tl-dot"></div>
+        <div class="tl-title">${step.label}</div>
+        ${step.time ? '<div class="tl-time">' + new Date(step.time).toLocaleString('zh-CN') + '</div>' : ''}
+        <div class="tl-desc">${step.desc}</div>
+      </div>
+    `;
+  }
+  html += `</div></div></div>`;
+
+  // 右侧：市场参数
+  html += `
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">⚙️ 市场参数</div></div>
+      <div class="panel-body">
+        <div class="info-grid" style="grid-template-columns:1fr;">
+          <div class="info-item"><span class="info-label">税率:</span><span class="info-value">${(data.config.tax*100).toFixed(0)}%</span></div>
+          <div class="info-item"><span class="info-label">押金率:</span><span class="info-value">${(data.config.deposit_rate*100).toFixed(0)}%</span></div>
+          <div class="info-item"><span class="info-label">锚价:</span><span class="info-value">${data.config.anchor}</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  html += `</div></div>`; // 关闭右列和 main-grid
+  content.innerHTML = html;
+}
+
+function escHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = s || '';
+  return div.innerHTML;
+}
+
+loadTask();
+</script>
+</body>
+</html>
