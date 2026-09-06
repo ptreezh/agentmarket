@@ -20,6 +20,79 @@ const [cmd, ...rest] = process.argv.slice(2);
 const TASK_RE = /^T-[0-9A-Z]+$/;
 const llm = require("./llm.js");
 
+// ========== 多镜像故障转移（D-92~D-96） ==========
+function loadConfig() {
+  try { return JSON.parse(fs.readFileSync("market-config.json", "utf-8")); }
+  catch (e) { return {}; }
+}
+function hasMirror() {
+  try {
+    const out = execSync("git remote get-url mirror 2>/dev/null", { encoding: "utf-8" }).trim();
+    return out.length > 0;
+  } catch (e) { return false; }
+}
+function isNetworkUnreachable(e) {
+  const msg = (e.stderr?.toString() || e.message || "").toLowerCase();
+  return /could not resolve host|failed to connect|operation timed out|connection reset|connection refused|502|503|504|service unavailable/.test(msg);
+}
+function fetchWithFailover(agentId) {
+  const cfg = loadConfig();
+  const retries = cfg.failover?.fetch_retries ?? 2;
+  // 1. 尝试 primary（重试 N 次，避免临时网络抖动误判）
+  for (let i = 0; i < retries; i++) {
+    try {
+      execSync("git fetch --filter=blob:none origin main --quiet", { encoding: "utf-8", stdio: "pipe", timeout: 15000 });
+      execSync("git reset --hard origin/main --quiet", { encoding: "utf-8", stdio: "pipe", timeout: 10000 });
+      return { source: "primary", ok: true };
+    } catch (e) {
+      if (!isNetworkUnreachable(e)) return { source: "primary", ok: false, error: e.message };
+    }
+  }
+  // 2. 尝试 mirror（只读故障转移）
+  if (!hasMirror()) return { source: "none", ok: false, error: "primary 不可用且无 mirror" };
+  try {
+    execSync("git fetch mirror main --quiet", { encoding: "utf-8", stdio: "pipe", timeout: 15000 });
+    // 检查 mirror 是否比本地新，避免回退到旧数据
+    const ahead = parseInt(execSync("git rev-list --count HEAD..FETCH_HEAD", { encoding: "utf-8" }).trim());
+    if (ahead > 0) {
+      execSync("git reset --hard FETCH_HEAD --quiet", { encoding: "utf-8", stdio: "pipe", timeout: 10000 });
+      if (agentId) log(agentId, "⚠️ primary 不可用，使用 mirror 只读（数据可能延迟）");
+      return { source: "mirror", ok: true, stale: true };
+    }
+    return { source: "mirror", ok: true, stale: true, noUpdate: true };
+  } catch (e2) {
+    return { source: "none", ok: false, error: e2.message };
+  }
+}
+function refCheckWithFailover(t, agentId) {
+  // 1. 尝试 primary
+  try {
+    const out = execSync(`git ls-remote origin refs/claims/${t}`, { encoding: "utf-8", stdio: "pipe", timeout: 10000 }).trim();
+    return { claimed: out.length > 0, source: "primary" };
+  } catch (e) {
+    if (!isNetworkUnreachable(e)) return { claimed: false, source: "primary", error: e.message };
+  }
+  // 2. 尝试 mirror（标注 stale）
+  if (!hasMirror()) return { claimed: false, source: "none", error: true };
+  try {
+    const out = execSync(`git ls-remote mirror refs/claims/${t}`, { encoding: "utf-8", stdio: "pipe", timeout: 10000 }).trim();
+    return { claimed: out.length > 0, source: "mirror", stale: true };
+  } catch (e2) {
+    return { claimed: false, source: "none", error: true };
+  }
+}
+function syncToMirror(agentId) {
+  // push primary 成功后，best-effort 同步所有 refs 到 mirror
+  if (!hasMirror()) return;
+  try {
+    execSync('git push mirror "refs/heads/*:refs/heads/*" "refs/claims/*:refs/claims/*" "refs/tasks/*:refs/tasks/*" --quiet',
+      { encoding: "utf-8", stdio: "pipe", timeout: 30000 });
+    if (agentId) log(agentId, "🔄 已同步到 mirror");
+  } catch (e) {
+    if (agentId) log(agentId, `⚠️ mirror 同步失败（不阻塞）: ${e.message?.slice(0, 80)}`);
+  }
+}
+
 // ========== 日志 ==========
 function logPath(id) {
   const d = new Date().toISOString().slice(0, 10);
@@ -77,13 +150,16 @@ function specMeta(t) {
            sens: m("sens"), est_range: m("est_range"), id: m("id"),
            output_schema: (s.match(/^output_schema:\s*([\s\S]*?)(?=\n[a-z_]+:|\n---|$)/m) || [])[1]?.trim() };
 }
-function discover() {
-  // HCA: 增量 fetch（partial clone 只拉元数据，不拉 blob）
-  try { execSync("git fetch --filter=blob:none origin main --quiet", { encoding: "utf-8", stdio: "pipe", timeout: 15000 }); } catch (e) {}
-  try { execSync("git reset --hard origin/main --quiet", { encoding: "utf-8", stdio: "pipe", timeout: 10000 }); } catch (e) {}
+function discover(agentId) {
+  // 多镜像故障转移：primary 失败自动切 mirror 只读
+  const fr = fetchWithFailover(agentId);
+  if (!fr.ok) {
+    if (agentId) log(agentId, `❌ fetch 失败（${fr.source}）: ${fr.error || "未知"}`);
+    return [];
+  }
   return (fs.existsSync("tasks") ? fs.readdirSync("tasks").filter(d => TASK_RE.test(d)) : [])
     .filter(t => taskState(t) === "published")
-    .filter(t => !refCheck(t)) // HCA: 排除已被 ref 锁认领的任务
+    .filter(t => !refCheckWithFailover(t, agentId).claimed) // HCA: 排除已被 ref 锁认领的任务
     .map(t => Object.assign({ task: t, state: "published" }, specMeta(t)));
 }
 
@@ -124,7 +200,13 @@ function claimTask(t, id, opid) {
     if (!inList) return { ok: false, reason: `${sens} 机密任务不在白名单` };
   }
   // HCA: 先用 ref 原子锁认领（D-85）
-  if (refCheck(t)) return { ok: false, reason: "ref 检查：已被认领" };
+  const rc = refCheckWithFailover(t, id);
+  if (rc.claimed) return { ok: false, reason: "ref 检查：已被认领" };
+  // D-96: mirror 模式下 refCheck 返回"未认领"时不直接认领（防止 mirror 延迟）
+  if (rc.source === "mirror" && rc.stale) {
+    return { ok: false, reason: "mirror 只读模式：ref 状态可能延迟，暂不认领（等 primary 恢复）" };
+  }
+  if (rc.source === "none") return { ok: false, reason: "primary 和 mirror 均不可用，无法确认认领状态" };
   if (!refClaim(t, id)) return { ok: false, reason: "ref 原子认领失败（他人先占）" };
   log(id, `[hca] ref 原子认领成功 ${t}`);
 
@@ -140,6 +222,7 @@ function claimTask(t, id, opid) {
   }
   gitWithRetry(`git add tasks/${t}/events/${fn} && git commit -q -m "claim ${t} by ${id}"`);
   gitWithRetry("git push origin HEAD:main");
+  syncToMirror(id); // D-93: push 成功后自动同步 mirror（best-effort）
   // 冲突检测
   const others = fs.readdirSync(evDir).filter(f => f.startsWith("claimed-") && f !== fn).map(f => {
     const m = fs.readFileSync(path.join(evDir, f), "utf-8").match(/worker:\s*(\S+)/);
@@ -166,6 +249,7 @@ function submitTask(t, id, opid, desc) {
   }
   gitWithRetry(`git add tasks/${t}/events/${fn} && git commit -q -m "submit ${t} by ${id}"`);
   gitWithRetry("git push origin HEAD:main");
+  syncToMirror(id); // D-93: push 成功后自动同步 mirror（best-effort）
   return { ok: true, event: fn };
 }
 
@@ -293,7 +377,7 @@ async function loop(id, opts) {
       }
 
       // 2. discover
-      const tasks = discover();
+      const tasks = discover(id);
       if (tasks.length === 0) {
         log(id, `无可认领任务，退避 ${backoff}s（D-72 指数退避）`);
         await sleep(backoff * 1000);

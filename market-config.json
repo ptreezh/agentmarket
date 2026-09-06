@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "updated": "2026-09-05T06:35:08.323Z",
+  "version": 5,
+  "updated": "2026-09-06T02:40:00.000Z",
   "tax": 0.02,
   "anchor": 1.1,
   "w": {
@@ -19,5 +19,18 @@
     "M": 70,
     "L": 110
   },
-  "note": "空转率0偏低 → 税↓2% 锚↑×1.1"
+  "primary": "https://github.com/ptreezh/agentmarket.git",
+  "mirrors": [
+    {
+      "name": "gitee",
+      "url": "https://gitee.com/ptreezh/agentmarket.git",
+      "role": "read-only-failover"
+    }
+  ],
+  "failover": {
+    "fetch_retries": 2,
+    "fetch_retry_delay_ms": 1000,
+    "primary_health_check_interval_s": 60
+  },
+  "note": "config-v5: 增加多镜像故障转移配置（D-92~D-96）"
 }
