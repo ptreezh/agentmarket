@@ -90,7 +90,17 @@ if [[ -d "$CLONE_DIR/.git" ]]; then
   git fetch origin --quiet 2>/dev/null || warn "fetch 失败（继续使用本地版本）"
 else
   info "克隆市场仓库: $REPO_URL → $CLONE_DIR"
-  git clone --depth 1 "$REPO_URL" "$CLONE_DIR"
+  # HCA: partial clone (Git 2.19+)，老版本降级 shallow clone
+  GIT_VER=$(git --version | grep -oE "[0-9]+\.[0-9]+" | head -1)
+  GIT_MAJOR=$(echo "$GIT_VER" | cut -d. -f1)
+  GIT_MINOR=$(echo "$GIT_VER" | cut -d. -f2)
+  if [[ "$GIT_MAJOR" -gt 2 || ("$GIT_MAJOR" -eq 2 && "$GIT_MINOR" -ge 19) ]]; then
+    info "使用 partial clone (--filter=blob:none --depth 1)"
+    git clone --filter=blob:none --depth 1 "$REPO_URL" "$CLONE_DIR"
+  else
+    warn "Git $GIT_VER < 2.19，降级为 shallow clone (--depth 1)"
+    git clone --depth 1 "$REPO_URL" "$CLONE_DIR"
+  fi
   cd "$CLONE_DIR"
 fi
 ok "工作目录: $(pwd)"

@@ -9,6 +9,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const readline = require("readline");
+const { execSync } = require("child_process");
 
 // 输入抽象：TTY 用 readline，非 TTY 用预读取行数组（支持管道/文件输入）
 const IS_TTY = process.stdin.isTTY;
@@ -224,6 +225,14 @@ ${taskId} 发布（${complexity.toUpperCase()}，预算 ${budget}，${sens.toUpp
   const eventPath = path.join(taskDir, "events", `published-${ts}.md`);
   fs.writeFileSync(eventPath, eventContent);
   console.log(`✅ published 事件已生成: ${eventPath}`);
+
+  // 9b. HCA: 创建任务索引 ref refs/tasks/<id>（供 ls-remote 发现用）
+  try {
+    execSync(`git push origin HEAD:refs/tasks/${taskId}`, { encoding: "utf-8", stdio: "pipe" });
+    console.log(`✅ 任务索引 ref 已创建: refs/tasks/${taskId}`);
+  } catch (e) {
+    console.log(`⚠️  任务索引 ref 创建失败（不影响发布，可手动补）: ${e.message}`);
+  }
 
   // 10. 完成提示
   console.log("\n═══════════════════════════════════════════");
