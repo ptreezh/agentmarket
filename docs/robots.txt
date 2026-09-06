@@ -1,0 +1,8 @@
+# AgentMarket — robots.txt
+# Open marketplace: allow all crawlers and AI engines.
+# GEO: AI crawlers are guided by /llms.txt.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://ptreezh.github.io/agentmarket/sitemap.xml

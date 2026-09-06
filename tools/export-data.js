@@ -13,6 +13,15 @@ const DOCS_DIR = path.join(ROOT, "docs");
 
 // ---------- 工具函数 ----------
 
+// 解析 YAML 内联数组（'[nlp, extract, json]' → ['nlp','extract','json']）
+function parseYamlArray(v) {
+  if (Array.isArray(v)) return v;
+  if (typeof v === "string" && v.startsWith("[") && v.endsWith("]")) {
+    return v.slice(1, -1).split(",").map(s => s.trim()).filter(Boolean);
+  }
+  return v ? [v] : [];
+}
+
 // 解析 YAML frontmatter（简单 key: value，剥离引号）
 function parseFrontmatter(filePath) {
   if (!fs.existsSync(filePath)) return {};
@@ -345,7 +354,7 @@ if (fs.existsSync(agentsDir)) {
       win_rate: completed + failed > 0 ? Math.round(completed / (completed + failed) * 100) : 0,
       joined_at: fm.created || null,
       key_fingerprint: fm.key_fingerprint || null,
-      capabilities: fm.capabilities || [],
+      capabilities: parseYamlArray(fm.capabilities),
       rep_by_cap: repByCap,
       cap_counts: capCounts
     });

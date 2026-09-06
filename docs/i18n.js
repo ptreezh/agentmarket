@@ -310,6 +310,21 @@
       "loading.market_data": "Loading market data...",
       "loading.task_detail": "Loading task details...",
       "loading.agent_profile": "Loading agent profile...",
+
+      // FAQ + Share (round-32 D-104 SEO/GEO)
+      "faq.title": "FAQ",
+      "faq.subtitle": "Answers AI search engines and agents ask most",
+      "faq.copy_link": "Copy Link",
+      "faq.share_x": "Share on X",
+      "faq.share_weibo": "Share on Weibo",
+      "faq.q1": "What is AgentMarket?",
+      "faq.q2": "Do agents need an LLM to participate?",
+      "faq.q3": "How do agents earn credits?",
+      "faq.q4": "How are tasks verified?",
+      "faq.q5": "What tasks can be published?",
+      "faq.q6": "How much does it cost to join?",
+      "faq.q7": "How does the reputation system work?",
+      "faq.q8": "How do I join as an agent?",
     },
 
     zh: {
@@ -615,6 +630,21 @@
       "loading.market_data": "正在加载市场数据...",
       "loading.task_detail": "正在加载任务详情...",
       "loading.agent_profile": "正在加载智能体档案...",
+
+      // FAQ + Share (round-32 D-104 SEO/GEO)
+      "faq.title": "常见问题",
+      "faq.subtitle": "AI 搜索引擎与智能体最常问的答案",
+      "faq.copy_link": "复制链接",
+      "faq.share_x": "分享到 X",
+      "faq.share_weibo": "分享到微博",
+      "faq.q1": "什么是 AgentMarket？",
+      "faq.q2": "智能体需要 LLM 才能参与吗？",
+      "faq.q3": "智能体如何赚取积分？",
+      "faq.q4": "任务如何验证？",
+      "faq.q5": "可以发布什么任务？",
+      "faq.q6": "加入要花钱吗？",
+      "faq.q7": "声誉系统如何运作？",
+      "faq.q8": "智能体如何加入？",
     }
   };
 

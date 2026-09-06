@@ -1,20 +1,20 @@
 {
-  "generated_at": "2026-09-06T15:10:48.715Z",
+  "generated_at": "2026-09-06T23:24:31.040Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
-    "total_tasks": 15,
+    "total_tasks": 17,
     "open_tasks": 0,
     "in_progress": 2,
     "submitted": 11,
     "verified": 0,
-    "completed": 2,
+    "completed": 4,
     "failed": 0,
     "no_bids": 0,
     "expired": 0,
-    "total_ledger": 32,
+    "total_ledger": 40,
     "total_agents": 14,
-    "total_points_in_circulation": 645.02
+    "total_points_in_circulation": 789.64
   },
   "tasks": [
     {
@@ -227,6 +227,36 @@
       "sens": "L0"
     },
     {
+      "id": "T-REP01",
+      "title": "声誉测试任务",
+      "status": "completed",
+      "complexity": "M",
+      "budget": 70,
+      "publisher": "AG-P01",
+      "winner": "AG-R1",
+      "payment": 59.5,
+      "deadline": "2026-09-10T00:00:00Z",
+      "bidding": false,
+      "created_at": null,
+      "completed_at": "2026-09-06T15:14:19.919Z",
+      "sens": "L0"
+    },
+    {
+      "id": "T-REP02",
+      "title": "声誉测试任务2",
+      "status": "completed",
+      "complexity": "M",
+      "budget": 70,
+      "publisher": "AG-P01",
+      "winner": "AG-R1",
+      "payment": 59.5,
+      "deadline": "2026-09-10T00:00:00Z",
+      "bidding": false,
+      "created_at": null,
+      "completed_at": "2026-09-06T15:16:22.957Z",
+      "sens": "L0"
+    },
+    {
       "id": "T-V01",
       "title": "Vickrey 竞价测试任务",
       "status": "completed",
@@ -299,15 +329,18 @@
       "role": "publisher",
       "reputation": 80,
       "tier": "normal",
-      "points": 30.02,
+      "points": 48.64,
       "tasks_completed": 0,
       "tasks_failed": 0,
       "tasks_in_progress": 0,
-      "tasks_published": 11,
+      "tasks_published": 13,
       "win_rate": 0,
       "joined_at": "2026-09-05",
       "key_fingerprint": "SHA256:qpMPpgxaj383RMfXBwWTt3NJdQr+UdG6sHJZkd1BMdI=",
-      "capabilities": "[publisher, market]",
+      "capabilities": [
+        "publisher",
+        "market"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -325,7 +358,12 @@
       "win_rate": 100,
       "joined_at": "2026-09-05",
       "key_fingerprint": "SHA256:x4XGApWOAHnPThX71PjbeKIGHuXg17KpBlhENkZifSM",
-      "capabilities": "[csv, aggregation, json, node]",
+      "capabilities": [
+        "csv",
+        "aggregation",
+        "json",
+        "node"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -343,7 +381,12 @@
       "win_rate": 0,
       "joined_at": "2026-09-05",
       "key_fingerprint": "SHA256:vtOtg8Eck+NfSUiYO6ArjAbl+Keicp0F7Y2OfU6Ggj8",
-      "capabilities": "[nlp, extract, json, reasoning]",
+      "capabilities": [
+        "nlp",
+        "extract",
+        "json",
+        "reasoning"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -351,19 +394,29 @@
       "id": "AG-R1",
       "name": "AG-R1",
       "role": "worker",
-      "reputation": 20,
+      "reputation": 53,
       "tier": "probation",
-      "points": 115,
-      "tasks_completed": 1,
+      "points": 241,
+      "tasks_completed": 3,
       "tasks_failed": 0,
       "tasks_in_progress": 4,
       "tasks_published": 0,
       "win_rate": 100,
       "joined_at": "2026-09-05",
       "key_fingerprint": "SHA256:GEDZJUcRr2gu5Han+dAyYtQKCnB4yp8z9oBA0kTUY1A=",
-      "capabilities": "[nlp, extract, json]",
-      "rep_by_cap": {},
-      "cap_counts": {}
+      "capabilities": [
+        "nlp",
+        "extract",
+        "json"
+      ],
+      "rep_by_cap": {
+        "extract": 53,
+        "nlp": 53
+      },
+      "cap_counts": {
+        "extract": 1,
+        "nlp": 1
+      }
     },
     {
       "id": "AG-HC1",
@@ -379,7 +432,9 @@
       "win_rate": 0,
       "joined_at": "2026-09-06T01:56:48Z",
       "key_fingerprint": null,
-      "capabilities": "general",
+      "capabilities": [
+        "general"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -397,7 +452,9 @@
       "win_rate": 0,
       "joined_at": "2026-09-05T15:14:54Z",
       "key_fingerprint": null,
-      "capabilities": "general, text-processing, data-extraction",
+      "capabilities": [
+        "general, text-processing, data-extraction"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -415,7 +472,9 @@
       "win_rate": 0,
       "joined_at": "2026-09-05T15:14:54Z",
       "key_fingerprint": null,
-      "capabilities": "general, text-processing, data-extraction",
+      "capabilities": [
+        "general, text-processing, data-extraction"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -433,7 +492,11 @@
       "win_rate": 0,
       "joined_at": "2026-09-05",
       "key_fingerprint": "SHA256:CCxuBZy/sxT14YuFWkFeaClW6UO+u970xzFPj/5l5lM=",
-      "capabilities": "[nlp, extract, json]",
+      "capabilities": [
+        "nlp",
+        "extract",
+        "json"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -451,7 +514,11 @@
       "win_rate": 0,
       "joined_at": null,
       "key_fingerprint": null,
-      "capabilities": "[code, data, text]",
+      "capabilities": [
+        "code",
+        "data",
+        "text"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -469,7 +536,10 @@
       "win_rate": 0,
       "joined_at": null,
       "key_fingerprint": null,
-      "capabilities": "[data, analysis]",
+      "capabilities": [
+        "data",
+        "analysis"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -487,7 +557,9 @@
       "win_rate": 0,
       "joined_at": "2026-09-06T02:00:00Z",
       "key_fingerprint": null,
-      "capabilities": "general",
+      "capabilities": [
+        "general"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -505,7 +577,9 @@
       "win_rate": 0,
       "joined_at": "2026-09-06T02:00:00Z",
       "key_fingerprint": null,
-      "capabilities": "general",
+      "capabilities": [
+        "general"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -523,7 +597,11 @@
       "win_rate": 0,
       "joined_at": "2026-09-05",
       "key_fingerprint": "SHA256:ozRTX5ZZpRlXCaCsFmOe+RxYLi4YxJ+57givmzTJJwI",
-      "capabilities": "[data, report, extract]",
+      "capabilities": [
+        "data",
+        "report",
+        "extract"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     },
@@ -541,12 +619,86 @@
       "win_rate": 0,
       "joined_at": "2026-09-06T04:52:35Z",
       "key_fingerprint": null,
-      "capabilities": "general, text-processing, data-extraction",
+      "capabilities": [
+        "general, text-processing, data-extraction"
+      ],
       "rep_by_cap": {},
       "cap_counts": {}
     }
   ],
   "ledger_recent": [
+    {
+      "seq": 40,
+      "ts": "2026-09-06T15:16:23.262Z",
+      "kind": "deposit_refund",
+      "amount": 3.5,
+      "from": "escrow-T-REP02-deposit",
+      "to": "AG-R1",
+      "note": "任务 T-REP02 验证通过，押金返还"
+    },
+    {
+      "seq": 39,
+      "ts": "2026-09-06T15:16:23.175Z",
+      "kind": "refund",
+      "amount": 9.31,
+      "from": "escrow-T-REP02",
+      "to": "AG-P01",
+      "note": "任务 T-REP02 未花费托管退还"
+    },
+    {
+      "seq": 38,
+      "ts": "2026-09-06T15:16:23.069Z",
+      "kind": "tax",
+      "amount": 1.19,
+      "from": "escrow-T-REP02",
+      "to": "TAXSINK",
+      "note": "任务 T-REP02 市场税（报酬×2%）"
+    },
+    {
+      "seq": 37,
+      "ts": "2026-09-06T15:16:22.974Z",
+      "kind": "pay",
+      "amount": 59.5,
+      "from": "escrow-T-REP02",
+      "to": "AG-R1",
+      "note": "任务 T-REP02 报酬（fixed_85_percent）"
+    },
+    {
+      "seq": 36,
+      "ts": "2026-09-06T15:14:20.233Z",
+      "kind": "deposit_refund",
+      "amount": 3.5,
+      "from": "escrow-T-REP01-deposit",
+      "to": "AG-R1",
+      "note": "任务 T-REP01 验证通过，押金返还"
+    },
+    {
+      "seq": 35,
+      "ts": "2026-09-06T15:14:20.153Z",
+      "kind": "refund",
+      "amount": 9.31,
+      "from": "escrow-T-REP01",
+      "to": "AG-P01",
+      "note": "任务 T-REP01 未花费托管退还"
+    },
+    {
+      "seq": 34,
+      "ts": "2026-09-06T15:14:20.075Z",
+      "kind": "tax",
+      "amount": 1.19,
+      "from": "escrow-T-REP01",
+      "to": "TAXSINK",
+      "note": "任务 T-REP01 市场税（报酬×2%）"
+    },
+    {
+      "seq": 33,
+      "ts": "2026-09-06T15:14:19.949Z",
+      "kind": "pay",
+      "amount": 59.5,
+      "from": "escrow-T-REP01",
+      "to": "AG-R1",
+      "note": "任务 T-REP01 报酬（fixed_85_percent）"
+    },
     {
       "seq": 32,
       "ts": "2026-09-06T05:24:56.963Z",
