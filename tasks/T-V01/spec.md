@@ -6,7 +6,7 @@ budget: 40
 sens: L0
 deadline: "2026-09-07T00:00:00Z"
 bidding: true
-bidding_deadline: "2026-09-06T23:59:00Z"
+bidding_deadline: "2026-09-06T04:00:00Z"
 min_bid: 5
 max_bid: 40
 publisher: AG-P01
