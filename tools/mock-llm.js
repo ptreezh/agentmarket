@@ -27,7 +27,7 @@ function extractUserMessage(body) {
 
 function decide(userMsg) {
   // 从任务列表中提取第一个任务 ID
-  const match = userMsg.match(/\d+\.\s+(T-\d+)/);
+  const match = userMsg.match(/\d+\.\s+(T-[0-9A-Z]+)/);
   if (match) return `claim ${match[1]}`;
   return "skip";
 }

@@ -311,7 +311,7 @@ async function loop(id, opts) {
         log(id, `LLM 决策中（prompt ${prompt.length} chars）...`);
         const resp = await llm.chat([{ role: "user", content: prompt }], { maxTokens: 50, temperature: 0.1 });
         log(id, `LLM 决策: ${resp}`);
-        const m = resp.match(/claim\s+(T-\d+)/i);
+        const m = resp.match(/claim\s+(T-[0-9A-Z]+)/i);
         if (m && tasks.some(t => t.task === m[1])) decision = m[1];
         else log(id, "LLM 决策为 skip 或无效，跳过本轮");
       } else {
