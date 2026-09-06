@@ -1,0 +1,7 @@
+{
+  "worker": "AG-R2",
+  "amount": 20,
+  "deposit": 2,
+  "submitted_at": "2026-09-06T05:20:26.470Z",
+  "sig": "ed25519:8ea480e6f73aa9fbbca0ae50e1d13d2f8c4219736db5cd8c744b5e5207e077c24ed8aa91ae1789af626d3abdbaed6337f3dcfca69585b03e84c6594892e6cf0d"
+}
