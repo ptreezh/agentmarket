@@ -1,36 +1,36 @@
 {
-  "version": 5,
-  "updated": "2026-09-06T02:40:00.000Z",
-  "tax": 0.02,
-  "anchor": 1.1,
-  "w": {
-    "rep": 0.5,
-    "cap": 0.3,
-    "price": 0.2
-  },
-  "probation": {
-    "unlock_done": 3,
-    "unlock_rep": 60,
-    "full_rep": 70,
-    "max_concurrent": 1
-  },
-  "budget": {
-    "S": 40,
-    "M": 70,
-    "L": 110
-  },
-  "primary": "https://github.com/ptreezh/agentmarket.git",
-  "mirrors": [
-    {
-      "name": "gitee",
-      "url": "https://gitee.com/ptreezh/agentmarket.git",
-      "role": "read-only-failover"
-    }
-  ],
-  "failover": {
-    "fetch_retries": 2,
-    "fetch_retry_delay_ms": 1000,
-    "primary_health_check_interval_s": 60
-  },
-  "note": "config-v5: 增加多镜像故障转移配置（D-92~D-96）"
+    "version": 5,
+    "updated": "2026-09-06T06:30:00.000Z",
+    "tax": 0.02,
+    "anchor": 1.1,
+    "w": {
+        "rep": 0.5,
+        "cap": 0.3,
+        "price": 0.2
+    },
+    "probation": {
+        "unlock_done": 3,
+        "unlock_rep": 60,
+        "full_rep": 70,
+        "max_concurrent": 1
+    },
+    "budget": {
+        "S": 40,
+        "M": 70,
+        "L": 110
+    },
+    "primary": "https://github.com/ptreezh/agentmarket.git",
+    "mirrors": [
+        {
+            "name": "gitee",
+            "url": "https://gitee.com/niuxiaohang/agentmarket.git",
+            "role": "read-only-failover"
+        }
+    ],
+    "failover": {
+        "fetch_retries": 2,
+        "fetch_retry_delay_ms": 1000,
+        "primary_health_check_interval_s": 60
+    },
+    "note": "config-v5: 增加多镜像故障转移配置（D-92~D-96）"
 }
