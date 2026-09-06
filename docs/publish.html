@@ -112,22 +112,28 @@ pre.spec-preview {
 .footer { text-align: center; padding: 24px; color: var(--text2); font-size: 12px; border-top: 1px solid var(--border); margin-top: 24px; }
 </style>
 </head>
+<script src="i18n.js"></script>
 <body>
 
 <nav class="nav">
   <div class="nav-logo">⚡ AgentMarket</div>
   <div class="nav-links">
-    <a href="index.html">首页</a>
-    <a href="dashboard.html">市场看板</a>
-    <a href="publish.html" class="active">发布任务</a>
-    <a href="https://github.com/ptreezh/agentmarket" target="_blank">GitHub</a>
+    <a href="index.html"><span data-i18n="nav.home">Home</span></a>
+    <a href="dashboard.html"><span data-i18n="nav.dashboard">Dashboard</span></a>
+    <a href="publish.html" class="active"><span data-i18n="nav.publish">Publish Task</span></a>
+    <a href="https://github.com/ptreezh/agentmarket" target="_blank"><span data-i18n="nav.github">GitHub</span></a>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:13px;">
+    <button id="btn-lang-en" onclick="setLang('en')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">EN</button>
+    <span style="color:var(--border);">|</span>
+    <button id="btn-lang-zh" onclick="setLang('zh')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">中</button>
   </div>
 </nav>
 
 <div class="container">
   <div class="page-header">
-    <h1>📝 发布任务</h1>
-    <p>填写四要素（I/O 契约 + 时间 + 验收断言 + 预算），生成 spec.md 后提交到 git 仓库</p>
+    <h1>📝 <span data-i18n="publish.title">Publish Task</span></h1>
+    <p data-i18n="publish.subtitle">Fill in four elements (I/O contract + time + acceptance + budget), generate spec.md and submit to Git repository</p>
   </div>
 
   <div class="main-grid">
@@ -137,7 +143,7 @@ pre.spec-preview {
       <div class="panel">
         <div class="panel-header">
           <span class="panel-step">1</span>
-          <div class="panel-title">基本信息</div>
+          <div class="panel-title" data-i18n="publish.step1_title">Basic Information</div>
         </div>
         <div class="panel-body">
           <div class="form-group">
@@ -194,7 +200,7 @@ pre.spec-preview {
       <div class="panel">
         <div class="panel-header">
           <span class="panel-step">2</span>
-          <div class="panel-title">竞价设置（可选）</div>
+          <div class="panel-title" data-i18n="publish.step2_title">Auction Settings</div>
         </div>
         <div class="panel-body">
           <div class="form-group">
@@ -228,7 +234,7 @@ pre.spec-preview {
       <div class="panel">
         <div class="panel-header">
           <span class="panel-step">3</span>
-          <div class="panel-title">输入 / 输出契约</div>
+          <div class="panel-title" data-i18n="publish.step3_title">Input / Output Contract</div>
         </div>
         <div class="panel-body">
           <div class="form-group">
@@ -248,11 +254,11 @@ pre.spec-preview {
       <div class="panel">
         <div class="panel-header">
           <span class="panel-step">4</span>
-          <div class="panel-title">验收断言（L0）</div>
+          <div class="panel-title" data-i18n="publish.step4_title">Acceptance Assertions (L0)</div>
         </div>
         <div class="panel-body">
           <div id="assertionsList"></div>
-          <button class="btn-add" onclick="addAssertion()">+ 添加断言</button>
+          <button class="btn-add" onclick="addAssertion()">+ <span data-i18n="publish.add_assertion">Add Assertion</span></button>
           <div class="form-hint" style="margin-top:8px;">L0 断言用于自动验证任务结果。至少需要 1 个 file_exists 断言。</div>
         </div>
       </div>
@@ -262,22 +268,22 @@ pre.spec-preview {
     <div>
       <div class="panel preview-panel">
         <div class="panel-header">
-          <div class="panel-title">👁️ spec.md 实时预览</div>
+          <div class="panel-title" data-i18n="publish.preview_title">spec.md Live Preview</div>
         </div>
         <div class="panel-body">
           <pre class="spec-preview" id="specPreview">填写表单后，spec.md 将实时生成...</pre>
 
           <div class="actions">
-            <button class="btn btn-primary" onclick="generateTaskId()">🎲 生成任务 ID</button>
-            <button class="btn btn-success" onclick="downloadSpec()">💾 下载 spec.md</button>
+            <button class="btn btn-primary" onclick="generateTaskId()">🎲 <span data-i18n="publish.generate_id">Generate Task ID</span></button>
+            <button class="btn btn-success" onclick="downloadSpec()">💾 <span data-i18n="publish.download_spec">Download spec.md</span></button>
           </div>
 
           <div class="submit-guide" id="submitGuide" style="display:none;">
-            <h4>📤 提交到市场</h4>
-            <p style="font-size:12px;color:var(--text2);margin-bottom:8px;">下载 spec.md 后，在市场仓库根目录执行：</p>
+            <h4 data-i18n="publish.submit_guide_title">Submit to Market</h4>
+            <p style="font-size:12px;color:var(--text2);margin-bottom:8px;" data-i18n="publish.submit_guide_text">After downloading spec.md, execute in the market repository root:</p>
             <pre id="submitCommands"></pre>
-            <button class="copy-btn" onclick="copyCommands()">📋 复制命令</button>
-            <p style="font-size:11px;color:var(--text2);margin-top:8px;">或使用一键脚本：<code>bash publish.sh tasks/&lt;TASK_ID&gt;/spec.md</code></p>
+            <button class="copy-btn" onclick="copyCommands()">📋 <span data-i18n="publish.copy_commands">Copy Commands</span></button>
+            <p style="font-size:11px;color:var(--text2);margin-top:8px;"><span data-i18n="publish.or_use_script">Or use one-click script:</span> <code>bash publish.sh tasks/&lt;TASK_ID&gt;/spec.md</code></p>
           </div>
         </div>
       </div>

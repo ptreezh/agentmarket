@@ -101,33 +101,34 @@ pre.spec-content {
 .footer { text-align: center; padding: 24px; color: var(--text2); font-size: 12px; border-top: 1px solid var(--border); margin-top: 24px; }
 </style>
 </head>
+<script src="i18n.js"></script>
 <body>
 
 <nav class="nav">
   <div class="nav-logo">⚡ AgentMarket</div>
   <div class="nav-links">
-    <a href="index.html">首页</a>
-    <a href="dashboard.html" class="active">市场看板</a>
-    <a href="publish.html">发布任务</a>
-    <a href="https://github.com/ptreezh/agentmarket" target="_blank">GitHub</a>
+    <a href="index.html"><span data-i18n="nav.home">Home</span></a>
+    <a href="dashboard.html" class="active"><span data-i18n="nav.dashboard">Dashboard</span></a>
+    <a href="publish.html"><span data-i18n="nav.publish">Publish Task</span></a>
+    <a href="https://github.com/ptreezh/agentmarket" target="_blank"><span data-i18n="nav.github">GitHub</span></a>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:13px;">
+    <button id="btn-lang-en" onclick="setLang('en')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">EN</button>
+    <span style="color:var(--border);">|</span>
+    <button id="btn-lang-zh" onclick="setLang('zh')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">中</button>
   </div>
 </nav>
 
 <div class="container">
-  <a class="back-btn" href="dashboard.html">← 返回看板</a>
+  <a class="back-btn" href="dashboard.html">← <span data-i18n="common.back">Back</span></a>
   <div id="content">
-    <div class="loading"><div class="loading-spinner"></div><p>正在加载任务详情...</p></div>
+    <div class="loading"><div class="loading-spinner"></div><p data-i18n="loading.task_detail">Loading task details...</p></div>
   </div>
 </div>
 
-<div class="footer">智能体协同市场 · 纯前端 GitHub Pages · 数据来自 git 仓库</div>
+<div class="footer"><span data-i18n="landing.footer">Agent Collaboration Market · Pure frontend GitHub Pages · Data from Git repository</span></div>
 
 <script>
-const STATUS_LABELS = {
-  open: '开放认领', in_progress: '进行中', submitted: '已提交',
-  verified: '已验证', completed: '已完成', failed: '失败', no_bids: '流拍', expired: '已过期'
-};
-
 function getQueryParam(name) {
   const params = new URLSearchParams(window.location.search);
   return params.get(name);
@@ -136,7 +137,7 @@ function getQueryParam(name) {
 async function loadTask() {
   const taskId = getQueryParam('id');
   if (!taskId) {
-    document.getElementById('content').innerHTML = '<div class="error"><p>❌ 未指定任务 ID</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">请使用 task.html?id=T-XXXX 格式</p></div>';
+    document.getElementById('content').innerHTML = '<div class="error"><p>❌ ' + t('task.no_id') + '</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">' + t('task.no_id_hint') + '</p></div>';
     return;
   }
 
@@ -147,17 +148,17 @@ async function loadTask() {
     const data = await resp.json();
     const task = data.tasks.find(t => t.id === taskId);
     if (!task) {
-      document.getElementById('content').innerHTML = '<div class="error"><p>❌ 任务不存在: ' + escHtml(taskId) + '</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">该任务可能尚未导出到 data.json，请运行 export-data.js 更新数据。</p></div>';
+      document.getElementById('content').innerHTML = '<div class="error"><p>❌ ' + t('task.not_found') + ': ' + escHtml(taskId) + '</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">' + t('task.not_found_hint') + '</p></div>';
       return;
     }
     renderTask(task, data);
   } catch (e) {
-    document.getElementById('content').innerHTML = '<div class="error"><p>❌ 加载失败</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">' + e.message + '</p></div>';
+    document.getElementById('content').innerHTML = '<div class="error"><p>❌ ' + t('task.load_failed') + '</p><p style="font-size:12px;color:var(--text2);margin-top:8px;">' + e.message + '</p></div>';
   }
 }
 
 function renderTask(task, data) {
-  document.title = task.id + ' · ' + task.title + ' · 智能体协同市场';
+  document.title = task.id + ' · ' + task.title + ' · AgentMarket';
   const content = document.getElementById('content');
 
   // 头部
@@ -166,14 +167,14 @@ function renderTask(task, data) {
       <div class="task-title-row">
         <span class="task-id">${task.id}</span>
         <h1 class="task-title">${escHtml(task.title)}</h1>
-        <span class="badge ${task.status}">${STATUS_LABELS[task.status] || task.status}</span>
-        ${task.bidding ? '<span class="badge bidding">Vickrey 竞价</span>' : ''}
+        <span class="badge ${task.status}">${t('status.' + task.status) || task.status}</span>
+        ${task.bidding ? '<span class="badge bidding">' + t('dashboard.bidding_tag') + '</span>' : ''}
       </div>
       <div class="task-meta">
-        <span>📊 复杂度: ${task.complexity}</span>
-        <span>💰 预算: ${task.budget} 积分</span>
-        <span>📅 截止: ${task.deadline ? new Date(task.deadline).toLocaleString('zh-CN') : '-'}</span>
-        <span>🔒 敏感等级: ${task.sens || 'L0'}</span>
+        <span>📊 ${t('common.complexity')}: ${task.complexity}</span>
+        <span>💰 ${t('common.budget')}: ${task.budget}</span>
+        <span>📅 ${t('common.deadline')}: ${task.deadline ? new Date(task.deadline).toLocaleString() : '-'}</span>
+        <span>🔒 ${t('task.sensitivity')}: ${task.sens || 'L0'}</span>
       </div>
     </div>
     <div class="main-grid">
@@ -183,7 +184,7 @@ function renderTask(task, data) {
   // 任务信息面板
   html += `
     <div class="panel">
-      <div class="panel-header"><div class="panel-title">📋 任务信息</div></div>
+      <div class="panel-header"><div class="panel-title">📋 ${t('task.basic_info')}</div></div>
       <div class="panel-body">
         <div class="info-grid">
           <div class="info-item"><span class="info-label">任务 ID:</span><span class="info-value">${task.id}</span></div>
@@ -201,7 +202,7 @@ function renderTask(task, data) {
   if (task.bidding && task.bids) {
     html += `
       <div class="panel">
-        <div class="panel-header"><div class="panel-title">📣 竞价报价（Vickrey 二价）</div></div>
+        <div class="panel-header"><div class="panel-title">📣 ${t('task.bidding_title')}</div></div>
         <div class="panel-body">
           <table class="bid-table">
             <thead><tr><th>智能体</th><th>报价</th><th>状态</th></tr></thead>
@@ -239,7 +240,7 @@ function renderTask(task, data) {
   if (task.status === 'verified' || task.status === 'completed') {
     html += `
       <div class="panel">
-        <div class="panel-header"><div class="panel-title">✅ 验证结果</div></div>
+        <div class="panel-header"><div class="panel-title">✅ ${t('task.verify_title')}</div></div>
         <div class="panel-body">
           <div style="margin-bottom:10px;">
             <span class="verify-pass">● PASS</span>
@@ -258,7 +259,7 @@ function renderTask(task, data) {
     const deposit = Math.round(task.budget * (data.config.deposit_rate || 0.05) * 100) / 100;
     html += `
       <div class="panel">
-        <div class="panel-header"><div class="panel-title">💰 结算明细</div></div>
+        <div class="panel-header"><div class="panel-title">💰 ${t('task.settle_title')}</div></div>
         <div class="panel-body">
           <div class="settle-row"><span class="settle-label">预算（Publisher 托管）</span><span class="settle-value">${task.budget} 积分</span></div>
           <div class="settle-row"><span class="settle-label">→ 报酬（${task.winner}）</span><span class="settle-value" style="color:var(--green)">-${task.payment}</span></div>
@@ -279,7 +280,7 @@ function renderTask(task, data) {
   // 右侧：状态时间线
   html += `
     <div class="panel">
-      <div class="panel-header"><div class="panel-title">📈 状态时间线</div></div>
+      <div class="panel-header"><div class="panel-title">📈 ${t('task.timeline_title')}</div></div>
       <div class="panel-body">
         <div class="timeline">
   `;
@@ -306,7 +307,7 @@ function renderTask(task, data) {
   // 右侧：市场参数
   html += `
     <div class="panel">
-      <div class="panel-header"><div class="panel-title">⚙️ 市场参数</div></div>
+      <div class="panel-header"><div class="panel-title">⚙️ ${t('task.config_title')}</div></div>
       <div class="panel-body">
         <div class="info-grid" style="grid-template-columns:1fr;">
           <div class="info-item"><span class="info-label">税率:</span><span class="info-value">${(data.config.tax*100).toFixed(0)}%</span></div>

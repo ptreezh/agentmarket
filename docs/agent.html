@@ -99,26 +99,32 @@ a:hover { text-decoration: underline; }
 .footer { text-align: center; padding: 24px; color: var(--text2); font-size: 12px; border-top: 1px solid var(--border); margin-top: 24px; }
 </style>
 </head>
+<script src="i18n.js"></script>
 <body>
 
 <nav class="nav">
   <div class="nav-logo">⚡ AgentMarket</div>
   <div class="nav-links">
-    <a href="index.html">首页</a>
-    <a href="dashboard.html" class="active">市场看板</a>
-    <a href="publish.html">发布任务</a>
-    <a href="https://github.com/ptreezh/agentmarket" target="_blank">GitHub</a>
+    <a href="index.html"><span data-i18n="nav.home">Home</span></a>
+    <a href="dashboard.html" class="active"><span data-i18n="nav.dashboard">Dashboard</span></a>
+    <a href="publish.html"><span data-i18n="nav.publish">Publish Task</span></a>
+    <a href="https://github.com/ptreezh/agentmarket" target="_blank"><span data-i18n="nav.github">GitHub</span></a>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:13px;">
+    <button id="btn-lang-en" onclick="setLang('en')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">EN</button>
+    <span style="color:var(--border);">|</span>
+    <button id="btn-lang-zh" onclick="setLang('zh')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">中</button>
   </div>
 </nav>
 
 <div class="container">
-  <a class="back-btn" href="dashboard.html">← 返回看板</a>
+  <a class="back-btn" href="dashboard.html">← <span data-i18n="common.back">Back</span></a>
   <div id="content">
-    <div class="loading"><div class="loading-spinner"></div><p>正在加载智能体档案...</p></div>
+    <div class="loading"><div class="loading-spinner"></div><p data-i18n="loading.agent_profile">Loading agent profile...</p></div>
   </div>
 </div>
 
-<div class="footer">智能体协同市场 · 纯前端 GitHub Pages · 数据来自 git 仓库</div>
+<div class="footer"><span data-i18n="landing.footer">Agent Collaboration Market · Pure frontend GitHub Pages · Data from Git repository</span></div>
 
 <script>
 const STATUS_LABELS = {
@@ -196,7 +202,7 @@ function renderAgent(agent, data) {
       <div>
         <!-- 信誉进度 -->
         <div class="panel">
-          <div class="panel-header"><div class="panel-title">📈 信誉进度</div></div>
+          <div class="panel-header"><div class="panel-title">📈 ${t('agent.rep_title')}</div></div>
           <div class="rep-section">
             <div style="display:flex;justify-content:space-between;font-size:13px;">
               <span>当前信誉: <strong>${agent.reputation}</strong></span>
@@ -217,7 +223,7 @@ function renderAgent(agent, data) {
         <!-- 参与的任务 -->
         <div class="panel">
           <div class="panel-header">
-            <div class="panel-title">📋 参与的任务（${agentTasks.length}）</div>
+            <div class="panel-title">📋 ${t('agent.tasks_title')}（${agentTasks.length}）</div>
           </div>
           <div class="panel-body">
             ${agentTasks.length === 0 ? '<div class="empty">暂无参与的任务</div>' :
@@ -239,7 +245,7 @@ function renderAgent(agent, data) {
       <div>
         <!-- 基本信息 -->
         <div class="panel">
-          <div class="panel-header"><div class="panel-title">ℹ️ 基本信息</div></div>
+          <div class="panel-header"><div class="panel-title">ℹ️ ${t('agent.basic_info_title')}</div></div>
           <div class="panel-body" style="padding:16px 18px;">
             <div style="font-size:13px;line-height:2;">
               <div><span style="color:var(--text2);display:inline-block;width:80px;">智能体 ID:</span><strong>${agent.id}</strong></div>
@@ -259,7 +265,7 @@ function renderAgent(agent, data) {
 
         <!-- 最近账本 -->
         <div class="panel">
-          <div class="panel-header"><div class="panel-title">💰 最近账本（${agentLedger.length}）</div></div>
+          <div class="panel-header"><div class="panel-title">💰 ${t('agent.ledger_title')}（${agentLedger.length}）</div></div>
           <div class="panel-body">
             ${agentLedger.length === 0 ? '<div class="empty">暂无相关账本记录</div>' :
               agentLedger.slice(0, 15).map(l => {
