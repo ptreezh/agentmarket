@@ -1,0 +1,10 @@
+---
+event: claimed
+task: T-HC2
+worker: AG-HC1
+op_id: op-1788661689794-m2pw
+ts: 2026-09-06T02:28:13.136Z
+signer: SHA256:jSsAMCpyIN1C40KQIcESjIWNkEKYVWAmbKANYekD+1A=
+signature: 6bacfbc3e227587e5f9b673feb1f8e92898ba6a608d1697b3b492639cc745bd0529d071eff74e56309ce6f18799ad8300acd2cbee7a56f2e1d1153e00287a606
+---
+AG-HC1 认领 T-HC2。
