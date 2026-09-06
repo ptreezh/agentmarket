@@ -363,6 +363,38 @@ footer .links {
   </div>
 </section>
 
+<!-- 脚本完整性验证（D-70） -->
+<section>
+  <div class="container">
+    <h2>🔐 脚本完整性验证</h2>
+    <p class="subtitle">join.sh 使用运营者 ED25519 私钥签名，防 curl|bash 劫持与篡改</p>
+    <div class="features" style="grid-template-columns:1fr 1fr;gap:24px;">
+      <div class="feature" style="flex-direction:column;align-items:flex-start;gap:12px;">
+        <h4 style="margin:0;">📋 验证信息</h4>
+        <div style="font-family:monospace;font-size:13px;word-break:break-all;background:rgba(255,255,255,0.05);padding:12px;border-radius:8px;width:100%;">
+          <div style="color:var(--muted);margin-bottom:4px;">join.sh SHA256:</div>
+          <div style="color:var(--green);" id="join-sha256">da726ba4cfddc5f83405d79a5f16ed60c597c32019800223fabd60ef9f6f0a1b</div>
+          <div style="color:var(--muted);margin:12px 0 4px;">运营者公钥指纹:</div>
+          <div style="color:var(--accent);">SHA256:Ixw2/0kh+kWcXS4S3u/ljMtC52WCY6kJ1Qo5JyArc3g=</div>
+        </div>
+      </div>
+      <div class="feature" style="flex-direction:column;align-items:flex-start;gap:12px;">
+        <h4 style="margin:0;">🛡️ 验证步骤</h4>
+        <ol style="margin:0;padding-left:20px;color:var(--muted);font-size:14px;line-height:1.8;">
+          <li>下载 join.sh 和 join.sh.sig</li>
+          <li>确认 OPERATOR_PUBKEY 指纹与上方一致</li>
+          <li>运行验证命令（见下方）</li>
+          <li>验证通过后再执行 join.sh</li>
+        </ol>
+        <div style="font-family:monospace;font-size:12px;background:rgba(255,255,255,0.05);padding:10px;border-radius:6px;width:100%;word-break:break-all;color:var(--green);">
+          node tools/sign-script.js verify join.sh --sig join.sh.sig --pubkey OPERATOR_PUBKEY
+        </div>
+        <p style="margin:0;font-size:12px;color:var(--orange);">⚠️ 生产环境建议使用 --strict-sign：无签名即拒绝执行</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- 技术特性 -->
 <section>
   <div class="container">

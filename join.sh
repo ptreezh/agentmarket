@@ -31,6 +31,12 @@ CLONE_DIR="./agentmarket"
 INTERVAL=30
 LLM_MODE="auto"
 DAEMON=false
+STRICT_SIGN="${AGENTMARKET_STRICT_SIGN:-false}"
+
+# 严格模式判断：接受 true/1/yes（不区分大小写）
+is_strict_sign() {
+  [[ "$STRICT_SIGN" =~ ^(true|1|yes|on)$ ]]
+}
 
 # ---------- 参数解析 ----------
 while [[ $# -gt 0 ]]; do
@@ -44,6 +50,7 @@ while [[ $# -gt 0 ]]; do
     --llm)      LLM_MODE="$2"; shift 2 ;;
     --mirror)   MIRROR_URL="$2"; shift 2 ;;
     --daemon)   DAEMON=true; shift ;;
+    --strict-sign) STRICT_SIGN=true; shift ;;
     --help|-h)
       sed -n '2,30p' "$0"
       exit 0
@@ -72,6 +79,68 @@ for cmd in git node; do
   fi
 done
 ok "git $(git --version | awk '{print $3}') / node $(node --version)"
+
+# ---------- 脚本签名自校验（D-70）----------
+verify_script_signature() {
+  # curl | bash 模式：BASH_SOURCE[0] 不是文件，跳过验证
+  if [[ ! -f "${BASH_SOURCE[0]}" ]]; then
+    warn "curl|bash 模式无法验证脚本签名，建议下载后验证执行"
+    return 0
+  fi
+
+  local SCRIPT_DIR
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local SIG_FILE="$SCRIPT_DIR/join.sh.sig"
+  local PUBKEY_FILE="$SCRIPT_DIR/OPERATOR_PUBKEY"
+  local VERIFY_TOOL="$SCRIPT_DIR/tools/sign-script.js"
+
+  # 无签名文件
+  if [[ ! -f "$SIG_FILE" ]]; then
+    if is_strict_sign; then
+      err "严格模式：未检测到脚本签名文件 join.sh.sig，拒绝执行"
+      exit 1
+    fi
+    warn "未检测到脚本签名，建议验证后执行（生产环境使用 --strict-sign）"
+    return 0
+  fi
+
+  # 无公钥文件
+  if [[ ! -f "$PUBKEY_FILE" ]]; then
+    if is_strict_sign; then
+      err "严格模式：未找到运营者公钥文件 OPERATOR_PUBKEY，拒绝执行"
+      exit 1
+    fi
+    warn "未找到运营者公钥文件，跳过签名验证"
+    return 0
+  fi
+
+  # 无验证工具
+  if [[ ! -f "$VERIFY_TOOL" ]]; then
+    if is_strict_sign; then
+      err "严格模式：未找到签名验证工具 tools/sign-script.js，拒绝执行"
+      exit 1
+    fi
+    warn "未找到签名验证工具，跳过签名验证"
+    return 0
+  fi
+
+  # 执行验证
+  local verify_output verify_rc
+  verify_output=$(node "$VERIFY_TOOL" verify "${BASH_SOURCE[0]}" --sig "$SIG_FILE" --pubkey "$PUBKEY_FILE" 2>&1)
+  verify_rc=$?
+
+  if [[ $verify_rc -eq 0 ]]; then
+    ok "脚本签名验证通过"
+    # 输出公钥指纹供用户对比 landing page
+    echo "$verify_output" | grep "签名者" | sed 's/^/      /'
+    return 0
+  else
+    err "脚本签名验证失败！脚本可能被篡改，拒绝执行。"
+    echo "$verify_output" | sed 's/^/      /'
+    exit 1
+  fi
+}
+verify_script_signature
 
 # ---------- 生成 Agent ID ----------
 if [[ -z "$AGENT_ID" ]]; then
