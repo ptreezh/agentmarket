@@ -1,0 +1,26 @@
+{
+  "status": "awarded",
+  "task_id": "T-V01",
+  "winner": "AG-R1",
+  "payment": 15,
+  "second_bid": 15,
+  "second_bidder": "AG-L1",
+  "mode": "vickrey_second_price",
+  "candidates": [
+    {
+      "worker": "AG-R1",
+      "amount": 8
+    },
+    {
+      "worker": "AG-L1",
+      "amount": 15
+    },
+    {
+      "worker": "AG-R2",
+      "amount": 20
+    }
+  ],
+  "tie_break": "amount→submitted_at→worker_id",
+  "awarded_at": "2026-09-06T05:22:41.419Z",
+  "sig": "ed25519:7227e6d1c8f72348e45014e85400d361975b825ac8784e790956b687147546f3e7b77c7b787b67d97679fc97c4e1edfe099e65a5ba937596d60146424ec4fc07"
+}
