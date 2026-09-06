@@ -17,7 +17,7 @@ const path = require("path");
 const { execSync, spawnSync } = require("child_process");
 const g = c => execSync(c, { encoding: "utf-8" }).trim();
 const [cmd, ...rest] = process.argv.slice(2);
-const TASK_RE = /^T-\d+$/;
+const TASK_RE = /^T-[0-9A-Z]+$/;
 const llm = require("./llm.js");
 
 // ========== 日志 ==========
