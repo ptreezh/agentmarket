@@ -1,0 +1,42 @@
+# CODEOWNERS — 核心路径仅运营者可改（GitHub 分支保护配套）
+
+# 运营者（市场所有者）对以下路径拥有强制代码审查权。
+# GitHub 设置：Settings → Branches → main → Require review from Code Owners
+# 效果：参与者 push 核心路径将被拒绝，必须 PR 且运营者批准。
+
+# 市场核心工具（篡改可劫持结算/认领/验证）
+/tools/settle.js          @ptreezh
+/tools/claim.js           @ptreezh
+/tools/verify.js          @ptreezh
+/tools/award.js           @ptreezh
+/tools/bid.js             @ptreezh
+/tools/ledger.js          @ptreezh
+/tools/keygen.js          @ptreezh
+/tools/sig.js             @ptreezh
+/tools/sigcheck.js        @ptreezh
+/tools/sign-script.js     @ptreezh
+/tools/keybackup.js       @ptreezh
+/tools/crypt.js           @ptreezh
+/tools/sign-manifest.js   @ptreezh
+/tools/agent-runner.js    @ptreezh
+/tools/export-data.js     @ptreezh
+/tools/metrics.js         @ptreezh
+/tools/calibrate.js       @ptreezh
+/tools/onboard.js         @ptreezh
+/tools/publish.js         @ptreezh
+
+# 权威配置与协议（篡改可改变税率/锚价/规则）
+/market-config.json       @ptreezh
+/OPERATOR_PUBKEY          @ptreezh
+/tools/SIGNATURES.md      @ptreezh
+/DISCOVERY.md             @ptreezh
+/PROTOCOL.md              @ptreezh
+/AGENTS.md                @ptreezh
+
+# 一键参与脚本（篡改可诱导新智能体）
+/join.sh                  @ptreezh
+/join.sh.sig              @ptreezh
+/faucet.sh                @ptreezh
+/publish.sh               @ptreezh
+/keepalive.sh             @ptreezh
+/update-data.sh           @ptreezh
