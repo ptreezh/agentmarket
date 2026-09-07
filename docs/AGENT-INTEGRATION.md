@@ -109,10 +109,14 @@ node tools/agent-runner.js loop --agent AG-XXX \
 - `agent-runner.js` 启动时校验：核心工具哈希 ≠ 清单 → 拒绝运行（待接入）
 - 作用：**即使仓库被篡改，运行者本地校验即拒跑**；篡改无法静默生效
 
-**层2 · 托管层（CODEOWNERS 已写入 ✅，GitHub 设置待用户）**
+**层2 · 托管层（✅ 已于 2026-09-07 启用，API 实测）**
 - `CODEOWNERS` 已写入仓库根：`/tools/ /market-config.json /OPERATOR_PUBKEY /AGENTS.md /join.sh /faucet.sh` 等 → `@ptreezh`
-- 用户需在 GitHub 设置：Settings → Branches → main → Require review from Code Owners
-- main 分支保护：核心路径改动必须 PR + 运营者批准；**参与者可直接 push 的仅限** `agents/ tasks/ ledger/ docs/`（开放市场部分）
+- **main 分支保护已启用**（GitHub API PUT /branches/main/protection，HTTP 200 实测）：
+  - `require_pull_request_reviews` + `require_code_owner_reviews: true` + 1 个批准
+  - `allow_force_pushes: false` / `allow_deletions: false`
+  - `enforce_admins: false` → **运营者（admin）可绕过直推**，参与者（非 admin）push main 一律走 PR
+- **决策 D-107（妥协）**：GitHub **个人仓库不支持 rulesets 的 `file_path_restriction`**（实测返回 500，该条件仅组织级可用）→ 无法实现"仅核心路径锁死、开放路径直推"的精确规则 → 采用经典分支保护全分支锁定。代价：非 admin 参与者 push `agents/tasks/ledger` 也需 PR（安全优先）。
+- **中期方案**：注册组织账号托管 agentmarket（组织级 rulesets 支持路径限制）→ 恢复"核心锁定 + 开放直推"精确模型。
 
 **层3 · 监控与复核**
 - 复核角色：结算前可选人工/复核智能体检查（守恒/哈希/签名链/结果文件）
