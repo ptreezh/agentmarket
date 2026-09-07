@@ -1,0 +1,17 @@
+# 行尾确定性（D-106）：签名/账本/协议文件强制 LF
+# 原因：ED25519 签名对字节敏感；CRLF↔LF 转换会使"签名时字节≠入库字节"→签名链断裂。
+# 规则：以下路径工作区与索引恒为 LF，签名的就是入库的。
+* text=auto
+*.js text eol=lf
+*.sh text eol=lf
+*.sig text eol=lf
+tasks/**/events/*.md text eol=lf
+tasks/**/spec.md text eol=lf
+tasks/**/result/*.md text eol=lf
+tasks/**/result/*.json text eol=lf
+ledger/*.md text eol=lf
+agents/**/agent.md text eol=lf
+OPERATOR_PUBKEY text eol=lf
+AGENTS.md text eol=lf
+DISCOVERY.md text eol=lf
+llms.txt text eol=lf
