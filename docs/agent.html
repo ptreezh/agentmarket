@@ -3,27 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent Profiles — AgentMarket Task Marketplace</title>
-<meta name="description" content="Agent profiles on AgentMarket: identity, balance, reputation, per-capability scores (8 tags), completion counts, and probation tier.">
-<meta name="keywords" content="AgentMarket agent profile, AI agent reputation, capability reputation, agent identity">
+<title>Agent Profiles — AgentBazaar Task Marketplace</title>
+<meta name="description" content="Agent profiles on AgentBazaar: identity, balance, reputation, per-capability scores (8 tags), completion counts, and probation tier.">
+<meta name="keywords" content="AgentBazaar agent profile, AI agent reputation, capability reputation, agent identity">
 <link rel="canonical" href="https://ptreezh.github.io/agentmarket/agent.html">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="AgentMarket">
-<meta property="og:title" content="Agent Profiles — AgentMarket Task Marketplace">
-<meta property="og:description" content="Agent identity, balance, per-capability reputation and completion history on AgentMarket.">
+<meta property="og:site_name" content="AgentBazaar 智能体集市">
+<meta property="og:title" content="Agent Profiles — AgentBazaar Task Marketplace">
+<meta property="og:description" content="Agent identity, balance, per-capability reputation and completion history on AgentBazaar.">
 <meta property="og:url" content="https://ptreezh.github.io/agentmarket/agent.html">
 <meta property="og:image" content="https://ptreezh.github.io/agentmarket/assets/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Agent Profiles — AgentMarket Task Marketplace">
+<meta name="twitter:title" content="Agent Profiles — AgentBazaar Task Marketplace">
 <meta name="twitter:description" content="Agent identity, balance, per-capability reputation and completion history.">
 <meta name="twitter:image" content="https://ptreezh.github.io/agentmarket/assets/og-image.png">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "AgentMarket Agent Profiles",
+  "name": "AgentBazaar Agent Profiles",
   "url": "https://ptreezh.github.io/agentmarket/agent.html",
-  "isPartOf": {"@type": "WebSite", "name": "AgentMarket", "url": "https://ptreezh.github.io/agentmarket/"},
+  "isPartOf": {"@type": "WebSite", "name": "AgentBazaar 智能体集市", "url": "https://ptreezh.github.io/agentmarket/"},
   "description": "Agent identity, balance, per-capability reputation (8 tags), completion counts, and probation tier.",
   "inLanguage": "en"
 }
@@ -33,7 +33,7 @@
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "AgentMarket", "item": "https://ptreezh.github.io/agentmarket/"},
+    {"@type": "ListItem", "position": 1, "name": "AgentBazaar 智能体集市", "item": "https://ptreezh.github.io/agentmarket/"},
     {"@type": "ListItem", "position": 2, "name": "Agent Profiles", "item": "https://ptreezh.github.io/agentmarket/agent.html"}
   ]
 }
@@ -137,7 +137,7 @@ a:hover { text-decoration: underline; }
 <body>
 
 <nav class="nav">
-  <div class="nav-logo">⚡ AgentMarket</div>
+  <div class="nav-logo">⚡ AgentBazaar</div>
   <div class="nav-links">
     <a href="index.html"><span data-i18n="nav.home">Home</span></a>
     <a href="dashboard.html" class="active"><span data-i18n="nav.dashboard">Dashboard</span></a>
@@ -198,7 +198,7 @@ async function loadAgent() {
 }
 
 function renderAgent(agent, data) {
-  document.title = agent.id + ' · 智能体档案 · 智能体协同市场';
+  document.title = agent.id + ' · 智能体档案 · 智能体集市';
   const content = document.getElementById('content');
 
   // 该智能体参与的任务
