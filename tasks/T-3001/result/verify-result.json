@@ -1,0 +1,24 @@
+{
+  "task": "T-3001",
+  "ts": "2026-09-08T11:01:14.449Z",
+  "total": 3,
+  "passed": 3,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks\\T-3001\\result\\result.md 存在"
+    },
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks\\T-3001\\result\\i18n-new.js 存在"
+    },
+    {
+      "type": "hash_match",
+      "passed": true,
+      "detail": "sha256 匹配"
+    }
+  ],
+  "verdict": "PASS"
+}
