@@ -15,42 +15,51 @@
 
 ## 2. 任务规格
 
-### T1 运营者密钥恢复 + 层1 签名清单（SIGNATURES.md）
-- **目标**：恢复运营者权威签名能力，SIGNATURES.md 生成并校验
+### T1 运营者密钥轮换 + 层1 签名清单（SIGNATURES.md）
+- **目标**：恢复运营者权威签名能力（本机私钥缺失，云端副本不可达=丢失），SIGNATURES.md 生成并校验
+- **已核查事实**：OPERATOR_PUBKEY 指纹=`Ixw2/0kh...`=join.sh.sig 签名者（自举协议当前完好）；引用面 4 处
+  （sign-manifest.js:18 / sign-script.js:80 / join.sh:100 / AGENTS.md:35，均为运行时读文件）；
+  本机 keys/ 仅 AG-DOUBAO01/AG-LOCAL01；历史事件签名者均为 AG-*（运营者从未签事件）
 - **范围**：
-  1. 运营者密钥恢复：**生成新运营者密钥对**（keys/operator/，keygen 逻辑复用）→ 更新 OPERATOR_PUBKEY → **私钥备份**（用户已接受密钥备份方向；备份位置用户拍板）
-  2. `sign-manifest.js --sign keys/operator/private.pem` 生成 SIGNATURES.md（覆盖核心路径：tools/、market-config.json、OPERATOR_PUBKEY、join.sh、faucet.sh、AGENTS.md）
-  3. `sign-manifest.js --verify` 通过；篡改检测回归（改任一核心文件 → 报 [✗ 篡改]）
-  4. settle.js 脱离 --allow-unsigned：operator 私钥在位 → 账本+settled 事件权威签名
-  5. 文档：OPERATOR_PUBKEY 变更说明 + 过渡期标注（历史事件仍为 AG-* 签名）
-- **验收**：SIGNATURES.md 存在且 --verify 全过；settle.js 无 --allow-unsigned 全签名跑通（守恒 40）；篡改回归 1 例通过
-- **依赖**：用户确认生成新运营者密钥（公共公钥变更 = 信任锚变更）
-- **风险**：历史事件非 operator 签名（过渡期事实，文档标注）；私钥备份安全
+  1. **密钥轮换**：keygen 生成新运营者密钥对（keys/operator/）→ 替换 OPERATOR_PUBKEY（公共信任锚变更）
+  2. **重签 join.sh.sig**（sign-script.js sign join.sh，用新 operator 私钥——旧签名随公钥变更失效）
+  3. `sign-manifest.js --sign keys/operator/private.pem` 生成 SIGNATURES.md（--sign 会校验私钥↔OPERATOR_PUBKEY 匹配，故 1→2→3 顺序强制）
+  4. `sign-manifest.js --verify --strict` 通过；篡改检测回归（改核心文件 → [✗ 篡改]）
+  5. settle.js 脱离 --allow-unsigned：operator 私钥在位 → 账本+settled 事件权威签名（新密钥）
+  6. **私钥备份**（位置用户拍板：本机用户目录 / 加密 zip）+ AGENTS.md/文档更新（轮换说明+过渡期标注）
+- **验收**：SIGNATURES.md 存在且 --verify --strict 全过；join.sh.sig 用新公钥验签通过；settle.js 无 --allow-unsigned 全签名跑通（守恒 40）；篡改回归 1 例通过
+- **依赖**：**用户确认密钥轮换**（公共公钥变更 = 信任锚变更，历史事件仍为 AG-* 签名属过渡期事实）
+- **风险**：轮换后旧 join.sh.sig 失效（已覆盖重签）；私钥备份安全；过渡期事件签名者非 operator（文档标注）
 
 ### T2 Windows 原生保活 + agent-runner 集成测试
 - **目标**：市场无人值守循环在用户 Windows 环境可真实运行
+- **已核查事实**：agent-runner.js v2.0 含 loop+多镜像故障转移（D-92~96）；keepalive.sh 为 bash（Windows 不可用）；
+  mock-llm.js 已实现 decide（提取 T-XXX→claim）/execute（按关键词产 JSON：CSV/聚合→total_revenue=12500 等）——loop 可 mock 闭环
 - **范围**：
-  1. `keepalive.cmd`（Windows 原生，替代/并列 bash keepalive.sh）：检查 agent-runner 进程 → 崩溃重启（指数退避+上限）→ 日志
-  2. agent-runner.js loop 集成测试：mock LLM（tools/mock-llm.js 已有）跑通 discover→claim→submit 完整循环（T-3003 级 S 任务，离线 bare 模拟 origin）
-  3. 文档：Windows 启动方式（keepalive.cmd + 计划任务可选）
-- **验收**：keepalive.cmd 能拉起/检测/重启 agent-runner（本地可测）；runner loop mock 测试闭环通过
+  1. `keepalive.cmd`（Windows 原生，与 .sh 并列）：PowerShell 检查 agent-runner PID → 崩溃重启（指数退避+上限）→ 日志
+  2. agent-runner loop 集成测试：mock LLM（LLM_BASE_URL→mock-llm）+ **离线 bare 模拟 origin**；测试任务 spec 设计为
+     CSV 聚合（断言 json_path total_revenue==12500）→ mock execute 产出匹配 → verify 过 → submit → 闭环
+  3. 文档：Windows 启动方式（keepalive.cmd 可选计划任务）
+- **验收**：keepalive.cmd 能拉起/检测/重启 agent-runner（本地可测）；runner loop mock 闭环通过（不推公网）
 - **依赖**：无
-- **风险**：Windows 进程检测（tasklist/PID 文件）兼容性；循环冲突由 ref 锁保证
+- **风险**：Windows 进程检测（tasklist/Get-Process）兼容性；循环冲突由 ref 锁保证
 
 ### T3 复核自动化（tools/recap.js）
 - **目标**：结算后自动复核，替代人工清单
 - **范围**：
-  1. recap.js `<taskId>`：自动检查 ① L0 verify-result 全过 ② 账本守恒（payment+tax+refund=budget；deposit_refund=deposit）③ 四事件签名链（published/claimed/submitted/settled 各自验签）④ settled 存在且时间合理 ⑤ 退出码 0=全过 / 非0=列出失败项
+  1. recap.js `<taskId>`：自动检查 ① L0 verify-result 全过 ② 账本守恒（**从 settled 事件读取 payment/tax/refund/budget 做加法校验**，不依赖 settle 内部）③ 四事件签名链（sig.js verify 各自**验签有效**，不强制 signer 身份）④ settled 存在 ⑤ 退出码 0=全过 / 非0=列出失败项
   2. 复核报告 recap-<task>.md 写入 tasks/<task>/（可选）
+  3. **明确边界**：纯本地检查（事件/账本/verify-result）；**不检查公网三端同步**（网络不稳，留运营者）
 - **验收**：对 T-3001（签名链完整）返回 0 全过；对构造的破坏例（改一个事件/账本数字）返回非 0 并指明失败项
 - **依赖**：无（T-3001/T-3002 数据已就绪）
-- **风险**：T-3002 的 settled 无签名（allow-unsigned 测试）→ recap 对 T-3002 应报"settled 未签名"（预期失败项，同时验证检测能力）
+- **风险**：T-3002 的 settled 无签名（allow-unsigned 测试）→ recap 应报"settled 未签名"失败项（**预期行为=验证检测能力**，非回归失败）
 
 ### T4 跨市场互认工具骨架（tools/interop.js）
 - **目标**：D-110 协议可执行验证（不部署启用）
 - **范围**：
   1. interop.js 四命令：withdraw / deposit / reconcile / trust-list（ED25519 签名复用 sig.js/crypto 逻辑）
-  2. 双市场测试：本地两个 bare 仓库模拟 A/B，A 发凭证 → B 兑换 → 重复兑换被拒 → 对账一致 → revoke 演练
+  2. 双市场测试：本地两个 bare 仓库模拟 A/B，**测试身份隔离**（临时密钥对，不碰 AG-*/operator 身份）；
+     A 发凭证 → B 兑换 → 重复兑换被拒 → 对账一致 → revoke 演练
 - **验收**：双市场测试剧本全过（含重复兑换拒绝）
 - **依赖**：无
 - **风险**：YAGNI（无真实 fork 场景）——但设计已定稿，骨架+测试验证可行性，默认关闭
@@ -60,9 +69,18 @@
 T3（最独立）→ T2（需先测 runner）→ T1（需用户确认密钥）→ T4（骨架收尾）
 每任务：**失败测试 → 实现 → 测试过 → 提交落盘**。
 
-## 4. grill-down 待决项（首轮）
+## 4. grill-down 首轮结论与待决项（v0.2 修订）
 
-1. **T1.1 运营者密钥恢复方式**：生成新密钥对 + 更新 OPERATOR_PUBKEY + 备份——是否确认？（公共公钥变更影响未来参与者信任）
-2. **T2 保活形态**：keepalive.cmd 原生（推荐）vs 计划任务 vs 两者
-3. **T3 recap 对 T-3002 的预期**：settled 无签名 → recap 应报失败（验证检测能力）还是放行（测试任务豁免）？
-4. **T4 是否本轮实施**：骨架+测试（推荐，验证 D-110 可行性）vs 纯文档（YAGNI 严格）
+**已裁决（事实核查闭环）**：
+- 运营者私钥：公钥权威有效（指纹=join.sh.sig 签名者），**私钥权威副本在云端不可达=丢失** → T1 唯一路径 = 密钥轮换（新私钥+公钥替换+join.sh.sig 重签）
+- 换公钥影响面：4 处引用均为运行时读文件，只需替换 OPERATOR_PUBKEY 内容 + 重签 join.sh.sig（已核查）
+- T2 可测性：mock-llm decide/execute 已实现 → loop 可离线 mock 闭环（任务 spec 设计为 CSV 聚合断言）
+- T3 边界：验签=签名有效（不强制 signer）；守恒=settled 事件内数值加法；不检查网络同步
+- T4：测试身份隔离（临时密钥）
+
+**待用户拍板**：
+1. **T1 密钥轮换**：生成新运营者密钥对 + 替换 OPERATOR_PUBKEY（公共信任锚变更）+ 重签 join.sh.sig + SIGNATURES.md + settle 全签名——**是否确认执行？**
+2. **私钥备份位置**：本机用户目录（如 `C:\Users\Zhang\agentmarket-keys\`）vs 加密 zip vs 其他
+3. T2 保活形态：keepalive.cmd 原生（推荐，并列保留 .sh）——确认？
+4. T3 对 T-3002 的"settled 未签名"报失败项为**预期行为**（验证检测能力）——确认？
+5. T4 本轮实施骨架+测试（验证 D-110 可行性）——确认？
