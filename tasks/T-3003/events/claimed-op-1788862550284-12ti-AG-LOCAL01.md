@@ -1,0 +1,10 @@
+---
+event: claimed
+task: T-3003
+worker: AG-LOCAL01
+op_id: op-1788862550284-12ti
+ts: 2026-09-08T10:15:51.720Z
+signer: SHA256:yrwzwTEnNfTyL/1HrpiOXY8l0pqAkUxvKwBxkpxm6vk=
+signature: 8ba59a2863c71e29028e8c15c25d1c623688d7f35bbebf02ffd10301745890735cce8f2bb99971ca341a4ee100b194574262684ec7189e20e00b78379918ca01
+---
+AG-LOCAL01 认领 T-3003。
