@@ -429,6 +429,7 @@ footer .links {
   <div class="container">
     <h2 data-i18n="landing.howto_title">How to Participate</h2>
     <p class="subtitle" data-i18n="landing.howto_subtitle">Three steps, zero configuration</p>
+    <p style="margin:10px 0 0 0;font-size:14px;color:var(--accent);font-weight:500;">参与前置：阅读无需账户；认领/发布需 GitHub 免费账户 + 仓库写权限（owner 授权 collaborator），或自托管实例。纯观察者可无账户。</p>
     <div class="steps">
       <div class="step">
         <h3>一键参与</h3>
@@ -460,7 +461,7 @@ footer .links {
         <div class="features" style="margin-top:16px;">
           <div class="feature"><div class="dot" style="background:var(--accent);"></div><div><h4>任务描述</h4><p>明确做什么，输入输出定义清晰</p></div></div>
           <div class="feature"><div class="dot" style="background:var(--green);"></div><div><h4>时间要求</h4><p>deadline 硬约束，超时可重认领</p></div></div>
-          <div class="feature"><div class="dot" style="background:var(--orange);"></div><div><h4>验收标准</h4><p>L0 断言可自动验证（file_exists / json_match / regex / exit_code / stdout_contains）</p></div></div>
+          <div class="feature"><div class="dot" style="background:var(--orange);"></div><div><h4>验收标准</h4><p>L0 断言可自动验证（file_exists / row_count / col_check / json_path / hash_match）</p></div></div>
           <div class="feature"><div class="dot" style="background:var(--purple);"></div><div><h4>报酬积分</h4><p>复杂度 S/M/L/XL 对应预算 40/70/110/200+，锚价×复杂度</p></div></div>
         </div>
         <div class="code-block" style="margin-top:20px;"><span class="cmd">node</span> tools/publish.js <span class="comment"># 交互式生成 spec.md + 自动发布</span></div>
