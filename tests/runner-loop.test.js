@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 /* tests/runner-loop.test.js — T2b agent-runner loop 集成测试（离线 bare 模拟 origin）
+ * v3（D-113）：0 环境记录 headBefore + 清理 T-3003 残留（防 hasActiveClaim 误触发）
+ *             清理段精确 reset 回 headBefore，保证测试幂等、不留污染。
  * 流程：离线 bare → 发布 T-3003（CSV 聚合）→ mock-llm → agent-runner loop（--llm mock）
  *       → 验证闭环：claim 事件签名 / result/result.json / submitted 事件签名
- * 预期：submit 成功；settle 显示 ⚠️（缺 operator 私钥，T1 后修复——本测试记录不判失败）
+ * T1 后：loop 自动 settle 完整结算（operator 签名）→ settled 事件验签通过
  */
 "use strict";
-const assert = require("assert");
 const { execSync, spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
@@ -25,17 +26,21 @@ function check(name, cond, detail) {
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 (async () => {
-  console.log("T2b runner-loop.test.js");
+  console.log("T2b runner-loop.test.js (v3)");
 
-  // 0. 环境：离线 bare + origin 指向
+  // 0. 环境：记录 headBefore、清理残留、离线 bare + origin 指向
+  const headBefore = g("git rev-parse HEAD");
+  fs.rmSync(taskDirFor(BARE), { recursive: true, force: true });
   fs.rmSync(BARE, { recursive: true, force: true });
   g(`git init --bare "${BARE}"`);
   g(`git push "${BARE}" main`);
   g(`git remote set-url origin "${BARE}"`);
+  function taskDirFor() { return path.join("tasks", TASK); }
 
   // 1. 发布 T-3003（CSV 聚合，断言 file_exists result/result.json）
-  const taskDir = path.join("tasks", TASK);
+  const taskDir = taskDirFor();
   const evDir = path.join(taskDir, "events");
+  fs.rmSync(taskDir, { recursive: true, force: true }); // 确保 events 纯净
   fs.mkdirSync(evDir, { recursive: true });
   const ts = new Date().toISOString();
   const tsName = ts.replace(/[-:.]/g, "").slice(0, 15);
@@ -93,7 +98,7 @@ acceptance:
   }
 
   // 5. 断言
-  console.log("=== loop 输出（截断）===");
+  console.log("=== loop 输出（关键行）===");
   console.log(out.split("\n").filter((l) => /认领|执行|验证|提交|结算|签名|发现/.test(l)).slice(0, 20).join("\n"));
   check("result/result.json 已产出", fs.existsSync(path.join(taskDir, "result", "result.json")), "loop 未产出 result");
   const submittedFile = fs.existsSync(evDir) ? fs.readdirSync(evDir).find((f) => f.startsWith("submitted-")) : null;
@@ -104,13 +109,24 @@ acceptance:
       check("submitted 签名有效", true, "");
     } catch (e) { check("submitted 签名有效", false, e.message); }
   }
-  const settledWarn = /拒绝结算|⚠️/.test(out);
-  console.log(`  （预期）loop 自动 settle 缺 operator 私钥告警: ${settledWarn ? "✓ 出现" : "未出现"}`);
+  const settledOk = /结算: ✅/.test(out);
+  check("loop 自动结算成功（operator 签名，T1）", settledOk, "loop 未显示 结算: ✅");
+  const settledFile = fs.existsSync(evDir) ? fs.readdirSync(evDir).find((f) => f.startsWith("settled-")) : null;
+  if (settledFile) {
+    try {
+      g(`node tools/sig.js verify "${path.join(evDir, settledFile).replace(/\\/g, "/")}"`);
+      check("settled 事件签名有效（operator）", true, "");
+    } catch (e) { check("settled 事件签名有效（operator）", false, e.message); }
+  } else {
+    check("settled 事件存在", false, "loop 未完成结算");
+  }
   check("闭环完成", done, "45s 内未闭环");
 
-  // 6. 清理：恢复 origin、删 bare、杀 mock
+  // 6. 清理：恢复 origin、删 bare、杀 mock、精确回退（幂等）
   runner.kill(); mock.kill();
-  g(`git remote set-url origin https://github.com/ptreezh/agentmarket.git`);
+  try { g(`git remote set-url origin https://github.com/ptreezh/agentmarket.git`); } catch (e) {}
+  try { g("git reset --hard " + headBefore); } catch (e) { console.error("清理 reset 失败: " + e.message); }
+  try { g("git clean -fdx " + path.join("tasks", TASK)); } catch (e) {}
   fs.rmSync(BARE, { recursive: true, force: true });
   fs.rmSync(taskDir, { recursive: true, force: true });
 
