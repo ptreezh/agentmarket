@@ -26,6 +26,15 @@ function verifyBody(pubPem, body, sigHex) {
   } catch (e) { return false; }
 }
 function getPubFromAgent(signer) {
+  // operator 分支（D-111）：signer 指纹匹配 OPERATOR_PUBKEY → 用运营者公钥验签
+  try {
+    if (fs.existsSync("OPERATOR_PUBKEY")) {
+      const opPem = fs.readFileSync("OPERATOR_PUBKEY", "utf-8");
+      const opDer = crypto.createPublicKey(opPem).export({ type: "spki", format: "der" });
+      const opFp = "SHA256:" + crypto.createHash("sha256").update(opDer).digest("base64");
+      if (opFp === signer) return opPem;
+    }
+  } catch (e) { /* fall through to agent lookup */ }
   // 指纹 → agent 档案解析（扫 agents/*/agent.md 匹配 key_fingerprint）
   const dirs = fs.existsSync("agents") ? fs.readdirSync("agents") : [];
   for (const d of dirs) {

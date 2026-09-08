@@ -219,8 +219,12 @@ settled_at: ${now}
 budget: ${budget}
 conservation: payment+tax+refund=${escrowTotal}=budget
 `;
-const settledSig = signOperator(settledBody);
-fs.writeFileSync(settledPath, `---\n${settledBody}sig: ${settledSig}\n---\n任务结算完成，守恒验证通过。\n`);
+const settledNote = "任务结算完成，守恒验证通过。\n"; // 含尾部换行，与 sig.js splitFile body 一致（D-112 v2）
+const settledSig = signOperator(settledNote).replace(/^ed25519:/, ""); // 事件签名纯 hex，覆盖正文（D-112）
+const crypto2 = require("crypto");
+const opPubPem = fs.readFileSync("OPERATOR_PUBKEY", "utf-8");
+const opFp = "SHA256:" + crypto2.createHash("sha256").update(crypto2.createPublicKey(opPubPem).export({ type: "spki", format: "der" })).digest("base64");
+fs.writeFileSync(settledPath, `---\n${settledBody}signer: ${opFp}\nsignature: ${settledSig}\n---\n${settledNote}`);
 
 // 7b. 声誉更新（分标签能力声誉，D-103）
 function updateReputation(taskId, winner, spec, verifyResult) {

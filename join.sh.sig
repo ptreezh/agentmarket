@@ -1,8 +1,8 @@
 {
   "version": 1,
   "algorithm": "ed25519",
-  "signer_fingerprint": "SHA256:Ixw2/0kh+kWcXS4S3u/ljMtC52WCY6kJ1Qo5JyArc3g=",
-  "signed_at": "2026-09-06T04:53:14.855Z",
-  "payload_sha256": "0e1cc798e0c77abc447fd7b79efee56a5fe61f47f7ccf64e0c67b692dcefdd57",
-  "signature": "GcnlpyOgkn9H5fmZbDW0cxmlpVOS5KfeVpcgtwFYmVVCuWzhoRbpcVhciQpc5CLHMptB/bg7beUp89R92UsqAQ=="
+  "signer_fingerprint": "SHA256:1fEPEHWqcdMYJ8cnwR++XIEAF+OsMp0j3Vj5Z1f0uaY=",
+  "signed_at": "2026-09-08T10:29:35.156Z",
+  "payload_sha256": "cb9904cf965fa5511c6de94da031d6dac654cd4c74ccb749941ef9ef303a734a",
+  "signature": "82WqaxypuSaxuUnaQwJh3e+fubhmTH8YxIWUjPIl46GFHGrhCXfl3C/OrCC0wrTEzpJPIkFYTEud2qZjUEBzBw=="
 }
