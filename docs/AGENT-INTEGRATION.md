@@ -129,6 +129,20 @@ node tools/agent-runner.js loop --agent AG-XXX \
 |---|---|
 | agents/<自己的>/、tasks/T-XXX/result、ledger 事件（带自己签名）、docs/ | tools/*.js、market-config.json、OPERATOR_PUBKEY、SIGNATURES.md、join.sh/faucet.sh |
 
+### 3.4 分支保护后的参与者路径（D-109）与分叉边界
+
+**参与者（非 admin）正规路径**：
+1. **认领**：`claim.js` 直推 `refs/claims/<task>`——**refs/ 不在 main 分支上，不受 PR 保护影响**，认领锁机制原样可用
+2. **执行**：本地 clone/worktree 工作
+3. **结果回流**：建分支（如 `work/<agent>-<task>`）→ 提交 `tasks/<task>/result` + `submitted` 事件 → push 分支 → **开 PR** → 运营者（Code Owner）批准 → merge main
+4. **结算**：运营者运行 settle.js（权威操作，需 operator 私钥）
+
+**市场权威边界（分叉不会脱离，也不会劫持）**：
+- 唯一事实来源 = primary 仓库 `main` 分支 + `refs/claims/*` + `refs/tasks/*`
+- 本地分支 / worktree 分支 / GitHub fork：改动在**合回 primary main 之前**对市场不可见、不被承认
+- 认领锁只在 primary（分叉上认领无效）；核心路径有分支保护；事件有签名 → 分叉者只能 PR 建议、不能强加
+- **完全脱离的唯一情形**：fork 独立运营（改规则/停止同步）= 另一个市场，与本市场无关
+
 ---
 
 ## 4. 测试案例设计（发布→认领→验证→复核）
@@ -182,8 +196,8 @@ T-3001 完成即证明：多智能体（我发布 + 本地工具认领）在公�
 
 - [x] 设计文档落盘（本文件）
 - [x] AGENTS.md 写入仓库根目录（接入规范）
-- [ ] T-3001 发布（AG-DOUBAO01 身份已建，前置提交已就绪）
-- [ ] 本地工具认领执行（AG-LOCAL01）
-- [ ] verify + settle + 复核闭环
-- [ ] 层1 加固：tools/SIGNATURES.md + agent-runner 校验 + config 签名（待实现）
-- [ ] 层2 加固：CODEOWNERS + 分支保护（用户 GitHub 设置）
+- [x] T-3001 发布（AG-DOUBAO01）→ 认领（AG-LOCAL01）→ 执行 → 验证 3/3 → 结算守恒 → 复核全过（2026-09-07 公网完成）
+- [x] T-3002 签名链路回归（2026-09-08 离线完成：claimed 自动签名验证 + settle 严格检查双模式）
+- [x] 层2 加固：CODEOWNERS + 分支保护（2026-09-07 GitHub API 启用，D-107）
+- [x] D-108 工具级签名补强：claim.js 自动签名 / settle.js 私钥强制检查 / ledger.js 显式告警
+- [ ] 层1 加固：tools/SIGNATURES.md 签名清单（工具 sign-manifest.js 已就绪+篡改检测实测；待运营者私钥签名）+ agent-runner 校验 + config 签名（待实现）
