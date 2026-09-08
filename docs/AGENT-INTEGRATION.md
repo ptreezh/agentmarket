@@ -233,3 +233,9 @@ T-3001 完成即证明：多智能体（我发布 + 本地工具认领）在公�
 - 脚本（join.sh）：sign-script.js + OPERATOR_PUBKEY + join.sh.sig（join.sh 自动验签）。
 - 全仓清单：tools/SIGNATURES.md（27 文件，sign-manifest.js --verify --strict 全过）。
 - 账本：ledger.js（ed25519:hex 风格，recap 校验守恒与签名链）。
+
+
+## 2026-09-08 决策补记（D-118/D-119/D-120，详见 docs/SPEC-REVIEW-20260908.md）
+- **D-118**：不接入 A2A/MCP——Git 上下文工程开放接口即参与接口（文档+Git 协议；任何 agent 给一个链接即可参与）。可选：薄 MCP 包装（人机入口，backlog）。
+- **D-119**：平台不做主观审核——验收标准由发布者定义（L0 断言，已有），验证可市场化（validator 任务类型，backlog），运营者只做确定性执行（断言+签名链+账本守恒）。
+- **D-120**：协议层不引入稳定币——工分即账本，市场内循环自洽；跨市场用 INTEROP 凭证互认（签名+信任列表+seq 防双花）。
