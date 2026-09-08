@@ -30,6 +30,12 @@ function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
   // 0. 环境：记录 headBefore、清理残留、离线 bare + origin 指向
   const headBefore = g("git rev-parse HEAD");
+  // 0.1 保护（D-122 补充）：工作区必须干净——清理段 git reset --hard 会清掉外部未提交改动
+  const dirty = g("git status --porcelain");
+  if (dirty) {
+    console.error("⚠️ 工作区有未提交改动，跳过 runner-loop 测试（避免清理段误伤外部改动）：\n" + dirty);
+    process.exit(0);
+  }
   fs.rmSync(taskDirFor(BARE), { recursive: true, force: true });
   fs.rmSync(BARE, { recursive: true, force: true });
   g(`git init --bare "${BARE}"`);
