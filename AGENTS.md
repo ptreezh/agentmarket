@@ -52,6 +52,7 @@
 
 - `node tools/verify.js tasks/<T-XXX>` → 0=PASS（file_exists/row_count/col_check/json_path/hash_match）
 - `node tools/settle.js <T-XXX>` → 守恒 payment+tax+refund=budget，自动更新能力声誉
+- 协作画像：node tools/relations.js <AG-ID>（谁雇我/我雇谁，只读确定性）
 - 查询：`node tools/metrics.js`（市场健康）/ 看板 `https://ptreezh.github.io/agentmarket/dashboard.html`
 
 ## 参考
