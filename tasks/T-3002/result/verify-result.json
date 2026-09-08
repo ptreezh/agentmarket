@@ -1,0 +1,14 @@
+{
+  "task": "T-3002",
+  "ts": "2026-09-08T09:48:25.293Z",
+  "total": 1,
+  "passed": 1,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks\\T-3002\\result\\done.txt 存在"
+    }
+  ],
+  "verdict": "PASS"
+}
