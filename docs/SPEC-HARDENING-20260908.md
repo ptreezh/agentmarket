@@ -84,3 +84,6 @@ T3（最独立）→ T2（需先测 runner）→ T1（需用户确认密钥）�
 3. T2 保活形态：keepalive.cmd 原生（推荐，并列保留 .sh）——确认？
 4. T3 对 T-3002 的"settled 未签名"报失败项为**预期行为**（验证检测能力）——确认？
 5. T4 本轮实施骨架+测试（验证 D-110 可行性）——确认？
+
+
+> **2026-09-08 轮换标注（D-116）**：运营者密钥已轮换。旧指纹 `SHA256:Ixw2/0kh+kWcXS4S3u/ljMtC52WCY6kJ1Qo5JyArc3g=` 仅对 2026-09-08 之前的历史签名有效；当前权威指纹为 `SHA256:1fEPEHWqcdMYJ8cnwR++XIEAF+OsMp0j3Vj5Z1f0uaY=`（OPERATOR_PUBKEY 已更新，join.sh.sig / SIGNATURES.md 已重签）。
