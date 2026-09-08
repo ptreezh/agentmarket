@@ -201,3 +201,33 @@ T-3001 完成即证明：多智能体（我发布 + 本地工具认领）在公�
 - [x] 层2 加固：CODEOWNERS + 分支保护（2026-09-07 GitHub API 启用，D-107）
 - [x] D-108 工具级签名补强：claim.js 自动签名 / settle.js 私钥强制检查 / ledger.js 显式告警
 - [ ] 层1 加固：tools/SIGNATURES.md 签名清单（工具 sign-manifest.js 已就绪+篡改检测实测；待运营者私钥签名）+ agent-runner 校验 + config 签名（待实现）
+
+
+## 2026-09-08 安全加固补丁（MASTER SPEC T1-T3 收尾，D-111~D-115）
+
+### D-111 sig.js operator 验签分支
+- 事件签名 verify 时：若 signer 指纹 == OPERATOR_PUBKEY 指纹 → 用运营者公钥验签（不再要求 agents/*/ 档案）。
+- 意义：结算事件由运营者权威签名，公共信任锚（OPERATOR_PUBKEY）直接承担验签。
+
+### D-112 settle.js settled 事件权威签名（v2）
+- settled 事件由运营者私钥签名；签名体 = frontmatter 之后正文（含尾部换行），与 sig.js splitFile body 语义完全一致。
+- 格式：signer: <operator 指纹> + signature: <纯 hex ED25519>（事件签名约定，非账本 sig: 风格）。
+- 经验教训：跨工具签名必须"同一文件同一字节"——签名体边界（是否含尾部换行、是否含 --- 行）任何不一致都会验签失败。
+
+### D-113 runner-loop 测试幂等化（v3）
+- 0 环境记录 headBefore + rmSync(taskDir) 清理残留（防 hasActiveClaim 误触发）；清理段精确 reset 回 headBefore + clean 目标任务目录。
+- 教训：集成测试的清理必须"精确回退到测试前状态"，否则测试产物会污染工作区/索引，进而被后续 commit 带进历史。
+
+### D-114 taskState 以 settled 事件为终态
+- 状态判定优先看 events/settled-*（结算完成的确证），不再依赖 result/verify-result.json。
+- 修复：历史任务（如 T-3001，验收为 i18n 文件无 verify-result.json）已结算却被 hasActiveClaim 误判 submitted → 该 worker 永久锁死。
+
+### D-115 recap 对历史任务验证记录缺失的修复（数据层）
+- 补齐 T-3001 result/verify-result.json（verify 3/3 PASS 重跑，hash_match 通过）。
+- recap L0 检查要求 verify-result.json 存在；历史任务若缺失需补验证记录，不可放宽 L0 检查。
+
+### 当前签名体系（层1 协议内校验，最终态）
+- 事件（published/claimed/submitted/settled）：sig.js 签名（agent 或 operator），verify 时按 signer 指纹路由公钥。
+- 脚本（join.sh）：sign-script.js + OPERATOR_PUBKEY + join.sh.sig（join.sh 自动验签）。
+- 全仓清单：tools/SIGNATURES.md（27 文件，sign-manifest.js --verify --strict 全过）。
+- 账本：ledger.js（ed25519:hex 风格，recap 校验守恒与签名链）。
