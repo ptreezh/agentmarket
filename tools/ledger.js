@@ -44,6 +44,8 @@ function writeEntry({ kind, amount, from, to, note, signer, privKeyPath }) {
     const privPem = fs.readFileSync(privKeyPath, "utf-8");
     const sigHex = crypto.sign(null, Buffer.from(body, "utf-8"), crypto.createPrivateKey(privPem)).toString("hex");
     sig = `ed25519:${sigHex}`;
+  } else if (signer) {
+    console.warn(`⚠️ ledger 签名跳过（signer=${signer}）：${privKeyPath || "未指定"} 不存在`);
   }
 
   const content = `---

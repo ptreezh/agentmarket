@@ -89,6 +89,14 @@ const fname = `claimed-${ts}-${worker}.md`;
 fs.writeFileSync(path.join(evDir, fname),
   `---\nevent: claimed\ntask: ${taskId}\nworker: ${worker}\nop_id: ${fname.replace(/\.md$/, "")}\nts: ${new Date().toISOString()}\n---\n${worker} 认领 ${taskId}（ref 原子锁）。\n`);
 
+// 3b. 签名 claimed 事件（worker 私钥，D-19 事件链完整性；认领有效性已由 ref 锁定，签名失败不阻断）
+try {
+  g(`node tools/sig.js sign ${worker} "${taskDir}/events/${fname}"`);
+  console.log(`[${worker}] ✍️  claimed 事件已签名（${fname}）`);
+} catch (e) {
+  console.warn(`[${worker}] ⚠️ claimed 事件签名失败（不影响认领，ref 已锁定）: ${e.message.split("\n")[0]}`);
+}
+
 // 4. 提交事件（审计用，失败不影响认领有效性——ref 已证明）
 try {
   g(`git add "${taskDir}/events/${fname}"`);

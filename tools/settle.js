@@ -144,6 +144,18 @@ console.log(`✅ 守恒验证通过：payment(${payment}) + tax(${tax}) + refund
 const now = new Date().toISOString();
 const operatorPriv = path.join("keys", "operator", "private.pem");
 
+// 6-pre. 运营者私钥前置检查：结算为权威操作，账本+settled 事件必须签名（D-108）
+const allowUnsigned = process.argv.includes("--allow-unsigned");
+if (!fs.existsSync(operatorPriv)) {
+  if (!allowUnsigned) {
+    console.error("❌ 拒绝结算：缺运营者私钥 " + operatorPriv);
+    console.error("   结算会写入账本与 settled 事件，属权威操作，必须由运营者签名。");
+    console.error("   测试环境可用 --allow-unsigned 显式降级（账本/事件无签名，勿用于生产）。");
+    process.exit(1);
+  }
+  console.warn("⚠️ 运营者私钥缺失——--allow-unsigned 显式降级：账本与 settled 事件将无签名（仅限测试）");
+}
+
 // 6a. 报酬（pay）
 ledger.writeEntry({
   kind: "pay",
