@@ -2,7 +2,8 @@
 
 - 日期：2026-09-08
 - 决策引用：D-122（方向采纳，backlog 高优先级）
-- 状态：SPEC v0.1 草案 → 待 grill-down → 修订 → TDD
+- 状态：**v1.0 已实现（2026-09-09 TDD 全绿：10/10 用例 + 四套回归全绿）**
+- 实现：tools/verify.js v1.1（verification 段：解析/沙箱执行/环境白名单/超时进程树kill/路径穿越拒绝/警告）；tests/verification.test.js
 
 ## 1. 背景与问题
 
