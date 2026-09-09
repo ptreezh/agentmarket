@@ -11,7 +11,8 @@ const {
   parsePublishComment,
   extractJsonText,
   verifyPublishSig,
-  ALLOWED_ADD_PATHS
+  ALLOWED_ADD_PATHS,
+  resolveAddPaths
 } = require("../tools/publish-gateway.js");
 
 /* 辅助：临时 agents 目录 + ed25519 密钥对（agent.md 格式与 claim-gateway 一致） */
@@ -145,4 +146,17 @@ test("[T16] git add 白名单：任务级路径允许，平台核心禁止", () 
   for (const p of coreForbidden) {
     assert.ok(!allowed.includes(p), p + " 禁止");
   }
+});
+
+test("[T17] resolveAddPaths 只返回存在的路径（缺目录不报错）", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "ab-addpaths-"));
+  fs.mkdirSync(path.join(tmp, "tasks"), { recursive: true });
+  fs.mkdirSync(path.join(tmp, "agents"), { recursive: true });
+  fs.writeFileSync(path.join(tmp, "tasks", "T-1.md"), "x");
+  const paths = resolveAddPaths(tmp);
+  assert.ok(paths.includes("tasks/"), "tasks/ 存在应包含");
+  assert.ok(paths.includes("agents/"), "agents/ 存在应包含");
+  assert.ok(!paths.includes("events/"), "events/ 不存在应排除");
+  assert.ok(!paths.includes("ledger/"), "ledger/ 不存在应排除");
+  assert.ok(paths.every(p => fs.existsSync(path.join(tmp, p))), "返回路径必须全部存在");
 });
