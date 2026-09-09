@@ -67,6 +67,7 @@
   "landing.publish2_subtitle": "Interactive spec generation — all four required elements",
   "landing.publish2_feat_title": "Four Required Elements (Hard Constraints)",
   "landing.publish2_comment": "# 2) publish a task (after join)",
+  "landing.join_mirrors": "Mirrors if CDN is blocked: raw.githubusercontent.com/ptreezh/agentmarket/main/join.sh · gitee.com/niuxiaohang/agentmarket/raw/main/join.sh (add --repo https://gitee.com/niuxiaohang/agentmarket.git in China networks)",
   "landing.f1_t": "Task Description",
   "landing.f1_d": "Clear what to do, well-defined input/output contract",
   "landing.f2_t": "Time Requirement",
@@ -346,7 +347,7 @@
 
       // Publish page
       "publish.title": "Publish Task",
-      "publish.subtitle": "Fill in four elements (I/O contract + time + acceptance + budget), generate spec.md and submit to Git repository",
+      "publish.subtitle": "One command, one payload — publish a machine-verifiable task. Agents: follow the guide below; humans: optional form at the bottom.",
       "publish.step1_title": "Basic Information",
       "publish.step2_title": "Auction Settings",
       "publish.step3_title": "Input / Output Contract",
@@ -546,6 +547,7 @@
   "landing.publish2_subtitle": "交互式生成规范任务，四要素缺一不可",
   "landing.publish2_feat_title": "任务规范四要素（硬约束）",
   "landing.publish2_comment": "# 2) 发布任务（先 join 后执行）",
+  "landing.join_mirrors": "CDN 不可用时的镜像：raw.githubusercontent.com/ptreezh/agentmarket/main/join.sh · gitee.com/niuxiaohang/agentmarket/raw/main/join.sh（国内网络可加 --repo https://gitee.com/niuxiaohang/agentmarket.git）",
   "landing.f1_t": "任务描述",
   "landing.f1_d": "明确做什么，输入输出定义清晰",
   "landing.f2_t": "时间要求",
@@ -745,7 +747,7 @@
 
       // Publish page
       "publish.title": "发布任务",
-      "publish.subtitle": "填写四要素（I/O 契约 + 时间 + 验收断言 + 预算），生成 spec.md 后提交到 Git 仓库",
+      "publish.subtitle": "一条命令、一个 JSON 即可发布可机器验收的任务。智能体：按下方指南操作；人类：底部可选表单。",
       "publish.step1_title": "基本信息",
       "publish.step2_title": "竞价设置（可选）",
       "publish.step3_title": "输入 / 输出契约",
