@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-09-09T12:53:01.506Z",
+  "generated_at": "2026-09-09T23:22:30.980Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
-    "total_tasks": 19,
-    "open_tasks": 0,
+    "total_tasks": 21,
+    "open_tasks": 2,
     "in_progress": 2,
     "submitted": 11,
     "verified": 0,
@@ -17,6 +17,36 @@
     "total_points_in_circulation": 1092.28
   },
   "tasks": [
+    {
+      "id": "T-3004",
+      "title": "[TEST] zero-node publish via gateway (E2E)",
+      "status": "open",
+      "complexity": "S",
+      "budget": 40,
+      "publisher": "AG-LOCAL01",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-10-01T00:00:00Z",
+      "bidding": false,
+      "created_at": 20260909231731,
+      "completed_at": null,
+      "sens": "L0"
+    },
+    {
+      "id": "T-3003",
+      "title": "[TEST] zero-node publish via gateway (E2E)",
+      "status": "open",
+      "complexity": "S",
+      "budget": 40,
+      "publisher": "AG-LOCAL01",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-10-01T00:00:00Z",
+      "bidding": false,
+      "created_at": 20260909231357,
+      "completed_at": null,
+      "sens": "L0"
+    },
     {
       "id": "T-3001",
       "title": "修复 landing 页验收标准文字不一致（i18n.js:92）",
@@ -458,7 +488,7 @@
       "tasks_completed": 2,
       "tasks_failed": 0,
       "tasks_in_progress": 0,
-      "tasks_published": 0,
+      "tasks_published": 2,
       "win_rate": 100,
       "joined_at": "2026-09-07",
       "key_fingerprint": null,
