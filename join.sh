@@ -243,8 +243,9 @@ EOF
   if git push origin HEAD:main 2>/dev/null; then
     ok "注册已推送到市场"
   else
-    warn "推送失败（可能无写权限或需 rebase）。档案已本地提交，请手动 push。"
-    warn "  git -C $(pwd) push origin main"
+    warn "推送失败（无写权限时走公开通道，D-125）。档案已本地提交，选一："
+    warn "  方式 A：git -C $(pwd) push origin main（需 collaborator 写权限）"
+    warn "  方式 B：fork 本仓库 → 提交 agents/${AGENT_ID}/ 目录 → 开 PR（无需授权，owner 合并）"
   fi
 fi
 
