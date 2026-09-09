@@ -66,7 +66,7 @@ body {
 a { color: var(--accent2); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* 导航栏 */
+/* navbar */
 .nav {
   background: var(--bg2);
   border-bottom: 1px solid var(--border);
@@ -114,15 +114,15 @@ a:hover { text-decoration: underline; }
 }
 .btn-refresh:hover { border-color: var(--accent); color: var(--accent2); }
 
-/* 容器 */
+/* container */
 .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
 
-/* 页面标题 */
+/* page title */
 .page-header { margin-bottom: 24px; }
 .page-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
 .page-header p { color: var(--text2); font-size: 14px; }
 
-/* 概览卡片 */
+/* overview cards */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -146,7 +146,7 @@ a:hover { text-decoration: underline; }
 .stat-value.cyan { color: var(--cyan); }
 .stat-sub { font-size: 11px; color: var(--text2); margin-top: 4px; }
 
-/* 主内容区 */
+/* main content */
 .main-grid {
   display: grid;
   grid-template-columns: 1fr 340px;
@@ -154,7 +154,7 @@ a:hover { text-decoration: underline; }
 }
 @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
 
-/* 卡片 */
+/* cards */
 .panel {
   background: var(--card);
   border: 1px solid var(--border);
@@ -172,7 +172,7 @@ a:hover { text-decoration: underline; }
 .panel-title { font-size: 15px; font-weight: 600; }
 .panel-body { padding: 0; }
 
-/* 筛选按钮 */
+/* filter buttons */
 .filter-bar {
   display: flex;
   gap: 8px;
@@ -195,7 +195,7 @@ a:hover { text-decoration: underline; }
   color: #fff;
 }
 
-/* 任务表格 */
+/* task table */
 .task-table { width: 100%; border-collapse: collapse; }
 .task-table th {
   text-align: left;
@@ -233,7 +233,7 @@ a:hover { text-decoration: underline; }
 .badge.expired { background: rgba(239,68,68,0.1); color: var(--red); }
 .badge.bidding { background: rgba(6,182,212,0.15); color: var(--cyan); margin-left: 4px; }
 
-/* 排行榜 */
+/* leaderboard */
 .rank-list { padding: 8px 0; }
 .rank-item {
   display: flex;
@@ -273,7 +273,7 @@ a:hover { text-decoration: underline; }
 }
 .rep-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; }
 
-/* 账本列表 */
+/* ledger list */
 .ledger-list { max-height: 400px; overflow-y: auto; }
 .ledger-item {
   padding: 10px 18px;
@@ -288,7 +288,7 @@ a:hover { text-decoration: underline; }
 .ledger-amount.negative { color: var(--red); }
 .ledger-meta { color: var(--text2); font-size: 11px; }
 
-/* 市场参数 */
+/* market params */
 .config-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -299,7 +299,7 @@ a:hover { text-decoration: underline; }
 .config-label { color: var(--text2); }
 .config-value { font-weight: 600; color: var(--text); }
 
-/* 加载/错误 */
+/* loading/error */
 .loading { text-align: center; padding: 60px 20px; color: var(--text2); }
 .loading-spinner {
   width: 32px; height: 32px;
@@ -312,10 +312,10 @@ a:hover { text-decoration: underline; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .error { text-align: center; padding: 40px 20px; color: var(--red); }
 
-/* 表格响应式 */
+/* table responsive */
 .table-wrap { overflow-x: auto; }
 
-/* 页脚 */
+/* footer */
 .footer {
   text-align: center;
   padding: 24px;
@@ -342,7 +342,7 @@ a:hover { text-decoration: underline; }
     <div style="display:flex;align-items:center;gap:4px;font-size:13px;">
       <button id="btn-lang-en" onclick="setLang('en')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">EN</button>
       <span style="color:var(--border);">|</span>
-      <button id="btn-lang-zh" onclick="setLang('zh')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">中</button>
+      <button id="btn-lang-zh" onclick="setLang('zh')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">ZH</button>
     </div>
     <button class="btn-refresh" onclick="loadData(true)">🔄 <span data-i18n="common.refresh">Refresh</span></button>
   </div>

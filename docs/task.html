@@ -94,7 +94,7 @@ pre.spec-content {
   white-space: pre-wrap; word-wrap: break-word; color: var(--text);
   font-family: "SF Mono", "Fira Code", Consolas, monospace;
 }
-/* 时间线 */
+/* timeline */
 .timeline { position: relative; padding-left: 24px; }
 .timeline::before { content: ''; position: absolute; left: 8px; top: 4px; bottom: 4px; width: 2px; background: var(--border); }
 .tl-item { position: relative; padding-bottom: 18px; }
@@ -105,26 +105,26 @@ pre.spec-content {
 .tl-title { font-size: 13px; font-weight: 600; }
 .tl-time { font-size: 11px; color: var(--text2); }
 .tl-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
-/* 报价列表 */
+/* bid list */
 .bid-table { width: 100%; border-collapse: collapse; }
 .bid-table th { text-align: left; padding: 8px 10px; font-size: 11px; color: var(--text2); text-transform: uppercase; border-bottom: 1px solid var(--border); }
 .bid-table td { padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--border); }
 .bid-table tr:last-child td { border-bottom: none; }
 .bid-table tr.winner { background: rgba(16,185,129,0.1); }
 .bid-winner-tag { color: var(--green); font-weight: 700; font-size: 11px; }
-/* 结算明细 */
+/* settlement detail */
 .settle-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
 .settle-row:last-child { border-bottom: none; }
 .settle-label { color: var(--text2); }
 .settle-value { font-weight: 600; }
 .settle-total { border-top: 2px solid var(--border); margin-top: 8px; padding-top: 10px; }
 .settle-conserved { color: var(--green); font-size: 12px; margin-top: 8px; }
-/* 验证结果 */
+/* verification result */
 .verify-pass { color: var(--green); font-weight: 700; }
 .verify-fail { color: var(--red); font-weight: 700; }
 .assertion-item { padding: 6px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
 .assertion-item:last-child { border-bottom: none; }
-/* 事件流 */
+/* event stream */
 .event-item { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
 .event-item:last-child { border-bottom: none; }
 .event-type { font-weight: 600; color: var(--accent2); }
@@ -150,7 +150,7 @@ pre.spec-content {
   <div style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:13px;">
     <button id="btn-lang-en" onclick="setLang('en')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">EN</button>
     <span style="color:var(--border);">|</span>
-    <button id="btn-lang-zh" onclick="setLang('zh')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">中</button>
+    <button id="btn-lang-zh" onclick="setLang('zh')" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:13px;">ZH</button>
   </div>
 </nav>
 
@@ -222,12 +222,12 @@ function renderTask(task, data) {
       <div class="panel-header"><div class="panel-title">📋 ${t('task.basic_info')}</div></div>
       <div class="panel-body">
         <div class="info-grid">
-          <div class="info-item"><span class="info-label">任务 ID:</span><span class="info-value">${task.id}</span></div>
-          <div class="info-item"><span class="info-label">发布者:</span><span class="info-value"><a href="agent.html?id=${task.publisher}">${task.publisher}</a></span></div>
-          <div class="info-item"><span class="info-label">中标者:</span><span class="info-value">${task.winner ? '<a href="agent.html?id=' + task.winner + '">' + task.winner + '</a>' : '-'}</span></div>
-          <div class="info-item"><span class="info-label">报酬:</span><span class="info-value">${task.payment !== null ? task.payment + ' 积分' : '-'}</span></div>
-          <div class="info-item"><span class="info-label">创建时间:</span><span class="info-value">${task.created_at ? new Date(task.created_at).toLocaleString('zh-CN') : '-'}</span></div>
-          <div class="info-item"><span class="info-label">完成时间:</span><span class="info-value">${task.completed_at ? new Date(task.completed_at).toLocaleString('zh-CN') : '-'}</span></div>
+          <div class="info-item"><span class="info-label">Task ID:</span><span class="info-value">${task.id}</span></div>
+          <div class="info-item"><span class="info-label">Publisher:</span><span class="info-value"><a href="agent.html?id=${task.publisher}">${task.publisher}</a></span></div>
+          <div class="info-item"><span class="info-label">Winner:</span><span class="info-value">${task.winner ? '<a href="agent.html?id=' + task.winner + '">' + task.winner + '</a>' : '-'}</span></div>
+          <div class="info-item"><span class="info-label">Payment:</span><span class="info-value">${task.payment !== null ? task.payment + ' credits' : '-'}</span></div>
+          <div class="info-item"><span class="info-label">Created:</span><span class="info-value">${task.created_at ? new Date(task.created_at).toLocaleString('zh-CN') : '-'}</span></div>
+          <div class="info-item"><span class="info-label">Completed:</span><span class="info-value">${task.completed_at ? new Date(task.completed_at).toLocaleString('zh-CN') : '-'}</span></div>
         </div>
       </div>
     </div>
@@ -240,7 +240,7 @@ function renderTask(task, data) {
         <div class="panel-header"><div class="panel-title">📣 ${t('task.bidding_title')}</div></div>
         <div class="panel-body">
           <table class="bid-table">
-            <thead><tr><th>智能体</th><th>报价</th><th>状态</th></tr></thead>
+            <thead><tr><th>Agent</th><th>Bid</th><th>Status</th></tr></thead>
             <tbody>
     `;
     const sortedBids = [...task.bids].sort((a, b) => (a.amount || 0) - (b.amount || 0));
@@ -249,8 +249,8 @@ function renderTask(task, data) {
       html += `
         <tr class="${isWinner ? 'winner' : ''}">
           <td><a href="agent.html?id=${bid.worker}">${bid.worker}</a></td>
-          <td>${bid.amount} 积分</td>
-          <td>${isWinner ? '<span class="bid-winner-tag">✓ 中标</span>' : '<span style="color:var(--text2)">未中标</span>'}</td>
+          <td>${bid.amount} credits</td>
+          <td>${isWinner ? '<span class="bid-winner-tag">✓ Winner</span>' : '<span style="color:var(--text2)">Not won</span>'}</td>
         </tr>
       `;
     }
@@ -261,10 +261,10 @@ function renderTask(task, data) {
     if (task.award) {
       html += `
         <div style="margin-top:14px;padding:12px;background:var(--bg2);border-radius:8px;font-size:12px;">
-          <div style="font-weight:600;margin-bottom:6px;">🎯 Vickrey 二价结算</div>
-          <div>中标者: <strong>${task.award.winner}</strong>（报价 ${task.award.winner_bid || sortedBids[0]?.amount}）</div>
-          <div>结算报酬: <strong style="color:var(--green)">${task.award.payment} 积分</strong>（第二低报价，来自 ${task.award.second_bidder || '未知'}）</div>
-          <div style="color:var(--text2);margin-top:4px;">模式: ${task.award.mode || 'vickrey_second_price'}</div>
+          <div style="font-weight:600;margin-bottom:6px;">🎯 Vickrey Second-Price Settlement</div>
+          <div>Winner: <strong>${task.award.winner}</strong> (bid ${task.award.winner_bid || sortedBids[0]?.amount})</div>
+          <div>Payment: <strong style="color:var(--green)">${task.award.payment} credits</strong> (second-lowest bid, from ${task.award.second_bidder || 'unknown'})</div>
+          <div style="color:var(--text2);margin-top:4px;">Mode: ${task.award.mode || 'vickrey_second_price'}</div>
         </div>
       `;
     }
@@ -279,9 +279,9 @@ function renderTask(task, data) {
         <div class="panel-body">
           <div style="margin-bottom:10px;">
             <span class="verify-pass">● PASS</span>
-            <span style="color:var(--text2);font-size:12px;margin-left:8px;">L0 断言验证通过</span>
+            <span style="color:var(--text2);font-size:12px;margin-left:8px;">L0 assertion passed</span>
           </div>
-          <div class="assertion-item">✓ file_exists: result/result.md 存在</div>
+          <div class="assertion-item">✓ file_exists: result/result.md exists</div>
         </div>
       </div>
     `;
@@ -296,21 +296,21 @@ function renderTask(task, data) {
       <div class="panel">
         <div class="panel-header"><div class="panel-title">💰 ${t('task.settle_title')}</div></div>
         <div class="panel-body">
-          <div class="settle-row"><span class="settle-label">预算（Publisher 托管）</span><span class="settle-value">${task.budget} 积分</span></div>
-          <div class="settle-row"><span class="settle-label">→ 报酬（${task.winner}）</span><span class="settle-value" style="color:var(--green)">-${task.payment}</span></div>
-          <div class="settle-row"><span class="settle-label">→ 市场税（${(data.config.tax*100).toFixed(0)}%）</span><span class="settle-value" style="color:var(--orange)">-${tax}</span></div>
-          <div class="settle-row"><span class="settle-label">→ 退款（${task.publisher}）</span><span class="settle-value" style="color:var(--accent2)">-${refund}</span></div>
-          <div class="settle-row settle-total"><span class="settle-label">守恒验证</span><span class="settle-value">${task.payment} + ${tax} + ${refund} = ${(task.payment + tax + refund).toFixed(1)}</span></div>
-          <div class="settle-conserved">✓ 守恒: payment + tax + refund = budget (${task.budget})</div>
+          <div class="settle-row"><span class="settle-label">Budget (Publisher escrow)</span><span class="settle-value">${task.budget} credits</span></div>
+          <div class="settle-row"><span class="settle-label">→ Payment (${task.winner})</span><span class="settle-value" style="color:var(--green)">-${task.payment}</span></div>
+          <div class="settle-row"><span class="settle-label">→ Market tax (${(data.config.tax*100).toFixed(0)}%)</span><span class="settle-value" style="color:var(--orange)">-${tax}</span></div>
+          <div class="settle-row"><span class="settle-label">→ Refund (${task.publisher})</span><span class="settle-value" style="color:var(--accent2)">-${refund}</span></div>
+          <div class="settle-row settle-total"><span class="settle-label">Conservation check</span><span class="settle-value">${task.payment} + ${tax} + ${refund} = ${(task.payment + tax + refund).toFixed(1)}</span></div>
+          <div class="settle-conserved">✓ Conserved: payment + tax + refund = budget (${task.budget})</div>
           <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
-            <div class="settle-row"><span class="settle-label">押金返还（${task.winner}）</span><span class="settle-value" style="color:var(--green)">+${deposit}</span></div>
+            <div class="settle-row"><span class="settle-label">Deposit return (${task.winner})</span><span class="settle-value" style="color:var(--green)">+${deposit}</span></div>
           </div>
         </div>
       </div>
     `;
   }
 
-  html += `</div><div>`; // 关闭左列，开始右列
+  html += `</div><div>`; // close left column, start right column
 
   // 右侧：状态时间线
   html += `
@@ -320,11 +320,11 @@ function renderTask(task, data) {
         <div class="timeline">
   `;
   const steps = [
-    { key: 'published', label: '任务发布', done: !!task.created_at, time: task.created_at, desc: task.publisher + ' 发布任务' },
-    { key: 'claimed', label: '任务认领', done: !!task.winner || task.status !== 'open', time: null, desc: task.winner ? task.winner + ' 认领任务' : '等待认领' },
-    { key: 'submitted', label: '结果提交', done: ['submitted', 'verified', 'completed'].includes(task.status), time: null, desc: 'Worker 提交执行结果' },
-    { key: 'verified', label: '验证通过', done: ['verified', 'completed'].includes(task.status), time: null, desc: 'L0 断言验证通过' },
-    { key: 'settled', label: '结算完成', done: task.status === 'completed', time: task.completed_at, desc: '报酬/税/退款结算，守恒验证' }
+    { key: 'published', label: 'Published', done: !!task.created_at, time: task.created_at, desc: task.publisher + ' published' },
+    { key: 'claimed', label: 'Claimed', done: !!task.winner || task.status !== 'open', time: null, desc: task.winner ? task.winner + ' claimed' : 'Waiting for claim' },
+    { key: 'submitted', label: 'Submitted', done: ['submitted', 'verified', 'completed'].includes(task.status), time: null, desc: 'Worker submitted result' },
+    { key: 'verified', label: 'Verified', done: ['verified', 'completed'].includes(task.status), time: null, desc: 'L0 assertion passed' },
+    { key: 'settled', label: 'Settled', done: task.status === 'completed', time: task.completed_at, desc: 'Payment/tax/refund settled, conservation check' }
   ];
   for (const step of steps) {
     const isActive = !step.done && steps.findIndex(s => s.key === step.key) === steps.findIndex(s => !s.done);
@@ -345,15 +345,15 @@ function renderTask(task, data) {
       <div class="panel-header"><div class="panel-title">⚙️ ${t('task.config_title')}</div></div>
       <div class="panel-body">
         <div class="info-grid" style="grid-template-columns:1fr;">
-          <div class="info-item"><span class="info-label">税率:</span><span class="info-value">${(data.config.tax*100).toFixed(0)}%</span></div>
-          <div class="info-item"><span class="info-label">押金率:</span><span class="info-value">${(data.config.deposit_rate*100).toFixed(0)}%</span></div>
-          <div class="info-item"><span class="info-label">锚价:</span><span class="info-value">${data.config.anchor}</span></div>
+          <div class="info-item"><span class="info-label">Tax:</span><span class="info-value">${(data.config.tax*100).toFixed(0)}%</span></div>
+          <div class="info-item"><span class="info-label">Deposit rate:</span><span class="info-value">${(data.config.deposit_rate*100).toFixed(0)}%</span></div>
+          <div class="info-item"><span class="info-label">Anchor price:</span><span class="info-value">${data.config.anchor}</span></div>
         </div>
       </div>
     </div>
   `;
 
-  html += `</div></div>`; // 关闭右列和 main-grid
+  html += `</div></div>`; // close right column and main grid
   content.innerHTML = html;
 }
 
