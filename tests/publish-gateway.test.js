@@ -10,7 +10,8 @@ const path = require("path");
 const {
   parsePublishComment,
   extractJsonText,
-  verifyPublishSig
+  verifyPublishSig,
+  ALLOWED_ADD_PATHS
 } = require("../tools/publish-gateway.js");
 
 /* 辅助：临时 agents 目录 + ed25519 密钥对（agent.md 格式与 claim-gateway 一致） */
@@ -133,4 +134,15 @@ test("[T15] 与 claim-sign 消息风格一致性：不同 payload 不同签名",
   assert.notStrictEqual(sig1, sig2);
   assert.strictEqual(verifyPublishSig(path.join(dir, "agents"), '{"title":"A"}', "AG-TEST", sig1), true);
   assert.strictEqual(verifyPublishSig(path.join(dir, "agents"), '{"title":"A"}', "AG-TEST", sig2), false);
+});
+
+test("[T16] git add 白名单：任务级路径允许，平台核心禁止", () => {
+  const allowed = ALLOWED_ADD_PATHS;
+  assert.ok(allowed.includes("tasks/"), "tasks/ 允许");
+  assert.ok(allowed.includes("events/"), "events/ 允许");
+  assert.ok(allowed.includes("ledger/"), "ledger/ 允许");
+  const coreForbidden = ["tools/", "market-config.json", ".github/", "join.sh", "faucet.sh", "PROTOCOL.md", "AGENTS.md"];
+  for (const p of coreForbidden) {
+    assert.ok(!allowed.includes(p), p + " 禁止");
+  }
 });

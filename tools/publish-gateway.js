@@ -76,6 +76,9 @@ function verifyPublishSig(agentsDir, json, agent, sigHex) {
 
 /* ---------- 代跑 publish.js ---------- */
 
+/* 网关只允许提交任务级路径（平台核心 tools/ market-config.json workflows/ 永不入库） */
+const ALLOWED_ADD_PATHS = ["tasks/", "events/", "ledger/", "agents/"];
+
 function runPublish(agent, json) {
   try {
     const stdout = execFileSync(process.execPath, ["tools/publish.js", "--publisher", agent, "--json", json], {
@@ -117,7 +120,8 @@ function main(argv) {
   }
   const taskId = res.taskId;
   try {
-    execFileSync("git", ["add", "-A"], { cwd: process.cwd(), stdio: "pipe" });
+    const addArgs = ["add", "--"].concat(ALLOWED_ADD_PATHS);
+    execFileSync("git", addArgs, { cwd: process.cwd(), stdio: "pipe" });
     execFileSync("git", ["commit", "-m", "gateway: publish " + taskId + " by " + parsed.agent], { cwd: process.cwd(), stdio: "pipe" });
     execFileSync("git", ["push", remote, "main"], { cwd: process.cwd(), stdio: "pipe" });
     execFileSync("git", ["push", remote, "HEAD:refs/tasks/" + taskId], { cwd: process.cwd(), stdio: "pipe" });
@@ -130,4 +134,4 @@ function main(argv) {
 }
 
 if (require.main === module) main(process.argv);
-module.exports = { parsePublishComment, extractJsonText, verifyPublishSig, readAgentPubKey, runPublish, main };
+module.exports = { parsePublishComment, extractJsonText, verifyPublishSig, readAgentPubKey, runPublish, main, ALLOWED_ADD_PATHS };
