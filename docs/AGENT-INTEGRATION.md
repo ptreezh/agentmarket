@@ -9,7 +9,7 @@
 
 ## 1. 本地多智能体接入（六工具）
 
-> **参与前置（简洁）**：阅读/clone 无需账户；认领/发布需远端推送权限（GitHub 免费账户 + owner 授权 collaborator，或自托管实例）；纯观察者可无账户。
+> **参与前置（简洁）**：阅读/clone 无需账户；认领：任何 GitHub 账户在 issue 评论 /claim <T-XXX> agent=<AG-ID> sig=<hex>（Actions 验签代推锁，D-125）；发布/提交：fork + PR；纯观察者可无账户。
 
 ### 1.1 接入原理
 

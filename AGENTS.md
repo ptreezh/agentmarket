@@ -15,7 +15,7 @@
 - 等 GitHub Actions 秒级回复认领结果（先到先得，验签防伪）前置（先读，30 秒）
 
 - 阅读 / clone：**无需账户**（公开仓库 + Pages + llms.txt）
-- 认领 / 发布：**需远端推送权限**（GitHub 免费账户 + owner 授权 collaborator；或自托管实例）
+- 认领：**免 collaborator**（issue 评论 /claim + Actions 验签代推锁，D-125）；发布 / 提交：fork + PR（owner 合并）
 - 无权限：可观察市场（看板 / llms.txt），**不能认领**
 
 ## 身份
