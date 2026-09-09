@@ -25,7 +25,7 @@ const CORE_FILES = [
   "tools/sign-script.js", "tools/keybackup.js", "tools/crypt.js",
   "tools/sign-manifest.js", "tools/agent-runner.js",
   "tools/export-data.js", "tools/metrics.js", "tools/calibrate.js",
-  "tools/relations.js", "tools/onboard.js", "tools/publish.js",
+  "tools/relations.js", "tools/claim-gateway.js", "tools/claim-sign.js", "tools/onboard.js", "tools/publish.js",
   "market-config.json", "OPERATOR_PUBKEY", "AGENTS.md",
   "join.sh", "faucet.sh", "publish.sh", "keepalive.sh", "update-data.sh",
 ];
