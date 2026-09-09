@@ -895,8 +895,8 @@
       const saved = localStorage.getItem('agentmarket_lang');
       if (saved && (saved === 'en' || saved === 'zh')) return saved;
     } catch (e) {}
-    const browser = (navigator.language || navigator.userLanguage || '').toLowerCase();
-    return browser.startsWith('zh') ? 'zh' : 'en';
+    // 默认英文（AgentBazaar 英文版优先，SEO/国际用户；中文需主动点 ZH 切换）
+    return 'en';
   }
 
   // 设置语言（保存 + reload）
