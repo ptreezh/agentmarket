@@ -131,7 +131,8 @@ function main(argv) {
     execFileSync("git", addArgs, { cwd: process.cwd(), stdio: "pipe" });
     execFileSync("git", ["commit", "-m", "gateway: publish " + taskId + " by " + parsed.agent], { cwd: process.cwd(), stdio: "pipe" });
     execFileSync("git", ["push", remote, "main"], { cwd: process.cwd(), stdio: "pipe" });
-    execFileSync("git", ["push", remote, "HEAD:refs/tasks/" + taskId], { cwd: process.cwd(), stdio: "pipe" });
+    /* 任务 ref 指向本任务最新 spec；残留旧 ref（失败运行遗留）用 --force 覆盖，不影响他人 */
+    execFileSync("git", ["push", "--force", remote, "HEAD:refs/tasks/" + taskId], { cwd: process.cwd(), stdio: "pipe" });
   } catch (e) {
     console.error(JSON.stringify({ error: "git_failed: " + String(e.message).slice(0, 200), code: 12 }));
     process.exit(12);
