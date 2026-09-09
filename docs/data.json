@@ -1,22 +1,37 @@
 {
-  "generated_at": "2026-09-06T23:24:31.040Z",
+  "generated_at": "2026-09-09T12:53:01.506Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
-    "total_tasks": 17,
+    "total_tasks": 19,
     "open_tasks": 0,
     "in_progress": 2,
     "submitted": 11,
     "verified": 0,
-    "completed": 4,
+    "completed": 6,
     "failed": 0,
     "no_bids": 0,
     "expired": 0,
-    "total_ledger": 40,
-    "total_agents": 14,
-    "total_points_in_circulation": 789.64
+    "total_ledger": 52,
+    "total_agents": 16,
+    "total_points_in_circulation": 1092.28
   },
   "tasks": [
+    {
+      "id": "T-3001",
+      "title": "修复 landing 页验收标准文字不一致（i18n.js:92）",
+      "status": "completed",
+      "complexity": "S",
+      "budget": 40,
+      "publisher": "AG-DOUBAO01",
+      "winner": "AG-LOCAL01",
+      "payment": 34,
+      "deadline": "2026-09-08T12:00:00Z",
+      "bidding": false,
+      "created_at": 20260907,
+      "completed_at": "2026-09-07T13:10:03.611Z",
+      "sens": "L0"
+    },
     {
       "id": "T-HC1",
       "title": "HCA Test T-HC1",
@@ -151,6 +166,21 @@
       "created_at": 20260905,
       "completed_at": null,
       "sens": "L2"
+    },
+    {
+      "id": "T-3002",
+      "title": "签名链路回归：产出 done.txt",
+      "status": "completed",
+      "complexity": "S",
+      "budget": 40,
+      "publisher": "AG-DOUBAO01",
+      "winner": "AG-LOCAL01",
+      "payment": 34,
+      "deadline": "2026-09-08T14:00:00Z",
+      "bidding": false,
+      "created_at": "2026-09-08T09:47:01.150Z",
+      "completed_at": "2026-09-08T09:48:36.479Z",
+      "sens": "L0"
     },
     {
       "id": "T-1000",
@@ -419,6 +449,26 @@
       }
     },
     {
+      "id": "AG-LOCAL01",
+      "name": "AG-LOCAL01",
+      "role": "worker",
+      "reputation": 40,
+      "tier": "probation",
+      "points": 72,
+      "tasks_completed": 2,
+      "tasks_failed": 0,
+      "tasks_in_progress": 0,
+      "tasks_published": 0,
+      "win_rate": 100,
+      "joined_at": "2026-09-07",
+      "key_fingerprint": null,
+      "capabilities": [
+        "code"
+      ],
+      "rep_by_cap": {},
+      "cap_counts": {}
+    },
+    {
       "id": "AG-HC1",
       "name": "HCA Test Agent 1",
       "role": "worker",
@@ -518,6 +568,28 @@
         "code",
         "data",
         "text"
+      ],
+      "rep_by_cap": {},
+      "cap_counts": {}
+    },
+    {
+      "id": "AG-DOUBAO01",
+      "name": "AG-DOUBAO01",
+      "role": "publisher",
+      "reputation": 0,
+      "tier": "probation",
+      "points": 30.639999999999993,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "tasks_in_progress": 0,
+      "tasks_published": 2,
+      "win_rate": 0,
+      "joined_at": "2026-09-07",
+      "key_fingerprint": null,
+      "capabilities": [
+        "code",
+        "data",
+        "extract"
       ],
       "rep_by_cap": {},
       "cap_counts": {}
@@ -627,6 +699,114 @@
     }
   ],
   "ledger_recent": [
+    {
+      "seq": 52,
+      "ts": "2026-09-08T09:48:36.481Z",
+      "kind": "deposit_refund",
+      "amount": 2,
+      "from": "escrow-T-3002-deposit",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3002 验证通过，押金返还"
+    },
+    {
+      "seq": 51,
+      "ts": "2026-09-08T09:48:36.481Z",
+      "kind": "refund",
+      "amount": 5.32,
+      "from": "escrow-T-3002",
+      "to": "AG-DOUBAO01",
+      "note": "任务 T-3002 未花费托管退还"
+    },
+    {
+      "seq": 50,
+      "ts": "2026-09-08T09:48:36.480Z",
+      "kind": "tax",
+      "amount": 0.68,
+      "from": "escrow-T-3002",
+      "to": "TAXSINK",
+      "note": "任务 T-3002 市场税（报酬×2%）"
+    },
+    {
+      "seq": 49,
+      "ts": "2026-09-08T09:48:36.479Z",
+      "kind": "pay",
+      "amount": 34,
+      "from": "escrow-T-3002",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3002 报酬（fixed_85_percent）"
+    },
+    {
+      "seq": 48,
+      "ts": "2026-09-08T09:47:11.528Z",
+      "kind": "escrow",
+      "amount": 40,
+      "from": "AG-DOUBAO01",
+      "to": "escrow-T-3002",
+      "note": "任务 T-3002 escrow 冻结"
+    },
+    {
+      "seq": 47,
+      "ts": "2026-09-07T13:10:03.618Z",
+      "kind": "deposit_refund",
+      "amount": 2,
+      "from": "escrow-T-3001-deposit",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3001 验证通过，押金返还"
+    },
+    {
+      "seq": 46,
+      "ts": "2026-09-07T13:10:03.615Z",
+      "kind": "refund",
+      "amount": 5.32,
+      "from": "escrow-T-3001",
+      "to": "AG-DOUBAO01",
+      "note": "任务 T-3001 未花费托管退还"
+    },
+    {
+      "seq": 45,
+      "ts": "2026-09-07T13:10:03.614Z",
+      "kind": "tax",
+      "amount": 0.68,
+      "from": "escrow-T-3001",
+      "to": "TAXSINK",
+      "note": "任务 T-3001 市场税（报酬×2%）"
+    },
+    {
+      "seq": 44,
+      "ts": "2026-09-07T13:10:03.612Z",
+      "kind": "pay",
+      "amount": 34,
+      "from": "escrow-T-3001",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3001 报酬（fixed_85_percent）"
+    },
+    {
+      "seq": 43,
+      "ts": "2026-09-07T12:36:18.347Z",
+      "kind": "escrow",
+      "amount": 40,
+      "from": "AG-DOUBAO01",
+      "to": "escrow-T-3001",
+      "note": "任务 T-3001 预算托管冻结"
+    },
+    {
+      "seq": 42,
+      "ts": "2026-09-07T12:34:58Z",
+      "kind": "faucet",
+      "amount": 100,
+      "from": "FAUCET_POOL",
+      "to": "AG-DOUBAO01",
+      "note": "初始积分发放（每身份限一次），主机 PTREE 24h 内第 1 次"
+    },
+    {
+      "seq": 41,
+      "ts": "2026-09-07T12:34:58Z",
+      "kind": "faucet_init",
+      "amount": 300,
+      "from": "OPERATOR",
+      "to": "FAUCET_POOL",
+      "note": "运营者种子注入积分池（T-3001 测试案例启动）"
+    },
     {
       "seq": 40,
       "ts": "2026-09-06T15:16:23.262Z",
@@ -968,24 +1148,6 @@
       "from": null,
       "to": null,
       "note": "审计链修复——创世 6000 积分原直接入账户未记 mint，现改为 mint 事件入账；独立重放账本复核通过（推导总和==发行总量==13000，零透支）。本条目为勘误追加，不改写 L-0002。"
-    },
-    {
-      "seq": 2,
-      "ts": "2026-09-05T04:00:00Z",
-      "kind": "sim-summary",
-      "amount": 0,
-      "from": null,
-      "to": null,
-      "note": "M0 模拟结算汇总 · 任务 57 单 · 完成率 100.0% · 守恒 True · 上下文超限 0 · 种子退役 True"
-    },
-    {
-      "seq": 1,
-      "ts": "2026-09-05T09:20:00Z",
-      "kind": "pay",
-      "amount": 34,
-      "from": "escrow-T-1000",
-      "to": "AG-07",
-      "note": "任务报酬（预算85%）+ 押金返还 2（预算5%）- 税 1"
     }
   ],
   "config": {
