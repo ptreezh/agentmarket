@@ -243,5 +243,20 @@ console.log("T10: 路径穿越 → 拒绝");
   cleanup(dir);
 }
 
+console.log("T11: 未知断言类型（旧名 file_hash）→ FAIL 拒绝");
+{
+  const dir = makeTask({
+    acceptance: ["file_hash, path: result/ok.txt"],
+    files: [{ path: "result/ok.txt", content: "x" }],
+  });
+  const r = runVerify(dir);
+  const vr = readVResult(dir);
+  check("exit 1", r.code === 1, `code=${r.code} out=${r.out.slice(0, 60)}`);
+  check("verdict FAIL", vr && vr.verdict === "FAIL", `verdict=${vr && vr.verdict}`);
+  check("错误含未知类型", vr && vr.assertions && /未知断言类型|unknown assertion/i.test(JSON.stringify(vr.assertions)),
+    `assertions=${JSON.stringify(vr && vr.assertions)}`);
+  cleanup(dir);
+}
+
 console.log(`\n结果: ${failed === 0 ? "全部通过 ✅" : failed + " 个失败 ❌"}`);
 process.exit(failed === 0 ? 0 : 1);

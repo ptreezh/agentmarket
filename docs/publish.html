@@ -342,8 +342,8 @@ const ASSERTION_TYPES = {
   file_exists: { labelKey: 'publish.assertion_file_exists', fields: ['path'], placeholders: { path: 'result/result.md' } },
   row_count: { labelKey: 'publish.assertion_row_count', fields: ['path', 'op', 'value'], placeholders: { path: 'result/output.csv', op: '>', value: '0' } },
   col_check: { labelKey: 'publish.assertion_col_check', fields: ['path', 'col', 'op', 'value'], placeholders: { path: 'result/output.csv', col: '0', op: '>', value: '0' } },
-  file_hash: { labelKey: 'publish.assertion_file_hash', fields: ['path', 'hash'], placeholders: { path: 'result/output.csv', hash: 'sha256:...' } },
-  command_exit: { labelKey: 'publish.assertion_command_exit', fields: ['command', 'expected'], placeholders: { command: 'cat result/result.md', expected: '0' } }
+  json_path: { labelKey: 'publish.assertion_json_path', fields: ['path', 'path_expr', 'op', 'value'], placeholders: { path: 'result/output.json', path_expr: 'result.total', op: '>', value: '0' } },
+  hash_match: { labelKey: 'publish.assertion_hash_match', fields: ['path', 'sha256'], placeholders: { path: 'result/output.csv', sha256: 'sha256:...' } }
 };
 
 function init() {
