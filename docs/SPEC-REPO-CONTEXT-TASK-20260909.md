@@ -170,10 +170,16 @@ V1 不引入容器/防火墙（超出零成本范围，诚实标注）。
 | T10 无 context.repo 但 context.ref 存在 | 忽略 ref（无 repo 不 clone），现有行为 |
 | T11 [repo] 标记：任务摘要含 [repo] 前缀 | discover 输出可识别 |
 | T12 成果文件越界（result/ 外路径） | context_error=copy_rejected |
-| T13 publish.js --json 合法 payload | 非交互发布成功，spec.md 正确落盘 |
-| T14 publish.js --json 未知字段 | 退出码 3 + 列出非法字段，不落盘 |
-| T15 publish.js --json 断言类型非白名单 | 拒绝 + 提示合法类型 |
-| T16 publish.js --json context.repo 不可达 | 拒绝 + 提示 |
+| T13 publish.js --json 合法 payload | 非交互发布成功，spec.md 正确落盘 | **✅ 全绿（2026-09-09）** |
+| T14 publish.js --json 未知字段 | 退出码 3 + 列出非法字段，不落盘 | **✅ 全绿** |
+| T15 publish.js --json 断言类型非白名单 | 拒绝 + 提示合法类型 | **✅ 全绿** |
+| T16 publish.js --json context.repo 不可达 | 拒绝 + 提示 | **✅ 全绿** |
+| T17 缺 title | 拒绝 + 提示 | **✅ 全绿** |
+| T18 无 assertions | 自动补 file_exists result/result.md | **✅ 全绿** |
+| T19 verification 段 | spec frontmatter 含 verification/script/timeout | **✅ 全绿** |
+| T20 context 段 | spec frontmatter 含 context/repo/ref/path | **✅ 全绿** |
+| T21 input_files 复制 | 任务目录含文件 + input_ref=sha256 | **✅ 全绿** |
+| T22 deadline 非法 | 拒绝 + 提示 ISO | **✅ 全绿** |
 
 ## 9. 发布端 UI
 
@@ -202,12 +208,14 @@ node tools/publish.js --json '{
 
 ### 12.2 字段白名单（防注入）
 发布端只接受已知字段，未知 key 一律拒绝（退出码 3 + 列出非法字段）：
-`title / description / deadline / complexity / budget / sens / timeout_penalty / use_bidding /
-bidding_deadline / min_bid / max_bid / input_files / output_schema / capability / assertions /
-verification / context`
+`title / description / deadline / complexity / budget / sens / timeout_penalty / est_range /
+use_bidding / bidding_deadline / min_bid / max_bid / input_files / output_schema /
+assertions / verification / context`
 - `assertions[].type` 白名单：file_exists / row_count / col_check / json_path / hash_match
 - `verification.script` 必须解析在任务目录内（发布端只存路径，不执行）
-- `context.repo` 必须 https 且 ls-remote 可达
+- `context.repo` 必须 https 且 ls-remote 可达（15s 超时）
+- `deadline` 强制 ISO 8601（Date.parse 校验）
+- `capability` 未实现（YAGNI，能力任务实现时再加）
 
 ### 12.3 上下文工程
 一次自动派发 = 1 个工具调用 + payload（约 100-200 tokens），agent 无需记忆表单结构。

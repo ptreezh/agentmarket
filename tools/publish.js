@@ -1,8 +1,13 @@
 #!/usr/bin/env node
-/* 任务发布工具 · publish.js（D-64）
+/* 任务发布工具 · publish.js（D-64 + D-127）
  * 交互式生成 spec.md（四要素：I/O契约+时间+验收断言+预算+敏感等级）
- * 用法: node tools/publish.js [--publisher <agentId>] [--non-interactive]
- * 非交互模式需配合环境变量或全部参数（MVP 暂只支持交互模式）
+ * D-127: --json '<payload>' 非交互自动派发模式（agent 一行命令发包）
+ * 用法:
+ *   交互: node tools/publish.js [--publisher <agentId>]
+ *   自动: node tools/publish.js --publisher <agentId> --json '<JSON payload>'
+ * 字段白名单（未知字段 exit 3）: title/description/deadline/complexity/budget/sens/
+ *   timeout_penalty/est_range/use_bidding/bidding_deadline/min_bid/max_bid/
+ *   input_files/output_schema/assertions/verification/context
  */
 "use strict";
 const fs = require("fs");
@@ -69,8 +74,151 @@ function isoDeadline(hoursFromNow) {
 
 const BUDGET_BY_COMPLEXITY = { S: 40, M: 70, L: 110, XL: 200 };
 
+// ---------- D-127 JSON 自动派发模式（SPEC-REPO-CONTEXT-TASK v0.4 §12）----------
+const SPEC_FIELDS = ["title", "description", "deadline", "complexity", "budget", "sens", "timeout_penalty", "est_range", "use_bidding", "bidding_deadline", "min_bid", "max_bid", "input_files", "output_schema", "assertions", "verification", "context"];
+const ASSERT_TYPES = ["file_exists", "row_count", "col_check", "json_path", "hash_match"];
+
+function parseJsonArg() {
+  const i = process.argv.indexOf("--json");
+  if (i < 0) return null;
+  const raw = process.argv[i + 1];
+  if (!raw) return { error: "missing --json payload (JSON string)" };
+  try { return { payload: JSON.parse(raw) }; }
+  catch (e) { return { error: "JSON parse failed: " + e.message }; }
+}
+
+function validateJsonPayload(p) {
+  const unknown = Object.keys(p).filter(k => !SPEC_FIELDS.includes(k));
+  if (unknown.length) return { error: "unknown field(s): " + unknown.join(",") + " (allowed: " + SPEC_FIELDS.join("/") + ")", code: 3 };
+  if (!p.title || !String(p.title).trim()) return { error: "title required" };
+  if (!p.deadline || isNaN(Date.parse(p.deadline))) return { error: "deadline required and must be ISO 8601 (e.g. 2026-09-15T00:00:00Z)" };
+  const budget = p.budget == null ? null : Number(p.budget);
+  if (budget == null || isNaN(budget) || budget <= 0) return { error: "budget required and > 0" };
+  if (p.complexity && !["S", "M", "L", "XL"].includes(String(p.complexity).toUpperCase())) return { error: "complexity must be S/M/L/XL" };
+  if (p.sens && !["L0", "L1", "L2"].includes(String(p.sens).toUpperCase())) return { error: "sens must be L0/L1/L2" };
+  if (p.timeout_penalty != null && (isNaN(Number(p.timeout_penalty)) || Number(p.timeout_penalty) < 0)) return { error: "timeout_penalty must be >= 0" };
+  if (p.est_range != null && (!Array.isArray(p.est_range) || p.est_range.length !== 2 || p.est_range.some(v => isNaN(Number(v))))) return { error: "est_range must be [min, max]" };
+  if (p.use_bidding != null && typeof p.use_bidding !== "boolean") return { error: "use_bidding must be boolean" };
+  if (p.assertions != null) {
+    if (!Array.isArray(p.assertions)) return { error: "assertions must be an array" };
+    for (const a of p.assertions) {
+      if (!ASSERT_TYPES.includes(a && a.type)) return { error: "invalid assertion type: " + (a && a.type) + " (allowed: " + ASSERT_TYPES.join("/") + ")" };
+      if (!a.path) return { error: "assertion missing path: " + JSON.stringify(a) };
+    }
+  }
+  if (p.verification != null) {
+    if (typeof p.verification !== "object" || !p.verification.script) return { error: "verification.script required" };
+    if (typeof p.verification.script !== "string") return { error: "verification.script must be a string" };
+    if (p.verification.timeout != null && (isNaN(Number(p.verification.timeout)) || Number(p.verification.timeout) <= 0)) return { error: "verification.timeout must be > 0" };
+  }
+  if (p.context != null) {
+    if (typeof p.context !== "object" || !p.context.repo || !/^https:\/\//.test(p.context.repo)) return { error: "context.repo must be an https URL" };
+    try {
+      execSync('git ls-remote "' + p.context.repo + '" HEAD', { timeout: 15000, stdio: "pipe", encoding: "utf-8" });
+    } catch (e) {
+      return { error: "context.repo unreachable: " + p.context.repo + " (git ls-remote failed)" };
+    }
+  }
+  return { ok: true };
+}
+
+function buildSpecContent(o) {
+  const acceptanceYaml = o.assertions.map(a => {
+    const parts = Object.entries(a).map(([k, v]) => {
+      if (typeof v === "string") return k + ': "' + v + '"';
+      return k + ": " + v;
+    }).join(", ");
+    return "  - {" + parts + "}";
+  }).join("\n");
+  let extra = "";
+  if (o.verification) extra += "verification:\n  script: " + o.verification.script + "\n  timeout: " + (o.verification.timeout || 60) + "\n";
+  if (o.context) extra += "context:\n  repo: " + o.context.repo + "\n  ref: " + (o.context.ref || "HEAD") + "\n  path: " + (o.context.path || ".") + "\n";
+  return "---\n" +
+    "id: " + o.taskId + "\n" +
+    "title: " + o.title + "\n" +
+    "complexity: " + o.complexity + "\n" +
+    "budget: " + o.budget + "\n" +
+    "sens: " + o.sens + "\n" +
+    "est_range: [" + o.estMin + ", " + o.estMax + "]\n" +
+    'deadline: "' + o.deadline + '"\n' +
+    "timeout_penalty: " + o.timeoutPenalty + "\n" +
+    "publisher: " + o.publisher + "\n" +
+    "input_ref: " + o.inputRef + "\n" +
+    (o.useBidding
+      ? 'bidding: true\nbidding_deadline: "' + o.biddingDeadline + '"\nmin_bid: ' + o.minBid + "\nmax_bid: " + o.maxBid + "\n"
+      : "bidding: false\n") +
+    extra +
+    "output_schema: |\n" + o.outputSchema + "\n" +
+    "acceptance:\n" + acceptanceYaml + "\n" +
+    "---\n# " + o.taskId + " · " + o.title + "\n\n" + o.description + "\n";
+}
+
+function runJsonMode(arg, publisher) {
+  if (arg.error) { console.error(JSON.stringify({ error: arg.error, code: 2 })); process.exit(2); }
+  const p = arg.payload;
+  const v = validateJsonPayload(p);
+  if (v.error) { console.error(JSON.stringify({ error: v.error, code: v.code || 1 })); process.exit(v.code || 1); }
+  if (!publisher) { console.error(JSON.stringify({ error: "missing --publisher <AgentID>", code: 2 })); process.exit(2); }
+  if (!fs.existsSync(path.join("agents", publisher, "agent.md"))) {
+    console.error(JSON.stringify({ error: "agent not found: agents/" + publisher + "/agent.md (run join.sh first)", code: 1 }));
+    process.exit(1);
+  }
+  const taskId = nextTaskId();
+  const taskDir = path.join("tasks", taskId);
+  fs.mkdirSync(path.join(taskDir, "events"), { recursive: true });
+  fs.mkdirSync(path.join(taskDir, "result"), { recursive: true });
+  let inputRef = "none";
+  if (p.input_files) {
+    const files = Array.isArray(p.input_files) ? p.input_files : [p.input_files];
+    const hashes = [];
+    for (const f of files) {
+      if (fs.existsSync(f)) {
+        const dest = path.join(taskDir, path.basename(f));
+        fs.copyFileSync(f, dest);
+        hashes.push(sha256File(dest));
+      } else {
+        console.error(JSON.stringify({ error: "input file not found: " + f, code: 1 }));
+        process.exit(1);
+      }
+    }
+    inputRef = hashes.join(",");
+  }
+  const complexity = String(p.complexity || "S").toUpperCase();
+  const sens = String(p.sens || "L0").toUpperCase();
+  const assertions = p.assertions && p.assertions.length ? p.assertions : [{ type: "file_exists", path: "result/result.md" }];
+  const outputSchema = p.output_schema || "  result/result.md: result summary file";
+  const specContent = buildSpecContent({
+    taskId, title: p.title, complexity, budget: Number(p.budget), sens,
+    estMin: p.est_range ? p.est_range[0] : 1, estMax: p.est_range ? p.est_range[1] : 3,
+    deadline: p.deadline, timeoutPenalty: p.timeout_penalty == null ? 0.05 : Number(p.timeout_penalty),
+    publisher, inputRef,
+    useBidding: !!p.use_bidding, biddingDeadline: p.bidding_deadline, minBid: p.min_bid, maxBid: p.max_bid,
+    outputSchema, assertions,
+    description: p.description || p.title + ".",
+    verification: p.verification, context: p.context
+  });
+  const specPath = path.join(taskDir, "spec.md");
+  fs.writeFileSync(specPath, specContent);
+  const ts = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 14);
+  const eventContent = "---\nevent: published\ntask: " + taskId + "\npublisher: " + publisher + "\nts: " + ts + "\n---\n" + taskId + " published (" + complexity + ", budget " + Number(p.budget) + ", " + sens + "). via publish.js --json auto-dispatch.\n";
+  fs.writeFileSync(path.join(taskDir, "events", "published-" + ts + ".md"), eventContent);
+  try {
+    execSync("git push origin HEAD:refs/tasks/" + taskId, { encoding: "utf-8", stdio: "pipe" });
+  } catch (e) { /* 忽略：无 origin 或权限时不影响本地发布 */ }
+  console.log(JSON.stringify({ ok: true, taskId, specPath, budget: Number(p.budget), publisher }));
+  process.exit(0);
+}
+
 // ---------- 主流程 ----------
 (async () => {
+  // D-127: --json 自动派发模式（agent 可程序化调用，跳过全部交互）
+  const jsonArg = parseJsonArg();
+  if (jsonArg) {
+    const pubArg = process.argv.includes("--publisher") ? process.argv[process.argv.indexOf("--publisher") + 1] : "";
+    runJsonMode(jsonArg, pubArg);
+    return;
+  }
+
   console.log("═══════════════════════════════════════════");
   console.log("  智能体协同市场 · 任务发布工具");
   console.log("═══════════════════════════════════════════\n");
