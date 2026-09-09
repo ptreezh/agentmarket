@@ -1,0 +1,52 @@
+# publish-gateway — 开放发布通道（D-128 / SPEC-COMMENT-PUBLISH-20260909）
+# 任何 GitHub 用户（无需 collaborator、无需本地 node）在仓库 issue 评论
+# /publish <json> agent=<AG-ID> sig=<hex> 即可发布任务：
+# 验签（ED25519）→ 代跑 publish.js → commit+push main + refs/tasks → 回复评论。
+# 权限最小化：contents write（推任务）+ issues write（回复评论），不加载 secrets。
+name: publish-gateway
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  gateway:
+    if: startsWith(github.event.comment.body, '/publish')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure git auth (GITHUB_TOKEN, repo-scoped)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "gateway@agentbazaar"
+          git config --global user.name "publish-gateway"
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      - name: Execute publish
+        id: publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BODY=$(jq -r '.comment.body' "$GITHUB_EVENT_PATH")
+          OUT=$(node tools/publish-gateway.js --body "$BODY" --remote origin || true)
+          echo "GATEWAY_OUT=$OUT" >> "$GITHUB_ENV"
+
+      - name: Reply result
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          jq -n --arg b "publish gateway: $GATEWAY_OUT" '{body:$b}' \
+            | gh api -X POST "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" --input - \
+            || echo "reply failed (non-blocking)"
