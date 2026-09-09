@@ -40,7 +40,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BODY=$(jq -r '.comment.body' "$GITHUB_EVENT_PATH")
-          OUT=$(node tools/publish-gateway.js --body "$BODY" --remote origin || true)
+          OUT=$(node tools/publish-gateway.js --body "$BODY" --remote origin 2>&1 || true)
           echo "GATEWAY_OUT=$OUT" >> "$GITHUB_ENV"
 
       - name: Reply result
