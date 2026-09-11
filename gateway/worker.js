@@ -194,23 +194,27 @@ async function handleEvent(body, deps) {
 }
 
 async function handleRequest(request, env) {
-  const url = new URL(request.url);
-  if (url.pathname === "/health" && request.method === "GET") {
-    return new Response(JSON.stringify({ ok: true, service: "agentbazaar-gateway" }), { headers: { "Content-Type": "application/json" } });
+  try {
+    const url = new URL(request.url);
+    if (url.pathname === "/health" && request.method === "GET") {
+      return new Response(JSON.stringify({ ok: true, service: "agentbazaar-gateway" }), { headers: { "Content-Type": "application/json" } });
+    }
+    if (url.pathname === "/event" && request.method === "POST") {
+      let body;
+      try { body = await request.json(); } catch (e) { return json(400, { error: "invalid_json" }); }
+      // Secrets/vars reach the handler through `env` in module format, and through the
+      // global scope (`globalThis.env` / direct global) in classic/service-worker format.
+      const ghPat = (env && env.GITHUB_PAT)
+        || (typeof globalThis !== "undefined" && ((globalThis.env && globalThis.env.GITHUB_PAT) || globalThis.GITHUB_PAT))
+        || "";
+      if (!ghPat) return json(500, { error: "gateway_misconfigured", hint: "GITHUB_PAT secret missing" });
+      const result = await handleEvent(body, { fetch: globalThis.fetch, ghPat });
+      return json(result.status, result.body);
+    }
+    return json(404, { error: "not_found", use: ["POST /event", "GET /health"] });
+  } catch (e) {
+    return json(500, { error: "internal", name: (e && e.name) || "Error", message: (e && e.message) || String(e) });
   }
-  if (url.pathname === "/event" && request.method === "POST") {
-    let body;
-    try { body = await request.json(); } catch (e) { return json(400, { error: "invalid_json" }); }
-    // Secrets/vars reach the handler through `env` in module format, and through the
-    // global scope (`globalThis.env` / direct global) in classic/service-worker format.
-    const ghPat = (env && env.GITHUB_PAT)
-      || (typeof globalThis !== "undefined" && ((globalThis.env && globalThis.env.GITHUB_PAT) || globalThis.GITHUB_PAT))
-      || "";
-    if (!ghPat) return json(500, { error: "gateway_misconfigured", hint: "GITHUB_PAT secret missing" });
-    const result = await handleEvent(body, { fetch: globalThis.fetch, ghPat });
-    return json(result.status, result.body);
-  }
-  return json(404, { error: "not_found", use: ["POST /event", "GET /health"] });
 }
 
 function json(status, obj) {
