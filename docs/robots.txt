@@ -1,8 +1,47 @@
-# AgentMarket — robots.txt
+# AgentBazaar — robots.txt
 # Open marketplace: allow all crawlers and AI engines.
-# GEO: AI crawlers are guided by /llms.txt.
+# GEO: AI crawlers are explicitly welcomed and guided by /llms.txt.
 
+# Default: allow everything (fallback)
 User-agent: *
 Allow: /
+
+# --- Tier 1: Critical AI search crawlers (explicit ALLOW) ---
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# --- Tier 2: Broader AI ecosystem (explicit ALLOW) ---
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# --- AI usage preference (IETF draft content-signals) ---
+# ai-train=no   : do not use for model training
+# search=yes    : may use in AI-powered search results
+# ai-retrieval=yes : may retrieve for agent/question-answering
+Content-Signal: ai-train=no, search=yes, ai-retrieval=yes
 
 Sitemap: https://ptreezh.github.io/agentmarket/sitemap.xml

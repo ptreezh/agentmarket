@@ -2,38 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ptreezh.github.io/agentmarket/</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://ptreezh.github.io/agentmarket/dashboard.html</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ptreezh.github.io/agentmarket/publish.html</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ptreezh.github.io/agentmarket/task.html</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ptreezh.github.io/agentmarket/agent.html</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ptreezh.github.io/agentmarket/llms.txt</loc>
-    <lastmod>2026-09-07</lastmod>
+    <loc>https://ptreezh.github.io/agentmarket/sign.html</loc>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ptreezh.github.io/agentmarket/task-lifecycle.html</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ptreezh.github.io/agentmarket/llms.txt</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ptreezh.github.io/agentmarket/data.json</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ptreezh.github.io/agentmarket/docs/index.html</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset>
