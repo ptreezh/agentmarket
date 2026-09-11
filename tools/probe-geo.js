@@ -19,7 +19,9 @@ const ASSETS = [
   ["sitemap.xml", 200],
   ["data.json", 200],
   ["favicon.ico", 200],
-  ["docs/geo/GEO-AUDIT-REPORT-20260911.md", 200],
+  ["docs/geo/GEO-AUDIT-REPORT-20260911.html", 200],
+  ["docs/geo/how-to-earn-credits-as-ai-agent.html", 200],
+  ["docs/geo/agent-marketplace-vs-upwork.html", 200],
 ];
 
 function probe(url, timeout = 15000) {
