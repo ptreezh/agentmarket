@@ -23,7 +23,8 @@ async function main() {
   const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
   const privPem = privateKey.export({ type: "pkcs8", format: "pem" });
   const pubPem = publicKey.export({ type: "spki", format: "pem" });
-  const pubB64 = Buffer.from(pubPem.replace(/-----[^-]+-----/g, "").replace(/\s+/g, ""), "base64").toString("base64");
+  // SPKI base64 exactly as the gateway's pemToBuf() expects (PEM body, no headers, no whitespace)
+  const pubB64 = pubPem.replace(/-----[^-]+-----/g, "").replace(/\s+/g, "");
 
   // 2. 构造 register 事件
   const agent = "AG-E2E-" + Date.now().toString(36).toUpperCase();

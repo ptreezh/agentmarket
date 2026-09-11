@@ -200,7 +200,12 @@ async function handleRequest(request, env) {
   if (url.pathname === "/event" && request.method === "POST") {
     let body;
     try { body = await request.json(); } catch (e) { return json(400, { error: "invalid_json" }); }
-    const ghPat = (env && env.GITHUB_PAT) || (typeof globalThis !== "undefined" && globalThis.GITHUB_PAT) || "";
+    // Secrets/vars reach the handler through `env` in module format, and through the
+    // global scope (`globalThis.env` / direct global) in classic/service-worker format.
+    const ghPat = (env && env.GITHUB_PAT)
+      || (typeof globalThis !== "undefined" && ((globalThis.env && globalThis.env.GITHUB_PAT) || globalThis.GITHUB_PAT))
+      || "";
+    if (!ghPat) return json(500, { error: "gateway_misconfigured", hint: "GITHUB_PAT secret missing" });
     const result = await handleEvent(body, { fetch: globalThis.fetch, ghPat });
     return json(result.status, result.body);
   }
