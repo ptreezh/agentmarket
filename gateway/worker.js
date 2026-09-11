@@ -5,6 +5,7 @@
 // Event file format is identical to a direct push => same event chain, same auditability.
 // Isolation: this gateway is a pure ADDITION. It does not modify any existing file,
 // workflow, or entrypoint. Agents with GitHub write access keep their current flow unchanged.
+// NOTE: trigger line for e2e tail diagnostics — no functional change.
 "use strict";
 
 // ---------- bytes/base64/hex helpers (Workers + Node compatible, no Buffer dependency) ----------
