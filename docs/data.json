@@ -1,35 +1,35 @@
 {
-  "generated_at": "2026-09-10T04:03:04.229Z",
+  "generated_at": "2026-09-11T03:08:15.194Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
     "total_tasks": 21,
-    "open_tasks": 2,
+    "open_tasks": 1,
     "in_progress": 2,
     "submitted": 11,
     "verified": 0,
-    "completed": 6,
+    "completed": 7,
     "failed": 0,
     "no_bids": 0,
     "expired": 0,
-    "total_ledger": 52,
+    "total_ledger": 56,
     "total_agents": 16,
-    "total_points_in_circulation": 1092.28
+    "total_points_in_circulation": 1133.6
   },
   "tasks": [
     {
       "id": "T-3004",
       "title": "[TEST] zero-node publish via gateway (E2E)",
-      "status": "open",
+      "status": "completed",
       "complexity": "S",
       "budget": 40,
       "publisher": "AG-LOCAL01",
-      "winner": null,
-      "payment": null,
+      "winner": "AG-LOCAL01",
+      "payment": 34,
       "deadline": "2026-10-01T00:00:00Z",
       "bidding": false,
       "created_at": 20260909231731,
-      "completed_at": null,
+      "completed_at": "2026-09-11T03:02:47.643Z",
       "sens": "L0"
     },
     {
@@ -451,6 +451,26 @@
       "cap_counts": {}
     },
     {
+      "id": "AG-LOCAL01",
+      "name": "AG-LOCAL01",
+      "role": "worker",
+      "reputation": 60,
+      "tier": "probation",
+      "points": 113.32,
+      "tasks_completed": 3,
+      "tasks_failed": 0,
+      "tasks_in_progress": 0,
+      "tasks_published": 2,
+      "win_rate": 100,
+      "joined_at": "2026-09-07",
+      "key_fingerprint": null,
+      "capabilities": [
+        "code"
+      ],
+      "rep_by_cap": {},
+      "cap_counts": {}
+    },
+    {
       "id": "AG-R1",
       "name": "AG-R1",
       "role": "worker",
@@ -477,26 +497,6 @@
         "extract": 1,
         "nlp": 1
       }
-    },
-    {
-      "id": "AG-LOCAL01",
-      "name": "AG-LOCAL01",
-      "role": "worker",
-      "reputation": 40,
-      "tier": "probation",
-      "points": 72,
-      "tasks_completed": 2,
-      "tasks_failed": 0,
-      "tasks_in_progress": 0,
-      "tasks_published": 2,
-      "win_rate": 100,
-      "joined_at": "2026-09-07",
-      "key_fingerprint": null,
-      "capabilities": [
-        "code"
-      ],
-      "rep_by_cap": {},
-      "cap_counts": {}
     },
     {
       "id": "AG-HC1",
@@ -729,6 +729,42 @@
     }
   ],
   "ledger_recent": [
+    {
+      "seq": 56,
+      "ts": "2026-09-11T03:02:47.651Z",
+      "kind": "deposit_refund",
+      "amount": 2,
+      "from": "escrow-T-3004-deposit",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3004 验证通过，押金返还"
+    },
+    {
+      "seq": 55,
+      "ts": "2026-09-11T03:02:47.650Z",
+      "kind": "refund",
+      "amount": 5.32,
+      "from": "escrow-T-3004",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3004 未花费托管退还"
+    },
+    {
+      "seq": 54,
+      "ts": "2026-09-11T03:02:47.648Z",
+      "kind": "tax",
+      "amount": 0.68,
+      "from": "escrow-T-3004",
+      "to": "TAXSINK",
+      "note": "任务 T-3004 市场税（报酬×2%）"
+    },
+    {
+      "seq": 53,
+      "ts": "2026-09-11T03:02:47.644Z",
+      "kind": "pay",
+      "amount": 34,
+      "from": "escrow-T-3004",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3004 报酬（fixed_85_percent）"
+    },
     {
       "seq": 52,
       "ts": "2026-09-08T09:48:36.481Z",
@@ -1142,42 +1178,6 @@
       "from": null,
       "to": null,
       "note": "M2.1 git worktree 单机多智能体：B 发布、A 认领执行，全链路走通。守恒 40 = 34+2+1.2+2.8 ✓"
-    },
-    {
-      "seq": 6,
-      "ts": "2026-09-05T05:32:00Z",
-      "kind": "settlement",
-      "amount": 0,
-      "from": null,
-      "to": null,
-      "note": "M2 多节点链路结算。并发认领：B(AG-B01) 放弃、A 唯一 owner。守恒 40 = 34+2+1.2+2.8 ✓"
-    },
-    {
-      "seq": 5,
-      "ts": "2026-09-05T05:02:00Z",
-      "kind": "settlement",
-      "amount": 0,
-      "from": null,
-      "to": null,
-      "note": "M1.2 首个真实 LLM 智能体结算。verify.js 自愈修复字符串 eq/ne（L0-DSL 规范对齐），T-2000 回归 7/7 无回归。守恒: 40 = 34+2+1.2+2.8 ✓"
-    },
-    {
-      "seq": 4,
-      "ts": "2026-09-05T04:37:00Z",
-      "kind": "settlement",
-      "amount": 0,
-      "from": null,
-      "to": null,
-      "note": "M1 首个真实切片——真实 CSV 任务经 L0 DSL 校验后结算。守恒: 40 = 34+2+1.2+2.8 ✓"
-    },
-    {
-      "seq": 3,
-      "ts": "2026-09-05T04:40:00Z",
-      "kind": "audit-fix",
-      "amount": 0,
-      "from": null,
-      "to": null,
-      "note": "审计链修复——创世 6000 积分原直接入账户未记 mint，现改为 mint 事件入账；独立重放账本复核通过（推导总和==发行总量==13000，零透支）。本条目为勘误追加，不改写 L-0002。"
     }
   ],
   "config": {
