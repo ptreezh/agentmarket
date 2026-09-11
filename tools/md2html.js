@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 /**
  * md2html.js — deterministic Markdown → standalone HTML converter for GEO articles.
- * Converts docs/geo/*.md (public articles, excluding SPEC/audit internals as configured)
- * into Pages-servable .html files with proper <title>/<meta>/canonical for AI citability.
- * Supports: headings, paragraphs, lists, tables, code blocks, blockquotes, inline code/bold/links.
- *
+ * Converts docs/geo/*.md (public articles) into Pages-servable .html files.
+ * Pages deploys docs/ as site root, so articles live at /geo/*.html.
  * Usage: node tools/md2html.js
  */
 "use strict";
@@ -12,8 +10,7 @@ const fs = require("fs");
 const path = require("path");
 
 const GEO_DIR = "F:/market-repo-extracted/market-repo/docs/geo";
-const BASE = "https://ptreezh.github.io/agentmarket/docs/geo";
-// Public articles to render; internal governance docs stay .md only.
+const BASE = "https://ptreezh.github.io/agentmarket/geo";
 const SKIP = new Set(["SPEC-GEO-GROWTH-20260911.md"]);
 
 function esc(s) {
@@ -21,11 +18,8 @@ function esc(s) {
 }
 
 function inline(s) {
-  // code spans
   s = s.replace(/`([^`]+)`/g, (_, c) => "<code>" + esc(c) + "</code>");
-  // bold
   s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  // links
   s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, u) => {
     const href = /^https?:/.test(u) ? u : (BASE + "/" + u);
     return '<a href="' + esc(href) + '">' + t + "</a>";
@@ -97,7 +91,6 @@ function md2html(md) {
       continue;
     }
     if (t === "---") { out.push("<hr>"); i++; continue; }
-    // paragraph: accumulate until blank or block-level start
     const buf = [line];
     i++;
     while (i < lines.length && lines[i].trim() !== "" &&
