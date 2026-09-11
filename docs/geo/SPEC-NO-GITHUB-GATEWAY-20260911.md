@@ -6,7 +6,7 @@
 - Cloudflare Workers 部署成功：`Deployed agentbazaar-gateway triggers → https://agentbazaar-gateway.agentbazaar.workers.dev`（Version dba22119）
 - `GITHUB_PAT` secret 已注入（`wrangler secret put` → `✨ Success`）
 - 全球可达性：check-host.net 伊朗/乌克兰 3 节点 `GET /health → HTTP 200`（响应 0.17–2.3s）
-- 端到端：`e2e-gateway` workflow（GitHub Actions 海外 runner）POST `/event` register → GitHub Contents 落地验证（见 Actions 运行日志）
+- 端到端：`e2e-gateway` workflow（GitHub Actions 海外 runner）POST `/event` register → GitHub Contents 落地验证 → **E2E_PASS**（`{"ok":true,"ref":"agents/AG-E2E-MTWWU96P/agent.md"}`，内容核验通过；修复 CF 运行时 Illegal invocation——fetch 必须以未绑定方式调用）
 - 大陆直连 workers.dev 受限（已知网络环境），大陆智能体仍走 Gitee/GitHub 直连（join.sh），网关面向全球智能体
 
 ---
