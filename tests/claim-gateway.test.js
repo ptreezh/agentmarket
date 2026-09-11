@@ -39,6 +39,16 @@ function makeFixture() {
     pubPem.trim().split("\n").join("\\n") + "\n");
   fs.mkdirSync(path.join(market, "keys", "AG-TEST"), { recursive: true });
   fs.writeFileSync(path.join(market, "keys", "AG-TEST", "private.pem"), privPem);
+  // 第二个测试 agent（A3 并发竞争用）
+  const { publicKey: pk2, privateKey: sk2 } = crypto.generateKeyPairSync("ed25519");
+  const pubPem2 = pk2.export({ type: "spki", format: "pem" });
+  const privPem2 = sk2.export({ type: "pkcs8", format: "pem" });
+  fs.mkdirSync(path.join(market, "agents", "AG-TEST2"), { recursive: true });
+  fs.writeFileSync(path.join(market, "agents", "AG-TEST2", "agent.md"),
+    "---\nid: AG-TEST2\n---\nkey_fingerprint: test2\npublic_key: " +
+    pubPem2.trim().split("\n").join("\\n") + "\n");
+  fs.mkdirSync(path.join(market, "keys", "AG-TEST2"), { recursive: true });
+  fs.writeFileSync(path.join(market, "keys", "AG-TEST2", "private.pem"), privPem2);
   // 初始化市场仓库 + bare remote
   for (const c of ["git init -q", "git add -A", `git -c user.email=t@t -c user.name=t commit -qm init`]) {
     try { g(c, { cwd: market }); } catch (e) { console.error("夹具失败: " + e.message); process.exit(1); }
@@ -46,7 +56,7 @@ function makeFixture() {
   g(`git init -q --bare "${bare}"`);
   g(`git remote add origin "${bare}"`, { cwd: market });
   g(`git push -q origin HEAD:main`, { cwd: market });
-  return { d, market, bare, privPem, pubPem };
+  return { d, market, bare, privPem, pubPem, privPem2 };
 }
 function signMsg(privPem, msg) {
   return crypto.sign(null, Buffer.from(msg, "utf-8"), privPem).toString("hex");
@@ -59,6 +69,7 @@ function runGateway(args, cwd) {
 }
 
 console.log("D-125 claim-gateway.test.js (SPEC-CLAIM-GATEWAY-20260909)");
+(async () => {
 let fx = null;
 try {
   fx = makeFixture();
@@ -129,8 +140,44 @@ try {
   const j12 = JSON.parse(r12.out.split("\n").pop());
   check("T12 闭环认领成功", r12.code === 0 && j12.ok === true, `code=${r12.code} ${r12.out.slice(0, 120)}`);
 
+  /* T13: 真并发竞争——双 gateway 进程同时抢同一任务 T-CONC，Git ref 原子锁仅一个成功 */
+  fs.mkdirSync(path.join(fx.market, "tasks", "T-CONC"), { recursive: true });
+  fs.writeFileSync(path.join(fx.market, "tasks", "T-CONC", "spec.md"),
+    "---\nid: T-CONC\ncomplexity: S\npublisher: AG-P01\n---\n");
+  for (const c of ["git add -A", `git -c user.email=t@t -c user.name=t commit -qm add-tconc`,
+    `git push -q origin HEAD:main`]) g(c, { cwd: fx.market });
+  const sigA13 = signMsg(fx.privPem, "claim T-CONC AG-TEST");
+  const sigB13 = signMsg(fx.privPem2, "claim T-CONC AG-TEST2");
+  const { spawn } = require("child_process");
+  function runGwAsync(agent, sig) {
+    return new Promise((res) => {
+      const p = spawn("node", [GATEWAY, "--task", "T-CONC", "--agent", agent, "--sig", sig,
+        "--repo", fx.market, "--remote", "origin"], { cwd: fx.market });
+      let out = "";
+      p.stdout.on("data", (d) => { out += d; });
+      p.stderr.on("data", (d) => { out += d; });
+      p.on("close", (code) => res({ code, out }));
+    });
+  }
+  const [ra13, rb13] = await Promise.all([runGwAsync("AG-TEST", sigA13), runGwAsync("AG-TEST2", sigB13)]);
+  function lastJson(out) {
+    const lines = out.split("\n");
+    for (let i = lines.length - 1; i >= 0; i--) {
+      const l = lines[i].trim();
+      if (l.startsWith("{")) { try { return JSON.parse(l); } catch { /* 继续 */ } }
+    }
+    return null;
+  }
+  const winners13 = [ra13, rb13].filter((r) => r.code === 0 && lastJson(r.out) &&
+    lastJson(r.out).ok === true).length;
+  check("T13 并发抢同一任务：恰好一个成功", winners13 === 1,
+    `codes=[${ra13.code},${rb13.code}] A=${ra13.out.slice(0, 70).replace(/\n/g, " ")} B=${rb13.out.slice(0, 70).replace(/\n/g, " ")}`);
+  const lock13 = g(`git ls-remote "${fx.bare}" refs/claims/T-CONC`).trim();
+  check("T13 锁 ref 存在且唯一", lock13.length > 0 && lock13.split("\n").length === 1, lock13.slice(0, 80));
+
   console.log(`\n结果: ${failed === 0 ? "全部通过 ✅" : failed + " 个失败 ❌"} (${passed}✅/${failed}❌)`);
 } finally {
   try { if (fx) fs.rmSync(fx.d, { recursive: true, force: true }); } catch {}
 }
 process.exit(failed === 0 ? 0 : 1);
+})().catch((e) => { console.error(e); process.exit(1); });

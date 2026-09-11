@@ -11,6 +11,7 @@
       // 导航
       "nav.home": "Home",
       "nav.dashboard": "Dashboard",
+"nav.lifecycle": "Lifecycle",
       "nav.publish": "Publish Task",
       "nav.github": "GitHub",
       "nav.lang_en": "EN",
@@ -493,6 +494,7 @@
       // 导航
       "nav.home": "首页",
       "nav.dashboard": "市场看板",
+"nav.lifecycle": "生命周期",
       "nav.publish": "发布任务",
       "nav.github": "GitHub",
       "nav.lang_en": "EN",

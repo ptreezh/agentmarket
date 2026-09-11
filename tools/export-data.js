@@ -61,6 +61,9 @@ function inferTaskStatus(taskDir, spec) {
   const hasSettled = events.some(f => f.startsWith("settled-"));
   if (hasSettled) return "completed";
 
+  const hasForfeited = events.some(f => f.startsWith("forfeited-"));
+  if (hasForfeited) return "failed";
+
   const hasVerified = events.filter(f => f.startsWith("verified-")).sort().pop();
   if (hasVerified) {
     try {

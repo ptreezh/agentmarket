@@ -84,9 +84,11 @@ function resolveAddPaths(cwd) {
   return ALLOWED_ADD_PATHS.filter(function (p) { return fs.existsSync(path.join(cwd, p)); });
 }
 
-function runPublish(agent, json) {
+function runPublish(agent, json, sig) {
   try {
-    const stdout = execFileSync(process.execPath, ["tools/publish.js", "--publisher", agent, "--json", json], {
+    const args = ["tools/publish.js", "--publisher", agent, "--json", json];
+    if (sig) args.push("--publish-sig", sig);
+    const stdout = execFileSync(process.execPath, args, {
       encoding: "utf-8", timeout: 60000
     });
     return JSON.parse(stdout);
@@ -118,7 +120,7 @@ function main(argv) {
     console.error(JSON.stringify({ error: "verify_failed", code: 11 }));
     process.exit(11);
   }
-  const res = runPublish(parsed.agent, parsed.json);
+  const res = runPublish(parsed.agent, parsed.json, parsed.sig);
   if (!res.ok) {
     console.error(JSON.stringify({ error: res.error, code: res.code || 1 }));
     process.exit(res.code || 1);

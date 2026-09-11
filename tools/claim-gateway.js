@@ -107,7 +107,7 @@ function main() {
   const fname = `claimed-${ts}-${agent}.md`;
   if (!fs.existsSync(evDir)) fs.mkdirSync(evDir, { recursive: true });
   fs.writeFileSync(path.join(evDir, fname),
-    `---\nevent: claimed\ntask: ${taskId}\nworker: ${agent}\nop_id: ${fname.replace(/\.md$/, "")}\nts: ${new Date().toISOString()}\n---\n${agent} 认领 ${taskId}（网关 ref 原子锁）。\n`);
+    `---\nevent: claimed\ntask: ${taskId}\nworker: ${agent}\nop_id: ${fname.replace(/\.md$/, "")}\nts: ${new Date().toISOString()}\nauth_sig: ${sigHex}\n---\n${agent} 认领 ${taskId}（网关 ref 原子锁）。\n`);
   try {
     g(`node "${path.join(root, "tools", "sig.js")}" sign ${agent} "${path.join(taskDir, "events", fname)}"`, { cwd: root });
   } catch (e) { console.error("[warn] claimed 事件签名失败（不影响认领）: " + String(e.message).split("\n")[0]); }

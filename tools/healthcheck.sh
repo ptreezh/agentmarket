@@ -68,4 +68,17 @@ if bad: sys.exit(1)
 PY2
 [ $? -eq 0 ] || FAIL=1
 
+echo "== [6/6] 镜像探活（primary/mirror 可达性） =="
+if command -v node >/dev/null 2>&1; then
+  node "$REPO/tools/probe-mirrors.js" --repo "$REPO"
+  case $? in
+    0) echo "  ✅ primary 可达（市场在线）" ;;
+    1) echo "  ⚠️ primary 不可达，但 mirror 可达（降级只读）"; FAIL=1 ;;
+    2) echo "  ❌ primary 与 mirror 均不可达"; FAIL=1 ;;
+    *) echo "  ⚠️ 探活异常" ;;
+  esac
+else
+  echo "  ⚠️ 无 node，跳过镜像探活（不判 FAIL）"
+fi
+
 [ "$FAIL" -eq 0 ] && echo "== 健康检查：全部通过 ==" || { echo "== 健康检查：存在失败项，需自愈 =="; exit 1; }

@@ -83,7 +83,7 @@ function parseJsonArg() {
   if (i < 0) return null;
   const raw = process.argv[i + 1];
   if (!raw) return { error: "missing --json payload (JSON string)" };
-  try { return { payload: JSON.parse(raw) }; }
+  try { return { payload: JSON.parse(raw), raw }; }
   catch (e) { return { error: "JSON parse failed: " + e.message }; }
 }
 
@@ -153,7 +153,7 @@ function buildSpecContent(o) {
     "---\n# " + o.taskId + " · " + o.title + "\n\n" + o.description + "\n";
 }
 
-function runJsonMode(arg, publisher) {
+function runJsonMode(arg, publisher, publishSig) {
   if (arg.error) { console.error(JSON.stringify({ error: arg.error, code: 2 })); process.exit(2); }
   const p = arg.payload;
   const v = validateJsonPayload(p);
@@ -200,7 +200,9 @@ function runJsonMode(arg, publisher) {
   const specPath = path.join(taskDir, "spec.md");
   fs.writeFileSync(specPath, specContent);
   const ts = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 14);
-  const eventContent = "---\nevent: published\ntask: " + taskId + "\npublisher: " + publisher + "\nts: " + ts + "\n---\n" + taskId + " published (" + complexity + ", budget " + Number(p.budget) + ", " + sens + "). via publish.js --json auto-dispatch.\n";
+  const authLine = publishSig ? `auth_sig: ${publishSig}\n` : "";
+  const eventBody = arg.raw ? arg.raw.trim() : (taskId + " published (" + complexity + ", budget " + Number(p.budget) + ", " + sens + "). via publish.js --json auto-dispatch.");
+  const eventContent = "---\nevent: published\ntask: " + taskId + "\npublisher: " + publisher + "\nts: " + ts + "\n" + authLine + "---\n" + eventBody + "\n";
   fs.writeFileSync(path.join(taskDir, "events", "published-" + ts + ".md"), eventContent);
   try {
     execSync("git push origin HEAD:refs/tasks/" + taskId, { encoding: "utf-8", stdio: "pipe" });
@@ -215,7 +217,8 @@ function runJsonMode(arg, publisher) {
   const jsonArg = parseJsonArg();
   if (jsonArg) {
     const pubArg = process.argv.includes("--publisher") ? process.argv[process.argv.indexOf("--publisher") + 1] : "";
-    runJsonMode(jsonArg, pubArg);
+    const sigArg = process.argv.includes("--publish-sig") ? process.argv[process.argv.indexOf("--publish-sig") + 1] : "";
+    runJsonMode(jsonArg, pubArg, sigArg);
     return;
   }
 

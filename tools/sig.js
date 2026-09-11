@@ -26,6 +26,13 @@ function verifyBody(pubPem, body, sigHex) {
   } catch (e) { return false; }
 }
 function getPubFromAgent(signer) {
+  // 1) 直接按 AG-ID 查 agents/<signer>/agent.md（auth_sig 场景：signer 是 AG-ID）
+  const direct = path.join("agents", signer, "agent.md");
+  if (fs.existsSync(direct)) {
+    const s = fs.readFileSync(direct, "utf-8");
+    const m = s.match(/^public_key:\s*(.+)$/m);
+    if (m) return m[1].replace(/\\n/g, "\n");
+  }
   // operator 分支（D-111）：signer 指纹匹配 OPERATOR_PUBKEY → 用运营者公钥验签
   try {
     if (fs.existsSync("OPERATOR_PUBKEY")) {
@@ -79,6 +86,32 @@ switch (cmd) {
     const text = fs.readFileSync(file, "utf-8");
     const sp = splitFile(text);
     if (!sp) { console.log(`✗ ${file}: 无 frontmatter`); process.exit(1); }
+    // 网关事件（零 node 通道）：auth_sig 优先（评论签名，消息 = 评论原文）
+    const authSig = (sp.front.match(/^auth_sig:\s*(\S+)/m) || [])[1];
+    if (authSig) {
+      const evType = (sp.front.match(/^event:\s*(\S+)/m) || [])[1];
+      let msg = null, authSigner = null;
+      if (evType === "published") {
+        authSigner = (sp.front.match(/^publisher:\s*(\S+)/m) || [])[1];
+        msg = "publish " + sp.body.trim();
+      } else if (evType === "claimed") {
+        authSigner = (sp.front.match(/^worker:\s*(\S+)/m) || [])[1];
+        const task = (sp.front.match(/^task:\s*(\S+)/m) || [])[1];
+        msg = "claim " + task + " " + authSigner;
+      }
+      if (msg && authSigner) {
+        try {
+          const pub = getPubFromAgent(authSigner);
+          const ok = verifyBody(pub, msg, authSig);
+          console.log(`${ok ? "✅" : "❌"} ${file}: ${ok ? "auth_sig 签名有效" : "auth_sig 验签失败/被篡改"} (signer=${authSigner})`);
+          process.exit(ok ? 0 : 1);
+        } catch (e) {
+          console.log(`✗ ${file}: auth_sig 验签异常 ${e.message}`);
+          process.exit(1);
+        }
+      }
+      // 缺消息构造信息（未知 event 类型）→ 回退 signer/signature 逻辑
+    }
     const signer = (sp.front.match(/^signer:\s*(\S+)/m) || [])[1];
     const sig = (sp.front.match(/^signature:\s*(\S+)/m) || [])[1];
     if (!signer || !sig) { console.log(`✗ ${file}: 缺 signer/signature（未签名）`); process.exit(1); }
