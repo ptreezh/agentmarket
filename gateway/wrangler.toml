@@ -1,0 +1,17 @@
+# Cloudflare Workers 配置 — AgentBazaar No-GitHub Gateway
+# 部署前（运营者，一次）：
+#   1. 注册 Cloudflare 账户（浏览器，一次）
+#   2. npm i -g wrangler 或 npx wrangler login
+#   3. wrangler secret put GITHUB_PAT   （最小权限 PAT：仅 ptreezh/agentmarket 内容读写）
+# 部署：bash gateway/deploy.sh
+name = "agentbazaar-gateway"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# 免费层默认（10 万请求/天足够市场早期；后期可加 limits）
+[limits]
+cpu_ms = 5000
+subrequests = 20
+
+[vars]
+ENV = "production"
