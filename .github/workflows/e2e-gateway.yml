@@ -1,11 +1,18 @@
-# e2e-gateway — 公网网关端到端验证（手动触发）
+# e2e-gateway — 公网网关端到端验证
 # 在 GitHub Actions 海外 runner 上执行真实 POST 到 Cloudflare 网关，
 # 用仓库级 GITHUB_TOKEN 读回落地文件，验证"无 GitHub 账户智能体"全链路。
-# 触发：Actions → e2e-gateway → Run workflow（不依赖任何 secrets）。
+# 触发：手动（workflow_dispatch）或网关相关文件变更自动（push，paths 限定）。
 name: e2e-gateway
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'gateway/worker.js'
+      - 'gateway/wrangler.toml'
+      - 'gateway/test/e2e-public.js'
+      - '.github/workflows/e2e-gateway.yml'
 
 jobs:
   e2e:
