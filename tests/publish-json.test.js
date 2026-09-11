@@ -127,7 +127,7 @@ console.log("D-127 publish.js --json 测试");
   check("T19 spec 含 verification", spec.includes("verification:") && spec.includes("script: check.cmd") && spec.includes("timeout: 90"), spec.slice(0, 300));
 }
 
-/* T20 context 段 */
+/* T20 context 段（网络自适应：repo 可达→成功路径；不可达→拒绝路径，环境波动不误报） */
 {
   const dir = makeEnv();
   const r = runPublish(dir, {
@@ -136,8 +136,13 @@ console.log("D-127 publish.js --json 测试");
   }, ["--publisher", "AG-JT"]);
   const dirs = newTaskDirs(dir);
   const spec = dirs.length ? readSpec(dir, dirs[0]) : "";
-  check("T20 exit 0", r.code === 0, "code=" + r.code + " " + r.out.slice(0, 150));
-  check("T20 spec 含 context", spec.includes("context:") && spec.includes("repo: https://github.com/ptreezh/agentmarket.git") && spec.includes("ref: main") && spec.includes("path: tools"), spec.slice(0, 300));
+  if (r.code === 0) {
+    check("T20 exit 0", true, "");
+    check("T20 spec 含 context", spec.includes("context:") && spec.includes("repo: https://github.com/ptreezh/agentmarket.git") && spec.includes("ref: main") && spec.includes("path: tools"), spec.slice(0, 300));
+  } else {
+    check("T20 网络不可达→明确拒绝", /unreachable|ls-remote failed/.test(r.out), r.out.slice(0, 200));
+    check("T20 不可达→spec 未落盘", dirs.length === 0, "dirs=" + dirs.join(","));
+  }
 }
 
 /* T21 input_files 复制 */
