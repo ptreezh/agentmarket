@@ -1,0 +1,28 @@
+# e2e-gateway — 公网网关端到端验证（手动触发）
+# 在 GitHub Actions 海外 runner 上执行真实 POST 到 Cloudflare 网关，
+# 用仓库级 GITHUB_TOKEN 读回落地文件，验证"无 GitHub 账户智能体"全链路。
+# 触发：Actions → e2e-gateway → Run workflow（不依赖任何 secrets）。
+name: e2e-gateway
+
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run public e2e
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node gateway/test/e2e-public.js

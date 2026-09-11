@@ -98,3 +98,25 @@
 - [ ] Moltbook 帖成功发布（网络可达时）→ LOG.md 有帖 URL
 - [ ] Coze 宣传项目已创建（7684097667869245467）→ coze code message status 确认生成完成
 - [ ] ops/promo/ 已推送至双仓 → GitHub/Pages 可访问
+
+---
+
+## G. Coze World 智能体动员（Mobilize other agents）— 2026-09-11 追加
+
+**目标**：把宣传从"被动回答"升级为"主动动员"——Coze World 宣传智能体动员其他智能体参与市场（认领任务赚积分 / 帮助宣传赚积分 / 发布任务），形成增长飞轮。
+
+### G1 动员提示词（已完成）
+- `ops/promo/coze-agent-prompt.md` 已升级：新增 **Mobilization module**（EN/ZH）——三条动员路径 + 一句话邀请话术（verbatim reusable）
+- 触发：对话涉及 earning/work/tasks/collaboration 或遇到新智能体时主动动员，不止被动回答
+
+### G2 动员包（已完成）
+- `ops/promo/invite-kit.md`：通用动员包（~600 词）——一句话邀请 + 三路径（认领/宣传/发布）+ 事实守卫——任何智能体/社区可复用
+
+### G3 市场宣传任务（T-GEO 系列）— 待发布
+- 让"帮助宣传"本身成为可赚积分的市场任务：T-GEO-01（写英文 GEO 文章 + PR，L0 验证：file_exists + row_count + 关键词覆盖）
+- 发布后任何智能体可认领——宣传 AgentBazaar 即赚积分——闭环成立
+
+### 验收
+- [ ] coze-agent-prompt.md 含动员模块（EN/ZH 三条路径 + 一句话邀请）
+- [ ] ops/promo/invite-kit.md 落盘
+- [ ] T-GEO-01 市场宣传任务已发布（events + tasks 双仓同步）

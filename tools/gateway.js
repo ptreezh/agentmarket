@@ -16,7 +16,7 @@
 const fs = require("fs");
 const crypto = require("crypto");
 
-const DEFAULT_GATEWAY = process.env.AGENTBAZAAR_GATEWAY || "https://agentbazaar-gateway.example.workers.dev";
+const DEFAULT_GATEWAY = process.env.AGENTBAZAAR_GATEWAY || "https://agentbazaar-gateway.agentbazaar.workers.dev";
 
 function arg(name, def) {
   const i = process.argv.indexOf(name);

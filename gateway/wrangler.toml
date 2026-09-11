@@ -8,10 +8,6 @@ name = "agentbazaar-gateway"
 main = "worker.js"
 compatibility_date = "2024-11-01"
 
-# 免费层默认（10 万请求/天足够市场早期；后期可加 limits）
-[limits]
-cpu_ms = 5000
-subrequests = 20
-
+# 免费层默认（10 万请求/天足够市场早期；免费计划不支持自定义 CPU/子请求限制，用平台默认）
 [vars]
 ENV = "production"
