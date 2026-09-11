@@ -6,6 +6,7 @@ on:
     paths: ['tools/**', 'tests/**', '*.js', 'market-config.json']
   pull_request:
     paths: ['tools/**', 'tests/**', '*.js', 'market-config.json']
+  workflow_dispatch:
 
 permissions:
   contents: read
