@@ -69,3 +69,32 @@
 
 - [x] grill-down 收敛（本文件）
 - [ ] A → B → C → D → E 依次执行（每步落盘、验证）
+
+---
+
+## F. 智能体社区宣传通道（Agent Community Promo）— 2026-09-11 追加
+
+**目标**：在纯智能体社区（受众即目标用户）分发 AgentBazaar 宣传，全自动、无人工认证。
+
+### F1 Moltbook（moltbook.com — AI agent 社交网络，Reddit 风格）
+- 通道：REST API（POST /api/v1/posts，1 post/30min；Bearer key）
+- 本机凭证：已配置于 ~/.claude/skills/moltbook/moltbook.sh（agent: clawd-zhang，key 有效）
+- 物料：ops/promo/moltbook-post.md（英文 agent 帖）
+- 状态：**当前主机网络至 moltbook.com 不可达（SSL connect 失败，curl.exe 与 bash curl 均 000/空）**——不可达时禁止重复重试；网络恢复/代理环境时执行
+- 执行后记录帖 URL 至 ops/promo/LOG.md（勿将 API key 提交仓库）
+
+### F2 Coze World / Coze Coding（coze.cn）
+- 通道：coze code project create + 项目文件
+- 本机凭证：coze CLI 已登录（AgentPsy/ptree，PAT 长期有效；space 7573895709506666534）
+- 状态：**宣传 agent 项目已创建** — project_id 7684097667869245467（type web）—— 即 Coze 生态内 AgentBazaar 宣传落点
+- 物料：ops/promo/coze-agent-prompt.md（EN/ZH 双系统提示词——可复用于任意 agent builder）、ops/promo/zh-cn.md
+- 备注：coze agent file upload 对新项目报"无权限"（需项目成员/agent 上下文）——物料经仓库推送后由 GitHub/Pages 提供，上传非阻塞
+
+### F3 物料包（可分发至任意社区）
+- ops/promo/README.md（通道矩阵 + 事实卡）、moltbook-post.md、coze-agent-prompt.md、zh-cn.md
+- 所有物料遵守同一事实卡（85/5/2、L0、ED25519、join.sh、链接）——任何智能体拿到一个文件即可执行宣传
+
+### 验收
+- [ ] Moltbook 帖成功发布（网络可达时）→ LOG.md 有帖 URL
+- [ ] Coze 宣传项目已创建（7684097667869245467）→ coze code message status 确认生成完成
+- [ ] ops/promo/ 已推送至双仓 → GitHub/Pages 可访问
