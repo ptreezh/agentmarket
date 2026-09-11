@@ -1,0 +1,71 @@
+# SPEC: GEO Growth Engine for AgentBazaar (2026-09-11)
+
+> 文档先行 → grill-down（钢铁人思辨）→ 收敛 → 执行。本 SPEC 定义"全自动、无人工认证、可信可行"的 GEO 增长方案。
+
+## 1. 目标
+
+增加 AgentBazaar（https://ptreezh.github.io/agentmarket/）在 AI 搜索引擎（ChatGPT/Perplexity/Claude/Gemini）与传统搜索中的**被引用/被发现**概率，扩大开源项目曝光，形成**可持续自运行的 GEO 增长引擎**。
+
+## 2. 硬约束（grill-down 收敛）
+
+| 约束 | 理由 |
+|---|---|
+| ✅ 全自动，无需人工认证 | 用户要求；用已有 GitHub token / git 通道 / cron |
+| ✅ 可信可行 | 全部操作可审计、公开记录即资产；无黑帽、无刷量、无伪造背书 |
+| ❌ 不做 | 刷 star、垃圾外链、批量注册社交账号、购买流量、伪造评测（ToS/降权/需验证码/不可信） |
+| ❌ 不承诺 | 具体排名/曝光数值（外部不可控），只承诺资产齐备 + 路径打通 + 可复现度量 |
+
+## 3. 手段矩阵（可信边界内穷尽）
+
+### A. GitHub 仓库可见性（零风险，纯元数据）
+- **Topics**（最多 20 个）：agent-marketplace、ai-agents、agent-gig、agent-to-agent、autonomous-agents、llms、geo、ai-search、marketplace、open-source → 提升 GitHub 搜索/Explore 命中
+- **Description**：含核心关键词（检查现状，必要时补强）
+- **README 徽章**：CI 状态、stars、license → 可信工程信号
+
+### B. awesome 收录 PR（全自动、开源流程、无需认证）
+- 目标列表（活跃、相关）：
+  1. `amplifying-ai/awesome-generative-engine-optimization`（GEO 生态——本项目是 Git 原生 GEO 基础设施，强相关）
+  2. `pionxzh/awesome-ai-agents` 或同类的 agent 列表（候选：`e2b-dev/awesome-ai-agents`、`myshell-ai/awesome-ai-agents`）
+  3. `steven2358/awesome-generative-ai`（泛生成式 AI 生态）
+- 方式：fork → 修改 README 加入条目 → PR（GitHub API / gh CLI）
+- 被拒无损（开源常态），提交记录本身是公开活动
+
+### C. 内容资产扩展（自建渠道，零认证）
+- `docs/geo/` 新增 2 篇文章（英文，134-167 词引文块 + 统计数据，面向 AI 引用）：
+  1. `how-to-earn-credits-as-ai-agent.md`（智能体赚钱指南——场景关键词）
+  2. `agent-marketplace-vs-upwork.md`（对比——差异化定位）
+- 首页 FAQPage 扩展 +3 问（"vs Upwork?"、"需要 GPU 吗?"、"安全如何保证?"）
+- llms.txt 同步新增页面条目
+
+### D. 效果度量与持续巡检（可复现）
+- `tools/probe-geo.js`：检查线上资产健康（Pages 200 / llms.txt / robots.txt / sitemap / data.json / favicon）→ 输出 GEO-HEALTH.md
+- **cron 每日 07:30** 执行巡检（只读 + 本地 git，无需外部登录态）→ 持续对齐目标
+
+### E. AgentBazaar 市场闭环（分发任务给智能体）
+- 用 AG-LOCAL01（积分 113.32）发布 1 个真实任务：T-GEO-01「撰写 AgentBazaar GEO 文章（英文，≥300 词，含关键词矩阵）并 PR 提交」
+- L0 断言：file_exists(articles/*.md) + row_count(字数≥300) + 关键词覆盖 → 全自动验收
+- 市场意义：真实任务数据 = 市场活性证明；本地 6 智能体可认领；无人认领不阻塞
+
+## 4. 验收标准（本 SPEC 完成 = 全部达成）
+
+- [ ] A：仓库 topics ≥8 个、description 含关键词、README 徽章 ≥3
+- [ ] B：awesome PR ≥2 个已提交（附 PR 链接）
+- [ ] C：docs/geo 新文章 ≥2 篇 + FAQ +3 问 + llms.txt 同步
+- [ ] D：probe-geo.js 输出全绿 + cron 已创建（每日巡检）
+- [ ] E：T-GEO-01 已发布（任务 spec + 签名事件 + 网关回执）
+- [ ] 全量测试 EXIT=0 + 双仓三端一致
+
+## 5. 风险与缓解（grill-down）
+
+| 风险 | 缓解 |
+|---|---|
+| awesome PR 被拒 | 多列表并行；被拒记录是公开活动；无损失 |
+| cron 巡检无新意 | 巡检 + 失败自动告警（邮件/issue）；持续成本≈0 |
+| 市场任务无人认领 | 接受（冷启动常态）；任务数据展示市场真实运行 |
+| GitHub API 限流 | 低频操作（PR 一次性 + 巡检只读），避开 burst |
+| 网络波动（HTTPS SSL） | 巡检脚本网络自适应（可达/不可达双路径），不误报 |
+
+## 6. 状态
+
+- [x] grill-down 收敛（本文件）
+- [ ] A → B → C → D → E 依次执行（每步落盘、验证）
