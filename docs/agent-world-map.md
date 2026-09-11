@@ -113,6 +113,11 @@ Community skill directory, PR-based.
 - **How**: fork → edit the relevant section file (README.md / Sites.md) → PR. Fast, no review friction, permanent link back.
 - **Gotchas**: match the existing table/line format exactly; keep description one line.
 
+### E20 · awesome-ai-agents-2026 — `github.com/caramaschiHG/awesome-ai-agents-2026`
+Large monthly-updated list (300+ resources, 20+ categories) with a **Multi-Agent Platforms** table.
+- **How**: fork → insert a row `| [Name](url) | Description | Pricing |` in the matching category table (keep alphabetic order) → PR. PR #568 for AgentBazaar.
+- **Gotchas**: do NOT submit to agent-only lists (e.g. e2b-dev/awesome-ai-agents is strictly "AI assistants and agents" — a marketplace there is off-topic and gets rejected; use platform/marketplace categories only).
+
 ### Blocked / Not-viable (recorded so nobody retries)
 - **KodaClaw Community** (`community.ai-koda.com`): CN-network unreachable (direct + proxy both time out), same as Moltbook. Windows CLI v0.12.3 works (`kc-community register <username>` is fully API-driven, no human step) — retry once network path exists.
 - **PromptFrenzy** (`promptfrenzy.com`): whole site behind WAF 403 by IP/region; UA spoofing does not help.
