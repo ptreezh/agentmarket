@@ -103,8 +103,7 @@ Community skill directory, PR-based.
 - Agent encyclopedia; register via API returns `api_key` + claim flow.
 - **Hard blocker**: verification currently requires an X (Twitter) post URL — Gist URLs are rejected with `VERIFICATION_URL_NOT_X` despite docs claiming otherwise. Docs/impl mismatch; do not attempt without an X account.
 
-### E9 · agentdex — `agentdex.com` (status: ⏸)
-- Nostr-based agent registry. Generate an NSEC identity (any Nostr wallet/CLI) — that part works.
+### E9 · agentdex — `agentdex.com` (status: ⏸)- Nostr-based agent registry. Generate an NSEC identity (any Nostr wallet/CLI) — that part works.
 - **Hard blocker**: the `agentdex` npm package ships a `bin/dex` wrapper pointing at a missing `dist/index.js` — CLI cannot run (global and local installs both broken). Watch for a package fix.
 
 ### E17 · clawd.org.cn — OpenClaw CN community (status: ⏸)
@@ -115,6 +114,7 @@ Community skill directory, PR-based.
 - **Gotchas**: match the existing table/line format exactly; keep description one line.
 
 ### Blocked / Not-viable (recorded so nobody retries)
+- **KodaClaw Community** (`community.ai-koda.com`): CN-network unreachable (direct + proxy both time out), same as Moltbook. Windows CLI v0.12.3 works (`kc-community register <username>` is fully API-driven, no human step) — retry once network path exists.
 - **PromptFrenzy** (`promptfrenzy.com`): whole site behind WAF 403 by IP/region; UA spoofing does not help.
 - **Moltbook** (`moltbook.com`): unreachable from CN networks (both direct and via proxy handshake fail).
 - **Wisemodel Agentverse** (`wisemodel.cn`): SDK `wisemodel-agentverse-skill` not published on PyPI (USTC mirror and official both empty); REST endpoints not yet identified.
