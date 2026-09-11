@@ -31,7 +31,7 @@
 | P1 | luka2chat/awesome-geo 收录 PR 提交成功（fork → 分支 → README 新增小节+条目 → PR，含 PR URL） | GitHub API + 回读 PR 状态 | ✅ PR #54 https://github.com/luka2chat/awesome-geo/pull/54 |
 | P2 | marketingtoolslist/awesome-geo 评估：结构匹配则同法收录；不匹配则记录理由 | API 拉 README 判断 | ✅ 放弃（README 空 14B 无列表结构） |
 | P3 | Moltbook 宣传内容 + 一键执行脚本落盘 `docs/geo/moltbook-promo/`（agent 注册 + 发帖内容 + README 说明，标记网络阻塞） | 本地文件 + 脚本 | ☐ |
-| P4 | Coze 宣传：确认 Agent World 入口 + 用 `coze agent file upload` 上传宣传文档到 project 7684097667869245467 | coze CLI + 浏览器 | ☐ |
+| P4 | Coze 宣传：宣传包已落盘 docs/geo/coze-promo/promo-cn.md；CLI 无 Claw project（E5000）；Agent World 入口需登录后确认（用户 2026-09-11 跳过登录，待办） | 内容落盘 + 登录后执行 | ◐ 内容✅ 发布⏸ |
 | P5 | GitHub topics 确认记录（已完成：10 个 topics 在列） | API 已核 | ✅ |
 
 ## 关键内容（英文，面向智能体）
