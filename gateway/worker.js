@@ -55,20 +55,20 @@ async function verifyEd25519(pubPem, message, sigHex) {
 const GH = "https://api.github.com";
 
 async function ghGet(path, deps) {
-  const d = deps || { fetch: globalThis.fetch };
-  return d.fetch(`${GH}/repos/ptreezh/agentmarket${path}`, {
-    headers: { "User-Agent": "agentbazaar-gateway", Accept: "application/vnd.github+json", Authorization: `Bearer ${d.ghPat || ""}` },
+  const doFetch = (deps && deps.fetch) || globalThis.fetch;
+  return doFetch(`${GH}/repos/ptreezh/agentmarket${path}`, {
+    headers: { "User-Agent": "agentbazaar-gateway", Accept: "application/vnd.github+json", Authorization: `Bearer ${(deps && deps.ghPat) || ""}` },
   });
 }
 
 async function ghPut(path, body, deps) {
-  const d = deps || { fetch: globalThis.fetch };
-  return d.fetch(`${GH}/repos/ptreezh/agentmarket/contents/${path}`, {
+  const doFetch = (deps && deps.fetch) || globalThis.fetch;
+  return doFetch(`${GH}/repos/ptreezh/agentmarket/contents/${path}`, {
     method: "PUT",
     headers: {
       "User-Agent": "agentbazaar-gateway",
       Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${d.ghPat || ""}`,
+      Authorization: `Bearer ${(deps && deps.ghPat) || ""}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
@@ -77,8 +77,7 @@ async function ghPut(path, body, deps) {
 
 // Read agents/<id>/agent.md to obtain the public_key (gateway stateless).
 async function fetchAgentPublicKey(agentId, deps) {
-  const d = deps || { fetch: globalThis.fetch };
-  const r = await ghGet(`/contents/agents/${agentId}/agent.md`, d);
+  const r = await ghGet(`/contents/agents/${agentId}/agent.md`, deps);
   if (!r.ok) return null;
   const j = await r.json();
   const content = bytesToUtf8(b64ToBytes(j.content));
@@ -88,14 +87,13 @@ async function fetchAgentPublicKey(agentId, deps) {
 
 // Write a file to the repo (single-file commit via Contents API — avoids push conflicts).
 async function writeRepoFile(path, content, message, deps) {
-  const d = deps || { fetch: globalThis.fetch };
   const body = { message, content: bytesToB64(utf8ToBytes(content)), branch: "main" };
-  const head = await ghGet(`/contents/${path}`, d);
+  const head = await ghGet(`/contents/${path}`, deps);
   if (head.ok) {
     const hj = await head.json();
     body.sha = hj.sha;
   }
-  const r = await ghPut(path, body, d);
+  const r = await ghPut(path, body, deps);
   if (!r.ok) {
     const txt = await r.text();
     return { ok: false, status: r.status, error: txt.slice(0, 300) };
@@ -105,8 +103,7 @@ async function writeRepoFile(path, content, message, deps) {
 
 // First-come-first-served claim semantics: reject if a claimed event already exists.
 async function taskHasClaimedEvent(taskId, deps) {
-  const d = deps || { fetch: globalThis.fetch };
-  const r = await ghGet(`/contents/tasks/${taskId}/events`, d);
+  const r = await ghGet(`/contents/tasks/${taskId}/events`, deps);
   if (!r.ok) return false;
   const j = await r.json();
   return Array.isArray(j) && j.some((f) => f.name.startsWith("claimed-"));
