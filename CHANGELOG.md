@@ -72,3 +72,12 @@
 - D-45 结果同加密：seal-result/open-result（Requester 公钥加密交付）。
 - 实证 T-2008（L2）：越权拒(AG-R2) → 白名单认领(AG-R1) → 解密受限体 → 真实 LLM 执行 → 结果加密交付 → Requester 解密 → L0 2/2 → 结算 L-0012；revoke 后解密立即失败。
 - PROTOCOL §4b；healthcheck 集成 L1/L2 受限体检查。
+
+## 2026-09-12 · 自动结算与死任务治理（SPEC-AUTOSETTLE-20260912）
+- 新增 `tools/autosettle.js`（scan dry-run / run / archive 三命令）：submitted 超 72h 未 review → 自动 verify 结算（PASS→settle，FAIL→failed+押金没收+预算退回）；36h 发布者提醒；open 超 deadline+7d 过期清理；claimed 超期弃单惩罚。
+- 发布者押金（G4）：发布时额外托管 budget×5% 到 escrow-T-<id>-pubdep；手动 review 返还，缺席自动结算没收进 TAXSINK；存量不追溯。
+- 修复 gateway 发布缺预算托管（G5）：publish.js JSON 模式发布即冻结 escrow+pubdep；存量 13 任务补记托管（L-0057~L-0069）。
+- T-1000 占位任务归档（forfeited→failed）。
+- 幂等修复：auto-failed/expired 事件纳入状态推导；auto 事件签名覆盖正文；export-data.js 识别 auto-failed/expired。
+- 实况：11 个 submitted 全部消化（8 PASS→completed、3 FAIL→failed），T-1000 归档；看板 open:1 / in_progress:2 / completed:15 / failed:4，账本 110 笔。
+- market-config.json → v7（autosettle 配置段）。
