@@ -1,0 +1,1188 @@
+<search query="ClawHub OpenClaw skills store publish skill marketplace" search_time="2026年9月12日11时29分星期六"><document reference_id="https://docs.openclaw.ai/clawhub/quickstart"><title>Quickstart</title><host>OpenClaw</host><snippet>Overview
+Quickstart
+ClawHub is a registry for OpenClaw skills and plugins.
+Use OpenClaw when you are installing things into OpenClaw. Use the <beginning of the code>clawhub<end of the code> CLI when you are signing in, publishing, managing your own listings, or using registry-specific workflows.
+Find and install a skill
+Search from OpenClaw:
+bash
+openclaw skills search "calendar"
+Install a skill:
+bash
+openclaw skills install @openclaw/demo
+Update installed skills:
+bash
+openclaw skills update --all
+OpenClaw records where the skill came from so later updates can continue to resolve through ClawHub.
+Find and install a plugin
+Search from OpenClaw:
+bash
+openclaw plugins search "calendar"
+Install a ClawHub-hosted plugin with an explicit ClawHub source:
+bash
+openclaw plugins install clawhub:<package>
+Update installed plugins:
+bash
+openclaw plugins update --all
+Use the <beginning of the code>clawhub:<end of the code> prefix when you want OpenClaw to resolve the package through ClawHub rather than npm or another source.
+Sign in for publishing
+Install the ClawHub CLI:
+bash
+npm i -g clawhub
+# or
+pnpm add -g clawhub
+Sign in with GitHub:
+bash
+clawhub login
+clawhub whoami
+Headless environments can use an API token from the ClawHub web UI:
+bash
+clawhub login --token clh_...
+Publish a skill
+A skill is a folder with a required <beginning of the code>SKILL.md<end of the code> file and optional supporting files.
+bash
+clawhub skill publish ./my-skill \
+--slug my-skill \
+--name "My Skill" \
+--changelog "Initial release"
+The command skips unchanged content. New skills start at <beginning of the code>1.0.0<end of the code>; later changes automatically publish the next patch version. Use <beginning of the code>--dry-run<end of the code> to preview or <beginning of the code>--version<end of the code> to choose an explicit version.
+Before publishing, check the metadata in <beginning of the code>SKILL.md<end of the code>. Declare required environment variables, tools, and permissions so users can understand what the skill needs before they install it. See Skill format.
+For repositories containing multiple skills, the reusable GitHub workflow calls <beginning of the code>skill publish<end of the code> for each immediate skill folder under <beginning of the code>skills/<end of the code>:
+yaml
+jobs:
+preview:
+uses: openclaw/clawhub/.github/workflows/skill-publish.yml@main
+with:
+dry_run: true
+Publish a plugin
+Publish a plugin from a local folder, a GitHub repo, a GitHub ref, or an existing archive:
+bash
+clawhub package publish <source> --family code-plugin --dry-run
+clawhub package publish <source> --family code-plugin
+Use <beginning of the code>--dry-run<end of the code> first to preview the resolved package metadata, compatibility fields, source attribution, and upload plan without publishing.
+Code plugins must include OpenClaw compatibility metadata in <beginning of the code>package.json<end of the code> , including <beginning of the code>openclaw.compat.pluginApi<end of the code> and <beginning of the code>openclaw.build.openclawVersion<end of the code>.
+Inspect before installing
+Before installing, use the ClawHub web page or CLI detail commands to inspect metadata, source links, versions, changelogs, and scan status:
+bash
+clawhub inspect @openclaw/demo
+clawhub package inspect <package>
+Public listings show the latest scan state. Releases that are held or blocked by moderation may be hidden from search and install surfaces until resolved.
+On this page
+Find and install a skill
+Find and install a plugin
+Sign in for publishing
+Publish a skill
+Publish a plugin
+Inspect before installing</snippet><url>https://docs.openclaw.ai/clawhub/quickstart</url><last_update_time>2026年8月31日15时37分</last_update_time><text_length>917</text_length></document><document reference_id="https://docs.openclaw.ai/clawhub/publishing.md"><title>OpenClaw文章</title><host>OpenClaw</host><snippet>---
+summary: "How ClawHub publishing works for skills, plugins, owners, scopes, releases, and review."
+read_when:
+  - Publishing a skill or plugin
+  - Debugging owner or package scope errors
+  - Adding publish UI, CLI, or backend behavior
+---
+# Publishing
+
+Publishing sends a skill folder or plugin package to ClawHub under the owner you
+choose. ClawHub checks that your token can publish for that owner, validates the
+metadata, name, version, files, and source information, then stores the release
+and starts automated security checks.
+
+If validation fails, nothing is published. New releases may also stay out of
+normal install and download surfaces until review finishes.
+
+## Skills
+
+The simplest publishing path is the CLI. Sign in, then publish a local skill
+folder:
+
+```bash
+clawhub login
+clawhub skill publish ./my-skill \
+  --slug my-skill \
+  --name "My Skill" \
+  --owner <owner>
+```
+
+Use `--owner <handle>` when publishing to an org owner. Omit it to publish as
+the authenticated user. Publishing skips unchanged content. A new skill starts
+at `1.0.0`, and later changes automatically publish the next patch version. Pass
+`--version` only when you need an explicit version.
+
+### Skill catalog metadata
+
+Categories place a skill in the category filters on the ClawHub skills browse
+page. Topics become the filter chips offered inside a selected category. Set both
+when you publish:
+
+```bash
+clawhub skill publish ./my-skill \
+  --categories development,operations \
+  --topics "git,worktree,cleanup"
+```
+
+Both flags take comma-separated values. Categories must be slugs from this list,
+matched exactly, so `Development` is rejected. Topics are free-form labels;
+ClawHub stores what you pass and displays the normalized form, so `Git Worktree`
+appears as `#git-worktree`.| Slug | Description |
+| --- | --- |
+| `integrations` | Connect services, fetch data, reconcile records, and operate APIs. |
+| `automation` | Build repeatable processes, scheduled jobs, pipelines, and orchestration. |
+| `development` | Inspect, edit, test, build, debug, and operate codebases. |
+| `productivity` | Manage tasks, calendars, email, meetings, projects, and business work. |
+| `communication` | Message, publish, and operate social or communication services. |
+| `creative` | Create and edit images, video, audio, music, design, and writing. |
+| `knowledge` | Work with documents, notes, knowledge bases, teaching, and learning. |
+| `agents` | Change how an agent plans, reflects, learns, remembers, or collaborates. |
+| `operations` | Inspect, monitor, deploy, and operate local systems or infrastructure. |
+| `finance` | Work with payments, budgets, banking, shopping, markets, and commerce. |
+| `lifestyle` | Travel, health, fitness, cooking, sports, home, and daily-life utilities. |
+| `other` | Skills that do not yet fit another browse category. |
+
+Rules ClawHub applies to both fields:
+
+- A skill can carry at most 3 categories and at most 5 topics.
+- An unknown category slug fails the publish. `--dry-run` does not check slugs;
+  the registry validates them when the publish runs.
+- `other` is dropped when it is passed alongside a specific category. The
+  3-category limit is applied after that, so `other,development,operations`
+  stores two categories rather than failing.
+- Repeats are dropped rather than rejected, and they are matched after
+  normalization, so `git,Git` is one topic. Both limits count what is left after
+  that, not what you passed.
+- Each topic is at most 48 characters, and topics cannot contain invisible
+  formatting characters.
+- These topic names are reserved by ClawHub and are rejected: `approved`,
+  `audited`, `certified`, `clawhub`, `community`, `curated`, `endorsed`,
+  `featured`, `official`, `officials`, `openclaw`, `recommended`, `staff-pick`,
+  `trusted`, `trusted-publisher`, `verified`. The check runs on the normalized
+  form, so `Official` and `staff pick` are rejected too.
+- A skill first published without `--categories` is stored as `other`, so it only
+  appears under the Other category.
+- On a later publish, omitting `--categories` or `--topics` keeps the values
+  already stored. Pass the flag again to change them. Passing an empty value
+  clears the field: `--categories ""` returns the skill to `other`, and
+  `--topics ""` removes its topics.
+- Passing either flag publishes even when the files have not changed, so fixing
+  metadata this way creates a new patch version.
+
+Skill owners can also edit categories and topics from the skill's settings page
+on ClawHub. That is the quickest fix for a skill that was already published into
+`other`.
+
+### Publishing from a catalog repo
+
+For catalog repos, use ClawHub's reusable
+[`skill-publish.yml` workflow](https://github.com/openclaw/clawhub/blob/main/.github/workflows/skill-publish.yml).
+It calls `skill publish` for each immediate skill folder under `root` (default:
+`skills`), or only the folder supplied as `skill_path`.
+
+```yaml
+jobs:
+  publish:
+    uses: openclaw/clawhub/.github/workflows/skill-publish.yml@main
+    with:
+      owner: <owner>
+      dry_run: false
+    secrets:
+      clawhub_token: ${{ secrets.CLAWHUB_TOKEN }}
+```
+
+Use `dry_run: true` to preview new and changed skills without publishing.
+
+The workflow forwards optional `changelog`, `categories`, and `topics` inputs to
+`skill publish`, plus `clear_categories` and `clear_topics` for removing metadata
+a skill already carries. A skill first published without `categories` is stored
+as `other`, the same as [`clawhub sync`](/clawhub/cli#sync); you can also set catalog
+metadata later from the skill's settings page.
+
+Like `tags`, `categories` and `topics` apply to **every** skill the run
+publishes, and supplying them suspends the unchanged-skill skip — the run
+releases a new patch version of each selected skill, including skills whose files
+did not change. Pass `skill_path` to bound that to one skill. See the
+[workflow notes](/clawhub/cli#github-actions-1) for the full behavior.
+
+## Plugins
+
+Plugins use npm-style package names. Scoped package names include the owner in
+the first part of the name:
+
+```text
+@owner/package-name
+```
+
+The scope must match the selected publish owner. If your package is named
+`@openclaw/dronzer`, it can only be published as `@openclaw`. If you publish as
+`@vintageayu`, rename the package to `@vintageayu/dronzer`.
+
+This prevents a package from claiming an org namespace that the publisher does
+not control.
+
+If you are the rightful owner of an org, brand, package scope, owner handle, or
+namespace that is already claimed or reserved on ClawHub, open an
+[Org / Namespace Claim issue](https://github.com/openclaw/clawhub/issues/new?template=org-namespace-claim.yml)
+with public, non-sensitive proof. See
+[Org and Namespace Claims](/clawhub/namespace-claims) for what to include and what
+to keep out of public issues.
+
+### Before Publishing a Plugin
+
+- Pick an owner that matches the package scope.
+- A code plugin's manifest `id` must be unique within that publisher's packages.
+  Different publishers can distribute the same runtime id under distinct scoped
+  package names. Choose the explicit scoped name to install a community package;
+  known bare OpenClaw aliases select the official package. One OpenClaw
+  installation still uses one plugin for each runtime id.
+- Include `openclaw.plugin.json`. Code plugins also need `package.json` with
+  `openclaw.compat.pluginApi` and `openclaw.build.openclawVersion`.
+- To show a custom plugin catalog icon on the homepage and plugin list pages,
+  add `icon` to `openclaw.plugin.json` with any HTTPS image URL.
+- Include source repository and exact commit metadata, or use the CLI from a
+  GitHub-backed checkout so it can detect them.
+- Run `clawhub package validate <source>` before publishing. For package,
+  manifest, SDK import, or artifact findings, see
+  [Plugin validation fixes](/clawhub/plugin-validation-fixes).
+- Run `clawhub package publish <source> --dry-run` before creating a release.
+- Expect new releases to stay out of public install surfaces until automated
+  security checks and verification finish.
+
+An inspector operational failure reports the failing stage. A temporary-workspace
+cleanup failure also blocks publication and appears alongside any original
+inspection findings; it does not erase the primary error. These failures are
+distinct from plugin policy findings. Report the stage and Convex request id
+when asking maintainers to investigate; do not include credentials or package
+contents in diagnostic reports.
+
+### Trusted Publishing for Packages
+
+Package trusted publishing is a two-step setup:
+
+1. Publish the package once through normal manual or token-authenticated
+   `clawhub package publish`. This creates the package row and establishes the
+   package managers who can change its trusted publisher config.
+2. A package manager sets the GitHub Actions trusted publisher config:
+
+```bash
+clawhub package trusted-publisher set @owner/package-name \
+  --repository owner/repo \
+  --workflow-filename package-publish.yml
+```
+
+If the package scope and selected owner do not match, ClawHub rejects the
+publish:
+
+```text
+Package scope "@openclaw" must match selected owner "@vintageayu".
+Publish as "@openclaw" or rename this package to "@vintageayu/dronzer".
+```
+
+To fix it, either choose the owner named by the package scope, or rename the
+package so the scope matches the owner you can publish as.
+
+If the package name already has the right scope but the package is owned by the
+This protects org namespaces. A package named `@openclaw/dronzer` claims the
+`@openclaw` namespace, so only publishers with access to the `@openclaw` owner
+can publish it.</snippet><url>https://docs.openclaw.ai/clawhub/publishing.md</url><last_update_time>2026年9月5日14时26分</last_update_time><text_length>2388</text_length></document><document reference_id="https://claw-hub.net/"><title>Claw Hub : The Skill Marketplace for OpenClaw Hub AI Agents</title><host>claw-hub.net</host><snippet>OpenClaw Hub Skill Registry
+Claw Hub: The Skill Marketplace for OpenClaw Hub AI Agents
+Discover, install, and publish skills for OpenClaw. Claw Hub is the npm for AI agents - 3,286 skills with vector search, version control, and community ratings.
+🚀 Deploy Your OpenClaw Bot in Minutes
+Professional OpenClaw AI Bot hosting by AiBotClaw.com — Skip the setup, get 7×24 operation with automatic updates
+One-click deployment
+24/7 uptime monitoring
+Auto security updates
+Professional support
+⬡ Instant access to all 3,286 ClawHub skills
+From $16.99/mo
+annual billing
+3,286
+Skills Available
+1.5M+
+Total Downloads
+11
+Categories
+What is Claw Hub for OpenClaw Hub?
+Claw Hub is OpenClaw's official skill registry - think of it as "npm for AI agents". The OpenClaw hub provides a fast, searchable marketplace for discovering and sharing skills across the OpenClaw hub ecosystem.
+With 3,286 available skills in the Claw Hub marketplace, OpenClaw hub users can extend their AI agents with powerful capabilities ranging from web automation to AI model integration.
+Claw Hub uses vector-based semantic search, meaning you can find relevant OpenClaw hub skills using natural language - even if the exact keywords don't match.
+$ clawhub search "web scraping"
+Found 127 skills in Claw Hub...
+$ clawhub install tavily-web-search
+✓ Installed to OpenClaw hub workspace
+$ clawhub list
+5 skills installed from Claw Hub
+Claw Hub Core Features for OpenClaw Hub
+Claw Hub provides powerful tools for discovering and managing OpenClaw hub skills
+Vector Search
+Find Claw Hub skills using natural language. Semantic search powered by embeddings finds relevant OpenClaw hub skills even without exact keyword matches.
+Version Control
+Semver versioning system with tags, changelogs, and downloadable zip files for each Claw Hub skill version. Track updates in your OpenClaw hub projects.
+Community Ratings
+Stars, comments, and moderation system. Claw Hub skills with 3+ reports are automatically hidden. Trust community feedback for OpenClaw hub security.
+CLI Integration
+Install, search, update, and publish Claw Hub skills directly from OpenClaw hub CLI. One-command skill management for seamless workflows.
+⚠️ Important Claw Hub Security Notice
+ClawHavoc Incident (February 2026): Researchers discovered 341 malicious Claw Hub skills stealing user data from OpenClaw hub. An additional 283 skills (7.1%) had critical security flaws.
+Claw Hub's Security Response:
+Removed ~2,419 suspicious/malicious skills from Claw Hub (5,705 → 3,286)
+VirusTotal partnership (Feb 7, 2026) - automatic malware scanning for OpenClaw hub
+Enhanced moderation in Claw Hub (3+ reports = auto-hide)
+User reporting system for dangerous OpenClaw hub skills
+Your Safety: Always review Claw Hub skills before installing. Prefer high-star, high-download skills from trusted authors in the OpenClaw hub ecosystem.
+Explore OpenClaw Hub Skills by Category
+Claw Hub organizes 3,286 OpenClaw hub skills into 11 major categories
+AI/ML
+1,588 skills
+48.3% - AI models, NLP, RAG
+Utility
+1,520 skills
+46.3% - File ops, system tools
+Development
+976 skills
+29.7% - Code, Git, DevOps
+Productivity
+822 skills
+25.0% - Docs, scheduling
+Web
+637 skills
+19.4% - Browser, HTTP
+Science
+598 skills
+18.2% - Data analysis
+Media
+365 skills
+11.1% - Video, audio
+Social
+364 skills
+11.1% - Twitter, Discord
+Finance
+311 skills
+9.5% - Stocks, crypto
+Location
+153 skills
+4.7% - Maps, weather
+Business
+151 skills
+4.6% - Marketing, CRM
+Top Claw Hub Skills by Downloads
+The most popular OpenClaw hub skills in the Claw Hub marketplace
+1
+Capability Evolver
+AI/ML
+35,581 downloads ⭐ 33 stars
+2
+Wacli
+Development · Utility
+16,415 downloads ⭐ 37 stars
+3
+ByteRover
+Utility · Development
+16,004 downloads ⭐ 36 stars
+4
+self-improving-agent
+AI/ML
+15,962 downloads ⭐ 132 stars
+5
+ATXP
+Utility
+14,453 downloads ⭐ 4 stars
+Powered by OpenClaw Hub
+Claw Hub is the official skill registry for OpenClaw hub, the revolutionary open-source AI agent framework with 157,000+ GitHub stars.
+157K+
+GitHub Stars
+3,286
+Claw Hub Skills
+1.5M+
+Skill Downloads
+Claw Hub Frequently Asked Questions
+Common questions about the Claw Hub skill marketplace for OpenClaw hub
+What is Claw Hub and how does it relate to OpenClaw hub?
+Claw Hub is OpenClaw's official skill registry - often described as "npm for AI agents". It provides a searchable marketplace with 3,286 skills for extending OpenClaw hub AI agents. Claw Hub offers vector search, version control, community ratings, and seamless CLI integration for OpenClaw hub users.
+Is Claw Hub safe to use after the ClawHavoc incident?
+Claw Hub significantly improved security after ClawHavoc: removed 2,419 suspicious skills (from 5,705 to 3,286), partnered with VirusTotal for automatic malware scanning (Feb 7, 2026), and enhanced moderation with auto-hide after 3 reports. However, always review Claw Hub skills before installing - prefer high-star, high-download skills from trusted authors.
+How do I install skills from Claw Hub to OpenClaw hub?
+Use OpenClaw CLI to install Claw Hub skills: <beginning of the code>clawhub search "keyword"<end of the code> to find skills, then <beginning of the code>clawhub install skill-name<end of the code> to install. Always check star count, downloads, and community comments before installing any Claw Hub skill.
+What are the most popular Claw Hub skills for OpenClaw hub?
+Top Claw Hub skills by downloads include: Capability Evolver (35,581 downloads), Wacli (16,415), ByteRover (16,004), self-improving-agent (15,962 downloads, 132 stars), and ATXP (14,453). These established skills have strong community trust in the OpenClaw hub ecosystem.
+Can I publish my own skills to Claw Hub?
+Yes! You can publish skills to Claw Hub using <beginning of the code>clawhub publish ./my-skill<end of the code>. Your skill needs a SKILL.md file with metadata, interface definition, and execution logic. A GitHub account at least one week old is required. See our Claw Hub skill development guide for details.
+How does Claw Hub vector search work for OpenClaw hub?
+Claw Hub uses embeddings-based semantic search, meaning you can find relevant OpenClaw hub skills using natural language descriptions - even if the exact keywords don't match. This makes discovering Claw Hub skills more intuitive than traditional keyword-only search.
+Ready to Use Claw Hub Skills?
+Install your first OpenClaw hub skill from Claw Hub in minutes with our comprehensive installation guide.
+Requires OpenClaw hub CLI. Free and open source.</snippet><url>https://claw-hub.net/</url><last_update_time>2026年6月5日1时10分</last_update_time><text_length>1775</text_length></document><document reference_id="https://imclaw.ai/ja/faq/what-is-clawhub"><title>什么是 ClawHub？OpenClaw 官方技能市场完整介绍（2026）</title><host>ImClaw</host><snippet>产品介绍 2026年3月14日
+什么是 ClawHub？OpenClaw 官方技能市场完整介绍（2026）
+ClawHub（clawhub.ai）是 OpenClaw 的官方技能注册中心，类似 npm 之于 Node.js。收录 19,000+ 社区贡献技能，涵盖效率提升、搜索研究、工作流自动化、通信协作等方向。本文详解 ClawHub 的定位、核心功能、安全注意事项及使用方式。
+什么是 ClawHub？
+ClawHub（clawhub.ai）是 OpenClaw AI 框架的官方技能（Skills）注册中心，类似于 npm 之于 Node.js，或 PyPI 之于 Python。
+简单来说：
+OpenClaw 是 AI Agent 框架（引擎）
+Skills 是扩展 OpenClaw 能力的功能模块（插件）
+ClawHub 是所有 Skills 的集中存储和分发平台（应用商店）
+截至 2026 年 3 月，ClawHub 收录了 19,000+ 社区贡献技能，覆盖从日常效率到专业自动化的各类场景，是 OpenClaw 生态能力扩展的核心来源。
+ClawHub 的核心功能
+1. 技能搜索与发现
+ClawHub 提供技能搜索、分类浏览和榜单排行：
+主要技能分类：
+| 分类 | 典型技能 |
+| --- | --- |
+| 效率提升 | 文档摘要、邮件起草、任务管理 |
+| 搜索与研究 | 联网搜索、学术论文检索、新闻聚合 |
+| 工作流自动化 | 定时任务、数据抓取、表单填写 |
+| 通信与协作 | Telegram Bot、Slack 集成、会议纪要 |
+| 代码与开发 | 代码审查、Debug 助手、文档生成 |
+| 图像与多媒体 | 图片识别、OCR、视频摘要 |
+
+2. 一键安装与版本管理
+在 Openclaw Desktop 或命令行中，安装 ClawHub 技能极为简单：
+<beginning of the code>
+# 搜索技能
+openclaw skills search "网页摘要"
+# 安装技能
+openclaw skills install web-summarizer
+# 更新所有技能
+openclaw skills update --all
+# 查看已安装技能
+openclaw skills list
+<end of the code>
+3. 技能发布与贡献
+任何开发者都可以向 ClawHub 提交自己的技能：
+按照 OpenClaw Skills 规范编写 YAML 配置
+在 ClawHub 注册开发者账号
+提交技能包，经过基础自动审核后上架
+社区用户评分和反馈帮助技能获得更高曝光
+ClawHub 的开放提交机制带来了丰富的技能生态，也是其数量超过 SkillHub 的原因。
+4. 技能备份与迁移
+ClawHub 提供技能配置的云端备份：
+将已安装技能列表同步到 ClawHub 账号
+换新设备时一键恢复所有技能
+团队共享技能配置，统一工作环境
+如何在 Openclaw Desktop 中使用 ClawHub
+方式一：图形界面（推荐）
+打开 Openclaw Desktop → 技能商店
+在搜索框输入技能名称或描述
+点击技能卡片查看详情和评分
+点击安装，技能自动部署，无需重启
+方式二：命令行
+<beginning of the code>
+openclaw skills install <技能名>
+<end of the code>
+适合批量安装或脚本化部署场景。
+ClawHub 必装技能推荐（2026 精选）
+以下是社区评分最高、最实用的技能：
+效率核心
+| 技能 | 说明 | 安装命令 |
+| --- | --- | --- |
+| web-search | 实时联网搜索 + AI 摘要 | openclaw skills install web-search |
+| pdf-reader | PDF 全文解析与问答 | openclaw skills install pdf-reader |
+| code-runner | Python/JS 沙盒执行 | openclaw skills install code-runner |
+| image-ocr | 图片文字识别 | openclaw skills install image-ocr |
+
+自动化工具
+| 技能 | 说明 | 安装命令 |
+| --- | --- | --- |
+| browser-auto | 网页自动化操作 | openclaw skills install browser-auto |
+| cron-scheduler | 定时任务触发器 | openclaw skills install cron-scheduler |
+| telegram-notify | 发送 Telegram 通知 | openclaw skills install telegram-notify |
+
+安全注意事项
+ClawHub 采用开放提交机制，曾有安全团队（思科等）发现 820+ 个恶意技能（约占总数 20%），恶意行为包括：
+数据外泄：将对话内容发送到第三方服务器
+权限提升：尝试访问超出技能职责的系统资源
+提示词注入：篡改 AI 的系统提示，影响模型行为
+如何降低风险
+优先安装官方认证技能（带 ✓ 标志）
+查看安装量和评分：安装量 >1000、评分 >4.0 的技能相对可信
+使用 SkillHub 的精选榜单：腾讯 SkillHub 的 Top 50 榜经过更严格的安全审核
+审查技能权限：安装前查看技能申请的系统权限，拒绝不合理权限
+在沙盒中测试：不确定的技能先在测试环境运行
+ClawHub vs SkillHub 详细对比
+| 对比项 | ClawHub（官方） | SkillHub（腾讯） |
+| --- | --- | --- |
+| 网址 | clawhub.ai | skillhub.tencent.com |
+| 主办方 | OpenClaw 官方 | 腾讯 |
+| 技能数量 | 19,000+ | 13,000+（精选） |
+| 下载速度（国内） | 较慢（海外服务器） | 快（腾讯云 CDN） |
+| 安全审核 | 基础自动审核 | 人工 + 自动双重审核 |
+| 精选推荐 | 社区评分榜 | 官方 Top 50 认证榜 |
+| 智能搜索 | 关键词搜索 | 自然语言 Find Skills |
+| 开发者发布 | 开放提交 | 需要申请审核 |
+| 框架兼容 | 主要支持 OpenClaw | OpenClaw / Qclaw / WorkBuddy |
+
+选择建议：
+追求数量和新鲜技能 → ClawHub（官方，更新最快）
+追求安全和下载速度 → SkillHub（腾讯，审核更严）
+最佳实践：两者结合使用，日常从 SkillHub 精选榜安装，探索新技能时去 ClawHub 搜索
+常见问题
+Q：ClawHub 技能免费吗？
+绝大多数技能免费。部分开发者会为高质量商业技能设置付费授权，但基础功能技能几乎全部免费。
+Q：自己写的技能能发布到 ClawHub 吗？
+可以。按照 OpenClaw Skills 开发规范（YAML + 处理器脚本）编写技能，在 ClawHub 注册账号后提交即可。审核通过后全球用户可以安装。
+Q：ClawHub 需要账号才能下载吗？
+不需要账号就能搜索和安装公开技能。但如果需要云端备份技能列表，或者发布自己的技能，需要注册账号。
+Q：Openclaw Desktop 默认使用 ClawHub 还是 SkillHub？
+Openclaw Desktop 默认连接 ClawHub（官方源）。如需切换到 SkillHub 获得更快的国内下载速度，在设置 → 技能市场 → 技能源中修改即可，支持同时添加多个技能源。
+</snippet><url>https://imclaw.ai/ja/faq/what-is-clawhub</url><publish_time>2026年3月14日0时0分</publish_time><text_length>2035</text_length></document><document reference_id="https://freeopenclaw.io/skills-and-clawhub"><title>OpenClaw Skills & ClawHub</title><host>freeopenclaw.io</host><snippet>OpenClaw Skills & ClawHub
+OpenClaw skills are modular extensions that teach your AI agent how to use specific tools, APIs, and workflows. Each skill is a directory containing a SKILL.md file — a Markdown document with YAML frontmatter and plain-language instructions — that the agent reads at runtime to learn new capabilities. No TypeScript or Python required for basic skills, though both are supported for complex workflows.
+ClawHub is the public skills registry — the OpenClaw skills marketplace and hub — where the community publishes, discovers, and installs skills. ClawHub AI marketplace currently hosts over 5,400 community-contributed skills (and growing daily), covering everything from email management and OpenClaw GitHub skill integrations to cryptocurrency trading, smart home control, and SEO analysis. Install any skill with a single command. Publish your own with a pull request. The combination of simple Markdown-based definitions and the ClawHub ecosystem is what makes OpenClaw the most extensible AI agent platform available.
+What Are OpenClaw Skills?...
+An OpenClaw skill is a structured set of instructions that tells the agent how to perform a specific task. At minimum, a skill directory contains one file: SKILL.md with YAML frontmatter (name, description) and natural-language instructions. The agent reads these instructions and follows them when the task matches the skill's description — exactly like a human reading a how-to guide.
+Skills can also include reference files (documentation, API schemas), executable scripts (Python, Node.js, bash), and configuration templates. This bundle approach means a single skill directory contains everything needed to add a new capability. Once the skill folder is in place, the agent can immediately use the new tool — no restart required.
+Skill File Structure
+A minimal SKILL.md looks like this:
+---
+name: weather
+description: Get current weather and forecasts for any location
+---
+
+## Instructions
+
+Use the wttr.in API to fetch weather data...
+That is a complete, functional skill. Twenty lines of Markdown can teach your agent an entirely new capability. This low barrier to entry explains why the OpenClaw skills ecosystem grew so fast — you do not need to be a developer to create a useful skill.
+How Skills Load: Precedence
+OpenClaw loads skills from multiple locations with a clear priority order. If the same skill name exists in more than one place, the highest-precedence copy wins:| Priority | Location | Scope |
+| --- | --- | --- |
+| 1 (highest) | /skills/ | Per-agent workspace |
+| 2 | /.agents/skills/ | Project agent skills |
+| 3 | ~/.agents/skills/ | Personal agent skills (all workspaces) |
+| 4 | ~/.openclaw/skills/ | Managed/local (shared across agents) |
+| 5 | Bundled skills | Shipped with OpenClaw install |
+| 6 (lowest) | skills.load.extraDirs | Custom directories |
+
+This layered system means you can override any bundled OpenClaw skill with a customized version in your workspace. In multi-agent setups, each agent has its own workspace and can run different skill configurations. Agent allowlists provide additional control — you can restrict which skills each agent can access via the <beginning of the code>agents.defaults.skills<end of the code> and <beginning of the code>agents.ClawHub: The OpenClaw Skills Marketplace
+ClawHub (clawhub.ai) is the central registry where the OpenClaw community publishes, discovers, and installs skills. Think of it as npm for AI agent capabilities. The OpenClaw ClawHub marketplace hosts over 5,400 skills across dozens of categories — the largest OpenClaw skills repository available. You can browse skills on the ClawHub website, search via the ClawHub CLI, or discover them through OpenClaw's built-in commands. The OpenClaw skills hub also provides OpenClaw skills GitHub links for every published skill, so you can review the source before installing.
+Installing Skills from ClawHub
+Two methods are available:
+Native command: <beginning of the code>openclaw skills install <skill-slug><end of the code> — installs into the active workspace skills/ directory. This is the simplest path for most users.
+ClawHub CLI: <beginning of the code>clawhub install <skill-slug><end of the code> — installs into ./skills under your current working directory. The ClawHub CLI adds publish and sync workflows for skill developers.
+Update all installed skills at once:
+openclaw skills update --all
+Sync and publish (for skill authors):
+clawhub sync --all
+Publishing Your Own Skills
+Any developer can publish a skill to ClawHub — the OpenClaw marketplace for skills. Create a skill directory with a SKILL.md file, test it locally with your OpenClaw instance, then publish via the ClawHub CLI or submit a pull request to the ClawHub GitHub repository. The review process checks for basic quality and security — malicious instructions are blocked, but users should still vet skills before installing (more on security below).
+Best OpenClaw Skills by Category
+With 5,400+ options on ClawHub, choosing where to start can be overwhelming. These are the top OpenClaw skills by category, based on install counts, community recommendations on OpenClaw Reddit, and practical utility.
+Productivity & Communication| Skill | What It Does | Notes |
+| --- | --- | --- |
+| OpenClaw WhatsApp | Enhanced WhatsApp integration and automation | Popular for business messaging workflows. |
+| Obsidian Vault | Manage Obsidian notes, create daily notes, search | Popular with PKM workflows. |
+
+Development & DevOps| Skill | What It Does | Notes |
+| --- | --- | --- |
+| GitHub | PRs, issues, code review, repo management | One of the most useful for developers. |
+| Docker Manager | Container lifecycle, logs, health checks | Useful for DevOps monitoring. |
+
+Awesome OpenClaw Skills: Community Curated Lists
+Beyond ClawHub, the community maintains curated lists of the best skills. The most popular is awesome-openclaw-skills on GitHub (often found via awesome openclaw skills searches) — a community-curated directory organized by category with descriptions, install instructions, and quality ratings. The Chinese community maintains a parallel list (awesome openclaw skills zh) focused on WeChat, DeepSeek, and Chinese-language tools.
+OpenClaw Reddit (r/OpenClaw and r/AI_Agents) is another major discovery channel. Threads like "Best OpenClaw Skills You Should Install" regularly surface hidden gems and include real-world feedback from users who have tested skills in production. The OpenClaw skills docs on docs.openclaw.ai provide the authoritative reference for skill format, loading, and configuration.
+How to Create OpenClaw Skills
+Creating a skill requires zero coding experience for simple cases. The most powerful aspect of OpenClaw is self-improvement: describe what you need in natural language, and the agent will create, test, and install a skill for itself. This self-improvement capability means the agent's functionality grows the more you use it.
+Manual Skill Creation
+Create a directory : <beginning of the code>mkdir ~/.openclaw/workspace/skills/my-skill/<end of the code>
+Write SKILL.md: add YAML frontmatter (name, description) and plain-language instructions
+Add references: optional — include API docs, scripts, or config templates in the directory
+Test: send a message that matches the skill description and verify the agent uses it correctly
+Publish: use clawhub sync or submit a PR to share with the community
+Agent Self-Creation
+Tell your agent: "Create a skill that checks my AWS billing dashboard every morning and alerts me if spending exceeds $50." The agent writes the SKILL.md, creates any necessary scripts, tests the workflow, and saves it to your workspace skills directory. Next session, the skill is live. This loop — describe → agent builds → agent uses — is unique to OpenClaw and is the main reason the ClawHub ecosystem grew from zero to 5,400+ skills in under four months.
+Skills vs Plugins vs Extensions
+OpenClaw uses three terms that are easy to confuse: skills, plugins, and extensions. Here is the distinction:| Concept | Format | Purpose | Install Method |
+| --- | --- | --- | --- |
+| Skills | SKILL.md (Markdown) | Teach agent to use a specific tool/API | openclaw skills install or ClawHub CLI |
+| Plugins | openclaw.plugin.json | Extend the OpenClaw runtime itself (new channels, tools) | Configuration in openclaw.json |
+| Extensions (informal) | Various | Community catch-all term for any add-on | Depends on type |
+
+OpenClaw plugins can ship their own skills — when a plugin is enabled, its skill directories are merged into the loading pipeline at the lowest precedence level. Most users only interact with skills directly; plugins are for developers extending the platform itself. The term "OpenClaw extensions" is sometimes used on Reddit and forums as a general term covering both.
+Security: Vetting OpenClaw Skills
+Third-party OpenClaw skills are code running in a privileged environment. This is the single most important security consideration in the OpenClaw ecosystem. Known risks and mitigations:
+Malicious instructions: a skill can contain hidden prompt injection that alters agent behavior. Hudson Rock documented infostealer malware that harvested a complete OpenClaw configuration — API keys, agent identity, memory — from a compromised skill install.
+CVE-2026-25253: a vulnerability in the AI Gateway that allowed attackers to push commands through a compromised skill. Patched in OpenClaw v1.x+. Always update.
+Excessive permissions: a skill requesting shell access, file writes, and network calls for a task that should only need read access. Check the SKILL.md instructions before installing.
+Best practices:
+Read the SKILL.md source before enabling any third-party skill
+Check the author, GitHub stars, and ClawHub reviews
+Test new skills in sandbox mode or an isolated environment first
+Run skills through ClawDex (clawdex.koi.security) for automated security scanning
+Use agent allowlists to restrict which skills each agent can access
+OpenClaw's built-in dangerous-code scanner blocks critical findings by default during skill dependency installs
+Bundled OpenClaw Skills
+OpenClaw ships with several bundled OpenClaw skills — also known as OpenClaw bundled skills — out of the box, requiring no installation. These include web search (Brave API), web fetch (URL content extraction), agent browser (headless Chrome automation), and core file/shell operations. Bundled skills can be overridden by placing a custom version with the same name in your workspace skills/ directory. The full list is documented in the OpenClaw GitHub repository under the skills/ directory. The OpenClaw hub and ClawHub together form the complete discovery ecosystem — bundled skills for basics, ClawHub for everything else.
+Frequently Asked Questions
+What are OpenClaw skills?
+How do I install OpenClaw skills?
+Is ClawHub free?
+What are the best OpenClaw skills to install first?
+Can OpenClaw create its own skills?
+Are OpenClaw skills safe?
+What is the difference between skills and plugins?
+How many skills are on ClawHub?
+Maintained by the OpenClaw documentation team. Updated every 4-6 weeks. For corrections, open an issue on GitHub or join the community Discord.</snippet><url>https://freeopenclaw.io/skills-and-clawhub</url><last_update_time>2026年6月12日15时55分</last_update_time><text_length>2557</text_length></document><document reference_id="https://claw-hub.net/what-is-clawhub.html"><title>What is Claw Hub? The Complete OpenClaw Hub Guide</title><host>claw-hub.net</host><snippet>What is Claw Hub? The Complete OpenClaw Hub Guide
+Claw Hub is OpenClaw's official skill registry - the npm for AI agents. Discover how Claw Hub powers the OpenClaw hub ecosystem with 3,286 skills, vector search, and seamless CLI integration.
+Understanding Claw Hub for OpenClaw Hub
+Claw Hub is the official skill registry for OpenClaw hub, designed to be the "npm for AI agents ". Created by the OpenClaw team led by Peter Steinberger, Claw Hub provides a centralized marketplace where developers can discover, install, and share skills that extend OpenClaw hub AI agent capabilities.
+Think of Claw Hub like this: just as npm (Node Package Manager) allows JavaScript developers to easily add libraries to their projects, Claw Hub enables OpenClaw hub users to enhance their AI agents with pre-built skills. Whether you need web scraping capabilities, AI model integration, or productivity tools, Claw Hub has you covered with 3,286 available skills.
+Claw Hub stands out from traditional package managers with its vector-based semantic search - you can find relevant OpenClaw hub skills using natural language, even if the exact keywords don't match. This AI-powered approach makes discovering the right skills intuitive and efficient.
+3,286
+Skills Available in Claw Hub
+1.5M+
+Total Downloads
+157K+
+OpenClaw GitHub Stars
+11
+Skill Categories
+How Claw Hub Works for OpenClaw Hub Users
+Understanding the core components that power the Claw Hub skill marketplace
+The Skill Structure in Claw Hub
+Every skill in Claw Hub is a versioned file package that teaches OpenClaw hub how to perform specific tasks. The core component is the SKILL.md file, which contains:
+Metadata - Name, version, description, and author information
+Interface Definition - Clear instructions for how AI agents call the skill
+Execution Logic - The actual scripts (Python, Node.js, or Bash) that perform the work
+<beginning of the code>
+# Example SKILL.md structurename: summarize
+version: 1.2.0
+description: Summarize long documents and articles
+
+## Interface
+The skill accepts text input and returns a concise summary.
+
+## Execution
+Uses Python with NLP libraries for text processing.
+                    
+<end of the code>
+Vector Search
+Claw Hub uses embeddings-based semantic search. Describe what you need in natural language, and Claw Hub finds relevant OpenClaw hub skills intelligently.
+Version Control
+Every Claw Hub skill uses semantic versioning (semver). Track updates, manage dependencies, and roll back if needed in your OpenClaw hub projects.
+Community Ratings
+Stars, comments, and moderation help identify quality skills. Skills with 3+ reports are automatically hidden from Claw Hub.
+Claw Hub vs npm: Key Differences
+Understanding how Claw Hub compares to traditional package managers
+While Claw Hub draws inspiration from npm, it's specifically designed for AI agents and the OpenClaw hub ecosystem:| Feature | Claw Hub | npm |
+| --- | --- | --- |
+| Target Users | AI agents (OpenClaw hub) | JavaScript developers |
+| Search Method | Vector semantic search | Keyword-based |
+| Package Format | SKILL.md + scripts | package.json + JS |
+| Security Scanning | VirusTotal integration | Limited |
+| Community Moderation | Auto-hide on 3 reports | Manual review only |
+| AI-Native Design | Built for AI agents | Not designed for AI |
+
+Who Uses Claw Hub for OpenClaw Hub?
+The growing community behind the Claw Hub skill marketplace
+OpenClaw Hub Developers
+Extend AI agents with powerful capabilities from Claw Hub - web scraping, API integrations, data processing, and more without writing code from scratch.
+AI Agent Creators
+Build sophisticated AI workflows by combining multiple Claw Hub skills. Create specialized agents for specific domains and use cases.
+Skill Developers
+Share expertise by publishing skills to Claw Hub. Contribute to the OpenClaw hub ecosystem and help others automate their workflows.
+Enterprise Teams
+Organizations using OpenClaw hub leverage Claw Hub for productivity automation, customer support, and internal workflow optimization.
+Claw Hub History and Evolution
+From launch to the leading OpenClaw hub skill marketplace
+Late 2025 - Claw Hub Launch
+Claw Hub launches alongside OpenClaw hub, created by Peter Steinberger and the OpenClaw team. The vision: create "npm for AI agents" with vector search capabilities.
+Early 2026 - Rapid Growth
+OpenClaw hub reaches 157,000+ GitHub stars. Claw Hub grows to 5,705 skills as thousands of developers contribute to the ecosystem.
+February 2026 - ClawHavoc Incident
+Researchers discover 341 malicious Claw Hub skills. The team responds by removing 2,419 suspicious skills (reducing total to 3,286) and implementing security measures.
+February 7, 2026 - VirusTotal Partnership
+Claw Hub announces partnership with VirusTotal for automatic malware scanning of all OpenClaw hub skills. Enhanced moderation system deployed.
+Present - Strengthened Security
+Claw Hub continues as the trusted skill registry for OpenClaw hub with 3,286 verified skills, improved security, and an active developer community.
+Frequently Asked Questions About Claw Hub
+Common questions about the OpenClaw hub skill marketplace
+Is Claw Hub free to use for OpenClaw hub?
+Yes, Claw Hub is completely free and open source. You can browse, search, and install any of the 3,286 skills without cost. Publishing skills to Claw Hub is also free, though you need a GitHub account at least one week old.
+How do I search for skills in Claw Hub?
+Claw Hub offers two search methods: web interface at clawhub.ai and CLI commands. Use <beginning of the code>clawhub search "your query"<end of the code> to find relevant OpenClaw hub skills. The vector search understands natural language, so describe what you need in plain English.
+What happened during the ClawHavoc incident?
+In February 2026, researchers discovered 341 malicious Claw Hub skills distributing malware called Atomic Stealer. The OpenClaw team responded by removing 2,419 suspicious skills (from 5,705 to 3,286), partnering with VirusTotal for automatic scanning, and enhancing moderation. Read our detailed ClawHavoc incident report .
+Can I publish my own skills to Claw Hub?
+Yes! Anyone with a GitHub account (at least one week old) can publish skills to Claw Hub. Create a SKILL.md file with metadata, interface definition, and execution logic, then use <beginning of the code>clawhub publish ./my-skill<end of the code>. See our publishing guide for details.</snippet><url>https://claw-hub.net/what-is-clawhub.html</url><last_update_time>2026年3月30日8时10分</last_update_time><text_length>1601</text_length></document><document reference_id="https://openclaw.ia.br/skills/clawhub/"><title>ClawHub - Marketplace de Skills</title><host>OpenClaw</host><snippet>Skills · 01 feb 2026 · 3 min de leitura
+ClawHub - Marketplace de Skills
+Como descobrir, instalar e publicar skills no ClawHub, o marketplace da comunidade OpenClaw.
+ClawHub
+O ClawHub é o marketplace da comunidade OpenClaw onde você pode descobrir, instalar e compartilhar skills.
+Site: clawhub.com
+Descobrindo Skills
+Navegando no ClawHub
+O ClawHub organiza skills por categorias:
+Produtividade - Tarefas, notas, calendário
+Desenvolvimento - GitHub, Git, code review
+Mídia - Imagens, vídeos, áudio
+Comunicação - Email, Slack, Discord
+Smart Home - Luzes, sensores, automação
+Dados - APIs, bancos de dados, análise
+Cada skill mostra:
+⭐ Avaliações da comunidade
+Número de instalações
+Data da última atualização
+Descrição e exemplos de uso
+Buscando Skills
+<beginning of the code>
+https://clawhub.com/search?q=pdf
+<end of the code>
+Filtros disponíveis:
+Categoria
+Popularidade
+Atualização recente
+Verificado (skills oficiais ou auditados)
+Instalando Skills
+Método 1: Via CLI
+# Instalar skill específico
+openclaw skill install nome-do-skill
+# Instalar de URL
+openclaw skill install https://clawhub.com/skills/nome-do-skill.skill
+# Listar skills instalados
+openclaw skill list
+# Remover skill
+openclaw skill remove nome-do-skill
+Método 2: Download Manual
+Baixe o arquivo <beginning of the code>.skill<end of the code> do ClawHub
+Copie para sua pasta de skills:
+cp ~/Downloads/meu-skill.skill ~/clawd/skills/
+unzip ~/clawd/skills/meu-skill.skill -d ~/clawd/skills/meu-skill
+Reinicie o OpenClaw ou recarregue skills
+Método 3: Via Configuração
+Adicione ao seu <beginning of the code>config.yaml<end of the code>:
+skills:
+install:
+- clawhub:nome-do-skill
+- clawhub:[email protected]  # Versão específica
+O OpenClaw baixará automaticamente na inicialização.
+Atualizando Skills
+# Atualizar skill específico
+openclaw skill update nome-do-skill
+# Atualizar todos
+openclaw skill update --all
+# Verificar atualizações disponíveis
+openclaw skill outdated
+Publicando Seus Skills
+Pré-requisitos
+Conta no ClawHub
+Skill empacotado (<beginning of the code>.skill<end of the code>)
+Skill testado e documentado
+Passos para Publicar
+Crie uma conta em clawhub.com/register
+Empacote seu skill:
+python scripts/package_skill.py ~/clawd/skills/meu-skill
+# Resultado: meu-skill.skill
+Faça upload:
+openclaw skill publish meu-skill.skill
+# Ou via interface web do ClawHub
+Preencha metadados:
+Descrição longa
+Screenshots/exemplos
+Categorias
+Licença
+Submeta para revisão (para skills verificados)
+Boas Práticas para Publicação
+✅ Faça:
+Inclua exemplos de uso claros
+Documente dependências externas
+Teste em diferentes ambientes
+Mantenha o SKILL.md conciso
+Responda a issues/feedback
+❌ Evite:
+Hardcoded API keys
+Dependências obscuras
+Skills muito específicos (sem utilidade geral)
+Descrições vagas
+Skills Verificados vs. Comunidade
+Skills Verificados ✓
+Revisados pela equipe OpenClaw
+Testados para segurança
+Garantia de funcionamento
+Badge de verificação
+Skills da Comunidade
+Criados por usuários
+Sem garantia
+Use com cautela
+Verifique o código antes de usar
+Versionamento
+Skills seguem versionamento semântico:
+<beginning of the code>
+v1.2.3
+│ │ │
+│ │ └── Patch: correções de bugs
+│ └──── Minor: novos recursos compatíveis
+└────── Major: mudanças incompatíveis
+<end of the code>
+Instalar versão específica:
+openclaw skill install [email protected]
+Reportando Problemas
+Se um skill não funciona:
+Verifique dependências:
+openclaw skill check nome-do-skill
+Consulte issues no ClawHub:
+<beginning of the code>
+https://clawhub.com/skills/nome-do-skill/issues
+<end of the code>
+Abra um novo issue com:
+Versão do OpenClaw
+Versão do skill
+Erro completo
+Passos para reproduzir
+escrito por OpenClaw Brasil · são paulo
+publicado 01 fev 2026
+última revisão 01 fev 2026
+revisado por openclaw v2026.5.6
+licença cc by 4.0
+</snippet><url>https://openclaw.ia.br/skills/clawhub/</url><publish_time>2026年2月1日0时0分</publish_time><text_length>1188</text_length></document><document reference_id="https://openclaw.ia.br/contribuir/skills/"><title>Contribuir com Skills — Publicar no ClawdHub</title><host>OpenClaw</host><snippet>Contribuir com Skills — Publicar no ClawdHub
+Como criar e compartilhar skills para OpenClaw. Guia para desenvolvedores de skills.
+Contribuir com Skills
+Crie skills e compartilhe com a comunidade no ClawdHub.
+O Que São Skills
+Skills são extensões que adicionam funcionalidades ao OpenClaw:
+Novas integrações
+Comandos especializados
+Automações prontas
+Workflows complexos
+Estrutura de uma Skill
+<beginning of the code>
+minha-skill/
+├── SKILL.md          # Obrigatório: documentação
+├── package.json      # Metadata
+├── index.js          # Código principal (opcional)
+├── config.yaml       # Config padrão (opcional)
+└── README.md         # Docs para GitHub
+<end of the code>
+SKILL.md Mínimo
+---
+name: minha-skill
+description: O que a skill faz
+version: 1.0.0
+author: seu-nome
+tags:
+- categoria
+- keywords
+---
+# Minha Skill
+## O Que Faz
+Descrição do que a skill faz...
+## Instalação
+\`\`\`bash
+clawdhub install minha-skill
+\`\`\`
+## Uso
+Como usar a skill...
+## Comandos
+- "comando 1" - descrição
+- "comando 2" - descrição
+## Configuração
+\`\`\`yaml
+# config exemplo
+\`\`\`
+Skill Apenas com Instruções
+A forma mais simples - só documentação:
+---
+name: pomodoro
+description: Técnica Pomodoro para produtividade
+---
+# Skill: Pomodoro
+## Comandos
+Quando eu disser "pomodoro":
+1. Inicie timer de 25 minutos
+2. Me avise quando acabar
+3. Pergunte se quero pausa de 5min
+Quando eu disser "pausa":
+1. Timer de 5 minutos
+2. Avise quando acabar
+Skill com Código
+Para lógica mais complexa:
+// index.js
+module.exports = {
+name: 'minha-skill',
+// Comandos que a skill responde
+commands: {
+async 'meu-comando'(args, context) {
+// Sua lógica aqui
+return {
+message: 'Resultado do comando',
+data: { ... }
+};
+}
+},
+// Hooks
+async onLoad(config) {
+// Inicialização
+},
+async onMessage(message, context) {
+// Interceptar mensagens
+}
+};
+Publicar no ClawdHub
+1. Criar Conta
+clawdhub login
+2. Validar Skill
+cd minha-skill/
+clawdhub validate
+3. Publicar
+clawdhub publish
+4. Atualizar
+# Incremente versão no SKILL.md
+clawdhub publish --update
+Boas Práticas
+Documentação
+✅ Explique claramente o que faz
+✅ Dê exemplos de uso
+✅ Documente configurações
+✅ Liste dependências
+Código
+✅ Trate erros graciosamente
+✅ Valide inputs
+✅ Use async/await
+✅ Evite dependências desnecessárias
+Segurança
+✅ Não armazene credenciais
+✅ Valide dados externos
+✅ Documente permissões necessárias
+Testando Localmente
+# Copie para skills locais
+cp -r minha-skill ~/clawd/skills/
+# Reinicie gateway
+openclaw gateway restart
+# Teste
+openclaw chat "teste meu comando"
+Exemplos de Skills
+Skill de API
+// Integra com API externa
+const axios = require('axios');
+module.exports = {
+commands: {
+async 'cotacao-dolar'() {
+const res = await axios.get('https://api.exchangerate.host/latest');
+return { message: `Dólar: R$ ${res.data.rates.BRL}` };
+}
+}
+};
+Skill de Automação
+# Backup Semanal
+Todo domingo às 3h:
+1. Comprima ~/clawd/ em backup.tar.gz
+2. Envie para Google Drive
+3. Me confirme por Telegram
+Monetização
+Atualmente skills são gratuitas. Modelo de monetização em discussão.
+escrito por OpenClaw Brasil · são paulo
+publicado 01 jan 0001
+última revisão 01 jan 0001
+revisado por openclaw v2026.5.6
+licença cc by 4.0
+</snippet><url>https://openclaw.ia.br/contribuir/skills/</url><last_update_time>2026年9月8日16时55分</last_update_time><text_length>1050</text_length></document><document reference_id="https://docs.openclaw.kr/ko-KR/tools/clawhub"><title>ClawHub</title><host>docs.openclaw.kr</host><snippet>원격 측정 (설치 횟수)
+환경 변수
+Skills
+ClawHub
+ClawHub는 OpenClaw의 공용 스킬 레지스트리 입니다. 모든 스킬은 공개되고, 열려 있으며, 공유 및 재사용을 위해 모두에게 보이는 무료 서비스입니다. 스킬은 <beginning of the code>SKILL.md<end of the code> 파일이 포함된 폴더(및 지원 텍스트 파일)일 뿐입니다. 웹 앱에서 스킬을 브라우징하거나 CLI를 사용하여 스킬을 검색, 설치, 업데이트 및 게시할 수 있습니다.
+사이트:
+clawhub.ai
+ClawHub의 특징
+OpenClaw 스킬의 공용 레지스트리
+스킬 번들 및 메타데이터의 버전 저장소
+검색, 태그 및 사용 신호를 위한 검색 인터페이스
+작동 방식
+사용자가 스킬 번들(파일 + 메타데이터)을 게시합니다.
+ClawHub가 번들을 저장하고 메타데이터를 파싱하며 버전을 할당합니다.
+레지스트리가 검색 및 발견을 위해 스킬을 색인화합니다.
+사용자는 OpenClaw에서 스킬을 브라우징하고, 다운로드하고, 설치합니다.
+수행 가능한 작업
+새로운 스킬 및 기존 스킬의 새 버전을 게시합니다.
+이름, 태그 또는 검색을 통해 스킬을 발견합니다.
+스킬 번들을 다운로드하고 파일을 확인합니다.
+남용되거나 안전하지 않은 스킬을 신고합니다.
+모더레이터라면 숨김, 숨김 해제, 삭제 또는 사용자 차단을 할 수 있습니다.
+대상 사용자 (초보자 친화적)
+OpenClaw 에이전트에 새로운 기능을 추가하고 싶다면 ClawHub는 스킬을 찾고 설치하는 가장 쉬운 방법입니다. 백엔드 작업 방식을 알 필요가 없습니다. 다음을 할 수 있습니다:
+자연어로 스킬을 검색합니다.
+스킬을 작업 공간에 설치합니다.
+나중에 명령어 하나로 스킬을 업데이트합니다.
+자신의 스킬을 게시하여 백업합니다.
+빠른 시작 (비기술적)
+CLI를 설치합니다 (다음 섹션 참조).
+필요한 것을 검색합니다:
+<beginning of the code>clawhub search "calendar"<end of the code>
+스킬을 설치합니다:
+<beginning of the code>clawhub install <skill-slug><end of the code>
+새로운 OpenClaw 세션을 시작하여 새 스킬을 불러옵니다.
+CLI 설치
+옵션 중 하나를 선택하세요:
+npm i -g clawhub
+pnpm add -g clawhub
+OpenClaw에서의 위치
+기본적으로, CLI는 현재 작업 디렉토리의 <beginning of the code>./skills<end of the code> 에 스킬을 설치합니다. OpenClaw 작업 공간이 구성된 경우, <beginning of the code>clawhub<end of the code> 는 <beginning of the code>--workdir<end of the code> (또는 <beginning of the code>CLAWHUB_WORKDIR<end of the code> )로 덮어쓰지 않는 한 해당 작업 공간으로 돌아갑니다. OpenClaw는 작업 공간 스킬을 <beginning of the code><workspace>/skills<end of the code>에서 로드하며 다음 세션에서 이를 사용합니다. 이미 <beginning of the code>~/.openclaw/skills<end of the code> 또는 번들 스킬을 사용하는 경우, 작업 공간 스킬이 우선권을 가집니다.
+<beginning of the code>clawhub update <slug><end of the code>
+<beginning of the code>clawhub update --all<end of the code>
+<beginning of the code>--version <version><end of the code>: 특정 버전으로 업데이트 (단일 슬러그만 해당).
+<beginning of the code>--force<end of the code>: 로컬 파일이 게시된 버전과 일치하지 않을 때 덮어쓰기.
+목록:
+<beginning of the code>clawhub list<end of the code> (<beginning of the code>.clawhub/lock.json<end of the code> 읽기)
+게시:
+<beginning of the code>clawhub publish <path><end of the code>
+<beginning of the code>--slug <slug><end of the code>: 스킬 슬러그.
+<beginning of the code>--name <name><end of the code>: 표시 이름.
+<beginning of the code>--version <version><end of the code>: Semver 버전.
+<beginning of the code>--changelog <text><end of the code>: 변경 로그 텍스트 (비어있을 수 있음).
+<beginning of the code>--tags <tags><end of the code>: 쉼표로 구분된 태그 (기본값: <beginning of the code>latest<end of the code>).
+삭제/삭제 취소 (소유자/관리자 전용):
+<beginning of the code>clawhub delete <slug> --yes<end of the code>
+<beginning of the code>clawhub undelete <slug> --yes<end of the code>
+동기화 (로컬 스킬 스캔 + 새/업데이트된 스킬 게시):
+<beginning of the code>clawhub sync<end of the code>
+<beginning of the code>--root <dir...><end of the code>: 추가 스캔 루트.
+<beginning of the code>--all<end of the code>: 프롬프트 없이 모든 것 업로드.
+<beginning of the code>--dry-run<end of the code>: 업로드될 목록 표시.
+<beginning of the code>--bump <type><end of the code>: <beginning of the code>patch|minor|major<end of the code> 업데이트 (기본값: <beginning of the code>patch<end of the code>).
+<beginning of the code>--changelog <text><end of the code>: 비대화식 업데이트를 위한 변경 로그.
+<beginning of the code>--tags <tags><end of the code>: 쉼표로 구분된 태그 (기본값: <beginning of the code>latest<end of the code>).
+<beginning of the code>--concurrency <n><end of the code>: 레지스트리 검증 (기본값: 4).
+에이전트를 위한 일반 워크플로우
+스킬 검색
+clawhub search "postgres backups"
+새 스킬 다운로드
+clawhub install my-skill-pack
+설치된 스킬 업데이트
+clawhub update --all
+자신의 스킬 백업 (게시 또는 동기화)
+단일 스킬 폴더의 경우:
+clawhub publish ./my-skill --slug my-skill --name "My Skill" --version 1.0.0 --tags latest
+여러 스킬을 한 번에 스캔하고 백업하려면:
+clawhub sync --all
+고급 정보 (기술적)
+버전 관리 및 태그
+각 게시 시 새로운 semver <beginning of the code>SkillVersion<end of the code>이 생성됩니다.
+태그(<beginning of the code>latest<end of the code> 등)는 버전을 가리키며, 태그 이동은 롤백을 허용합니다.
+각 버전마다 변경 로그가 첨부되며, 동기화 또는 게시 업데이트 시 비어있을 수 있습니다.
+로컬 변경 사항 vs 레지스트리 버전
+업데이트는 로컬 스킬 콘텐츠와 레지스트리 버전을 내용 해시를 사용하여 비교합니다. 로컬 파일이 게시된 버전과 일치하지 않으면, CLI는 덮어쓰기 전에 확인을 요청합니다 (또는 비대화식 실행에서 <beginning of the code>--force<end of the code> 필요).
+동기화 스캔 및 대체 루트
+<beginning of the code>clawhub sync<end of the code> 는 현재 작업 디렉토리를 먼저 스캔합니다. 스킬이 발견되지 않으면, 알려진 레거시 위치(<beginning of the code>~/openclaw/skills<end of the code> 및 <beginning of the code>~/.openclaw/skills<end of the code> 등)로 돌아갑니다. 이는 추가 플래그 없이 이전 스킬 설치를 찾기 위한 방식입니다.
+저장소 및 잠금파일
+설치된 스킬은 작업 디렉토리의 <beginning of the code>.clawhub/lock.json<end of the code>에 기록됩니다.
+인증 토큰은 ClawHub CLI 설정 파일에 저장됩니다 (<beginning of the code>CLAWHUB_CONFIG_PATH<end of the code> 로 오버라이드 가능).
+원격 측정 (설치 횟수)
+로그인한 상태에서 <beginning of the code>clawhub sync<end of the code> 를 실행하면, CLI는 설치 횟수를 계산하기 위해 최소 스냅샷을 보냅니다. 이를 완전히 비활성화할 수 있습니다:
+export CLAWHUB_DISABLE_TELEMETRY=1
+환경 변수
+<beginning of the code>CLAWHUB_SITE<end of the code>: 사이트 URL 오버라이드.
+<beginning of the code>CLAWHUB_REGISTRY<end of the code>: 레지스트리 API URL 오버라이드.
+<beginning of the code>CLAWHUB_CONFIG_PATH<end of the code>: CLI가 토큰/설정을 저장하는 위치 오버라이드.
+<beginning of the code>CLAWHUB_WORKDIR<end of the code>: 기본 작업 디렉토리 오버라이드.
+<beginning of the code>CLAWHUB_DISABLE_TELEMET...
+</snippet><url>https://docs.openclaw.kr/ko-KR/tools/clawhub</url><last_update_time>2026年9月8日11时45分</last_update_time><text_length>4033</text_length></document><document reference_id="https://documentation.openclaw.ai/clawhub/cli"><title>CLI</title><host>OpenClaw</host><snippet>CLI package: <beginning of the code>clawhub<end of the code>, bin: <beginning of the code>clawhub<end of the code>.
+# <beginning of the code>star <slug><end of the code> / <beginning of the code>unstar <slug><end of the code>
+Adds/removes a skill from your highlights.
+# <beginning of the code>explore<end of the code>
+Lists newest skills via <beginning of the code>/api/v1/skills?limit=...&sort=createdAt<end of the code> (sorted by <beginning of the code>createdAt<end of the code> desc).# <beginning of the code>install <slug><end of the code>
+Resolves latest version via <beginning of the code>/api/v1/skills/<slug><end of the code> .
+# <beginning of the code>skill publish <path><end of the code>
+Publishes via <beginning of the code>POST /api/v1/skills<end of the code> (multipart).
+Requires semver: <beginning of the code>--version 1.2.3<end of the code>.
+<beginning of the code>--owner <handle><end of the code> publishes under an org/user publisher handle when the actor has publisher access.
+Owner and review behavior is explained in <beginning of the code>docs/publishing.md<end of the code> .
+Publishing a skill means it is released under <beginning of the code>MIT-0<end of the code> on ClawHub.
+Published skills are free to use, modify, and redistribute without attribution.
+ClawHub does not support paid skills or per-skill pricing.
+Legacy alias: <beginning of the code>publish <path><end of the code> .
+clawhub package explore --family code-plugin --artifact-kind...
+clawhub package download @openclaw/example-plugin --version 1.2.Flags:
+# <beginning of the code>package publish <source><end of the code>
+Publishes a code plugin or bundle plugin via <beginning of the code>POST /api/v1/packages<end of the code> .
+<beginning of the code><source><end of the code> accepts:
+Local folder path: <beginning of the code>./my-plugin<end of the code>
+Local ClawPack npm-pack tarball: <beginning of the code>./my-plugin-1.2.3.tgz<end of the code>
+GitHub repo: <beginning of the code>owner/repo<end of the code> or <beginning of the code>owner/repo@ref<end of the code>
+GitHub URL: <beginning of the code>https://github.com/owner/repo<end of the code>
+Metadata is auto-detected from <beginning of the code>package.json<end of the code>, <beginning of the code>openclaw.plugin.json<end of the code>, and real OpenClaw bundle markers such as <beginning of the code>.codex-plugin/plugin.json<end of the code> , <beginning of the code>.claude-plugin/plugin.json<end of the code> , and <beginning of the code>.cursor-plugin/plugin.json<end of the code> .
+<beginning of the code>.tgz<end of the code> sources are treated as ClawPack. The CLI uploads the exact npm-pack bytes and uses the extracted <beginning of the code>package/<end of the code> contents only for validation and metadata prefill.
+Code-plugin folders are packed into a ClawPack npm tarball before upload so OpenClaw installs can verify the exact artifact. Bundle-plugin folders still use the extracted-file publish path.
+For GitHub sources, source attribution is auto-populated from the repo, resolved commit, ref, and subpath.
+For local folders, source attribution is auto-detected from local git when the origin remote points at GitHub.
+External code plugins must declare <beginning of the code>openclaw.compat.pluginApi<end of the code> and <beginning of the code>openclaw.build.openclawVersion<end of the code> explicitly. Top-level <beginning of the code>package.json.version<end of the code> is not used as a fallback for publish validation.
+<beginning of the code>--dry-run<end of the code> previews the resolved publish payload without uploading.
+<beginning of the code>--json<end of the code> emits machine-readable output for CI.
+<beginning of the code>--owner <handle><end of the code> publishes under a user or org publisher handle when the actor has publisher access.
+Scoped package names must match the selected owner. See <beginning of the code>docs/publishing.md<end of the code> .
+Existing flags (<beginning of the code>--family<end of the code>, <beginning of the code>--name<end of the code> , <beginning of the code>--version<end of the code> , <beginning of the code>--source-repo<end of the code> , <beginning of the code>--source-commit<end of the code>, <beginning of the code>--source-ref<end of the code>, <beginning of the code>--source-path<end of the code>) still work as overrides.
+Private GitHub repos require <beginning of the code>GITHUB_TOKEN<end of the code>.
+# Recommended local flow
+Use <beginning of the code>--dry-run<end of the code> first so you can confirm the resolved package metadata and source attribution before creating a live release:
+<beginning of the code>
+npm pack
+clawhub package publish ./my-plugin-1.2.3.tgz --family code-plugin --dry-run
+clawhub package publish ./my-plugin-1.2.3.tgz --family code-plugin
+<end of the code>
+# Local folder flow
+For code plugins, folder publish builds and uploads a ClawPack artifact from the package folder:
+<beginning of the code>
+clawhub package publish ./my-plugin --family code-plugin --dry-run
+clawhub package publish ./my-plugin --family code-plugin
+<end of the code>
+# Minimal <beginning of the code>package.json<end of the code> for <beginning of the code>--family code-plugin<end of the code>
+External code plugins need a small amount of OpenClaw metadata in <beginning of the code>package.json<end of the code>. This minimal manifest is enough for a successful publish:
+{
+  "name": "@myorg/openclaw-my-plugin",
+  "version": "1.0.0",
+  "type": "module",
+  "openclaw": {
+    "extensions": ["./index.ts"],
+    "compat": {
+      "pluginApi": ">=2026.3.24-beta.2"
+    },
+    "build": {
+      "openclawVersion": "2026.3.24-beta.2"
+    }
+  }
+
+ }
+
+
+Required fields:
+<beginning of the code>openclaw.compat.pluginApi<end of the code>
+<beginning of the code>openclaw.build.openclawVersion<end of the code>
+Notes:
+<beginning of the code>package.json.version<end of the code> is your package release version, but it is not used as a fallback for OpenClaw compatibility/build validation.
+<beginning of the code>openclaw.hostTargets<end of the code> and <beginning of the code>openclaw.environment<end of the code> are optional metadata. ClawHub may surface them when present, but they are not required for publish.
+<beginning of the code>openclaw.compat.minGatewayVersion<end of the code> and <beginning of the code>openclaw.build.pluginSdkVersion<end of the code> are optional extras if you want to publish more detailed compatibility metadata.
+If you are using an older <beginning of the code>clawhub<end of the code> CLI release, upgrade before publishing so the local preflight checks run before upload.
+# GitHub Actions
+ClawHub also ships an official reusable workflow at <beginning of the code>/.github/workflows/package-publish.yml<end of the code> for plugin repos.
+Typical caller setup:
+name: Package Publish
+
+on:
+
+   pull_request: 
+   workflow_dispatch: 
+   push: 
+     tags:
+      - "v*" 
+ 
+jobs: 
+   dry-run: 
+     if: github.event_name == 'pull_request' 
+     uses: openclaw/clawhub/.github/workflows/package-publish.yml@v0.12.0 
+     with: 
+       dry_run: true 
+ 
+  publish: 
+     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+    permissions: 
+       contents: read
+      id-token: write
+    uses: openclaw/clawhub/.github/workflows/package-publish.yml@v0.12.0 
+     with: 
+       dry_run: false 
+     secrets: 
+
+      clawhub_token: ${{ secrets.CLAWHUB_TOKEN }}
+
+Notes:
+The reusable workflow defaults <beginning of the code>source<end of the code> to the caller repo.
+For monorepos, pass <beginning of the code>source_path<end of the code> so the workflow publishes the plugin package folder, for example <beginning of the code>source_path: extensions/codex<end of the code> .
+Pin the reusable workflow to a stable tag or full commit SHA. Do not run release publishing from <beginning of the code>@main<end of the code> .
+<beginning of the code>pull_request<end of the code> should use <beginning of the code>dry_run: true<end of the code> so CI stays non-polluting.
+Real publishes should be limited to trusted events such as <beginning of the code>workflow_dispatch<end of the code> or tag pushes.
+Trusted publishing without a secret only works on <beginning of the code>workflow_dispatch<end of the code>; tag pushes still need <beginning of the code>clawhub_token<end of the code> .
+Keep <beginning of the code>clawhub_token<end of the code> available for first publish, untrusted packages, or break-glass publishes.
+The workflow uploads the JSON result as an artifact and exposes it as workflow outputs.
+# <beginning of the code>sync<end of the code>
+Scans for local skill folders and publishes new/changed ones.
+Roots can be any folder: a skills directory or a single skill folder with <beginning of the code>SKILL.md<end of the code>.
+Auto-adds Clawdbot skill roots when <beginning of the code>~/.</snippet><url>https://documentation.openclaw.ai/clawhub/cli</url><last_update_time>2026年5月8日12时44分</last_update_time><text_length>2968</text_length></document></search>

@@ -28,6 +28,7 @@
 | agentid.sh | none (pure REST) | `POST /api/register {"handle":"..."}` | ✅ HTTP 200 |
 | DeepNLP Agent Store | `agtm` CLI (`@aiagenta2z/agtm`) | `npm i -g @aiagenta2z/agtm` → `agtm upload --github <repo>` | ⏸ pending review |
 | GitHub curated lists | list repo README (line format) | fork → edit → PR | ✅ PR-driven |
+| AgentBazaar | `skills/agentbazaar` (this repo) · SkillHub `agentbazaar-by-agentbazaar@1.0.0` | load local skill; ab-* scripts (register/publish/claim/submit/review; `--mode gateway` if no GitHub write) | ✅ live (self-hosted) |
 
 ## Rules for maintaining this table
 

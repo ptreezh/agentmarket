@@ -1,0 +1,1266 @@
+<search query="Claude skills 商店 技能市场 上架 SKILL.md 平台" search_time="2026年9月12日11时29分星期六"><document reference_id="https://claudeskil.com/"><title>Agent Skills</title><host>ClaudeSkill</host><snippet>Agent Skills
+Marketplace
+> for the open SKILL.md ecosystem
+const skills = 2,840 ;
+// Discover open-source agent skills from GitHub
+/**
+* Search with AI semantics or keywords, filter by occupation, sort
+* by popularity. All skills use the open SKILL.md standard and are
+* ready to install
+*/
+$ book coaching/
+Learn AI, live 1-on-1
+Video sessions with an AI practitioner in your own codebase. Pick a track, book a time, and get unstuck fast.
+CT
+@chiragthummar16
+Verified Creator
+AI engineer · full-stack · Claude specialist
+5.0
+Google Meet · screen-share welcome
+Pay per session — no subscription
+Pick any open slot on Calendly
+Book a session — $100/hr
+$100/hr
+AI for App Development
+$100/hr
+AI for Web Development
+$100/hr
+AI Integration in Business
+$100/hr
+Business Progress Coaching
+Try “frontend”, “sql”, or “image gen”
+$
+claude skill install ios-dev-pro
+Android Developer
+iOS Developer
+Frontend
+SEO
+PPT Creator
+Prompt Engineer
+Video Editor
+SQL
+~/projects — claudeskill
+# install a skill in one line
+claudeskill install @pixelgrid/frontend-shadcn-buil
+Resolved @pixelgrid/frontend-shadcn-builder
+Downloaded skill bundle
+Installed to ~/.claude/skills/
+Skill ready. Try: claude /frontend-shadcn-builder
+Skills indexed
+2.8k
+Total installs
+184.3k
+Built to work alongside
+CL
+Claude
+CR Cursor VS VS Code RC Raycast WP Warp ZD Zed GH GitHub FG Figma
+CL Claude
+CR Cursor
+VS VS Code
+RC Raycast
+WP Warp
+ZD Zed
+GH GitHub
+FG Figma
+$ ls categories/
+Browse by role
+Find a skill for whatever hat you're wearing today.
+Android Developer
+iOS Developer
+Frontend
+Backend
+Fullstack
+Designer
+DevOps / CI/CD
+PPT Creator
+Video Editor
+Prompt Engineer
+QA / Testing
+Data Analyst
+$ ls featured/ —
+Featured this week
+Hand-picked skills
+$ cat /trending/2026.md — Updated May 2026
+The full 2026 AI landscape
+Every trending tool, agent and prompt mapped in one place — vibe coding, AI for every profession, image / video / audio models, and the new GEO + AI Overviews vertical.
+15
+Vibe coding tools
+Claude Code, Cursor, Windsurf, Lovable, Bolt.new, v0 by Vercel, Antigravity, Kiro, OpenAI Codex, Codegen, Cline, Aider, Gemini CLI — ranked.
+18
+AI for every profession
+Lawyers, doctors, teachers, accountants, real estate, HR, sales, PMs, engineers, writers, consultants — each with workflow prompts.
+10
+Image, video & audio AI
+Midjourney, DALL-E, Stable Diffusion, FLUX, Sora 2, Veo 3, Runway ML, Suno, Udio, ElevenLabs — the full media stack.
+vibe coding
+cursor vs windsurf 2026
+claude code vs codex
+lovable vs bolt
+ai overviews
+generative engine optimization
+sora 2 vs veo 3
+midjourney vs flux
+ai for lawyers
+ai for doctors
+ai for teachers
+ai for marketers
+$ ls why/
+Four reasons builders stick around
+A registry that behaves like source control, not an app store — made for teams who want speed without sketch.
+open-standard.sh
+--open
+Built on SKILL.md
+Every skill is a plain markdown file you can fork, audit, and version-control. No proprietary blob formats.
+cd ./docs/create
+install.sh
+--fast
+One-command install
+Copy the install line, paste it into any shell running Claude Code. The CLI does the rest — no registry accounts required.
+cd ./docs/api
+safety.sh
+--safe
+Moderated, not locked down
+Every submission hits a review queue. Malware and typosquats are rejected; legitimate open-source ships inside 24 hours.
+cd ./faq
+pricing.sh
+--free
+Free for open source
+Browse, install, and publish community skills forever. Private workspaces and team plans arrive later — they never gate the public registry.
+cd ./submit
+$ man how-it-works
+From keyword to installed in under a minute.
+01. Search a skill
+Full-text search across 2,800+ skills — or browse 38 categories tuned to the role you wear today.
+02. Install in one line
+Copy the CLI command straight from the skill page. Installs into ~/.claude/skills and your tool picks it up.
+03. Ship faster
+Skills drop into your flow. Fewer tabs, less prompt engineering, and every install credits the creator.
+~/projects/landing $ claude
+$ claude skills search "ship a landing page"=> 14 matches across frontend, designer=> top hit: frontend-shadcn-builder · 4.1k ★$ claude skills add frontend-shadcn-builder=> Resolved frontend-shadcn-builder@1.2.0=> Installed to ~/.claude/skills/$ claude --skill frontend-shadcn-builder "hero block"=> ✓ ready · drafting hero…
+$ ls trending/
+What everyone's installing
+Most-installed skills across every role, updated hourly.
+2.8k
+Skills indexed
+620
+Creators
+184.3k
+Total installs
+1.2k
+GitHub sources
+$ creator --mode
+You built the skill.Now let people find it.
+Publishing takes a GitHub URL and a paragraph. In exchange you get a dedicated skill page, an installable one-liner, install analytics, a creator profile, and distribution into every category feed your skill qualifies for.
++ Install counts, star history, and referrer breakdown
++ Auto-generated SEO, Open Graph, and JSON-LD per skill
++ Category feeds, related skills, and author profile page
++ Edits re-enter review — stats + stars are preserved
+dashboard · @you
+live
+installs · 7d
+1.3k
++18%
+unique · 7d
+912
++11%
+stars
+346
++4
+installs --daily mon → sun
+// latest install
+2s ago · via npx
+$ ls testimonials/
+Shipping faster, prompt by prompt.
+“Replaced 9 of my custom prompts with a single install. Worth it for the SEO skill alone.”
+MP
+Mina Patel
+Indie hacker
+“Think GitHub for the prompt era. I publish one skill and ship it to 40k developers.”
+TO
+Tomi Ola
+Dev-tools founder
+“Our design team has five skills pinned. It's the fastest deliverable->code loop I've seen.”
+JR
+Jade Rothman
+Design Lead, Mercury
+“Installed a content-optimizer skill on a Monday, shipped it to customers by Friday.”
+BC
+Ben Calvin
+PM, Retool
+“Replaced 9 of my custom prompts with a single install. Worth it for the SEO skill alone.”
+MP
+Mina Patel
+Indie hacker
+“Think GitHub for the prompt era. I publish one skill and ship it to 40k developers.”
+TO
+Tomi Ola
+Dev-tools founder
+“Our design team has five skills pinned. It's the fastest deliverable->code loop I've seen.”
+JR
+Jade Rothman
+Design Lead, Mercury
+“Installed a content-optimizer skill on a Monday, shipped it to customers by Friday.”
+BC
+Ben Calvin
+PM, Retool
+“The onboarding is the product. Paste one command, done.”
+LC
+Lia Chen
+Staff eng, Stripe
+“Already a daily tool. Honestly feels like the Linear of AI marketplaces.”
+PV
+Priya Venkat
+Principal, Figma
+“Published two skills in a weekend. Discovery is real — stars show up within hours.”
+JW
+Jonas Weber
+Creator
+“Best marketplace surface I've touched in years. Type is oversized, search actually works.”
+SK
+Sam Kim
+Solo dev
+“The onboarding is the product. Paste one command, done.”
+LC
+Lia Chen
+Staff eng, Stripe
+“Already a daily tool. Honestly feels like the Linear of AI marketplaces.”
+PV
+Priya Venkat
+Principal, Figma
+“Published two skills in a weekend. Discovery is real — stars show up within hours.”
+JW
+Jonas Weber
+Creator
+“Best marketplace surface I've touched in years. Type is oversized, search actually works.”
+SK
+Sam Kim
+Solo dev
+$ man claudeskill
+Questions, answered
+A quick primer before you install. The full catalog lives on /faq.
+faq.md
+6 entries
+01.
+Do I need Claude Code to use a skill?
+// Claude Code is the fastest path, but skills are plain markdown — you can also paste a SKILL.md into Cursor, Raycast, Warp, or the Anthropic API directly and it will read as instructions.
+02.
+Is ClaudeSkill free?
+// Yes. Browsing, installing, and publishing open-source skills is free forever. Optional paid tiers for private skills and team workspaces may arrive later, but the public registry stays free.
+03.
+How do I install a skill?
+// Open the skill page, copy the one-line install command (e.g. `npx @claudeskill/install owner/skill`), and paste it into any shell where Claude Code is configured. The CLI fetches the SKILL.md, validates it, and registers it locally.
+04.
+How long does review take?
+// Most submissions ship inside 24 hours. We check the repo is public, the SKILL.md is valid, and the skill isn't a typosquat or obvious copy. Edits re-enter the same queue — install counts and stars are preserved.
+05.
+Is this affiliated with Anthropic?
+// No. ClaudeSkill is an independent, community-run registry. Claude and Anthropic are trademarks of Anthropic, PBC; we use them strictly to describe compatibility.
+06.
+Can I monetize a skill I publish?
+// You keep every right in whatever license you pick — we recommend MIT or Apache-2.0 for the public registry. Commercial licensing, sponsorships, and paid support are up to you; we don't take a cut.
+Built a skill?Get discovered.
+Submit your skill to ClaudeSkill and reach thousands of builders searching for exactly what you made. Free, forever, for open-source skills.</snippet><url>https://claudeskil.com/</url><last_update_time>2026年9月12日7时30分</last_update_time><text_length>2367</text_length></document><document reference_id="https://github.com/2025laik/skills-marketplace/blob/main/CLAUDE.md"><title>CLAUDE.md</title><host>GitHub</host><snippet>2025laik
+/
+skills-marketplace
+Public
+Code
+98 lines (74 loc) · 3.72 KB
+CLAUDE.md
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Repository Overview
+This is a Claude Skills marketplace repository for 2025LAIK. Skills extend Claude's capabilities with specialized knowledge, workflows, and tool integrations. Each skill is a self-contained package with a <beginning of the code>SKILL.md<end of the code> file and optional bundled resources (scripts, references, assets).
+Skill Architecture
+Skill Structure
+Each skill directory contains:
+<beginning of the code>SKILL.md<end of the code> (required) - YAML frontmatter with metadata + markdown instructions
+<beginning of the code>scripts/<end of the code> (optional) - Executable code (Python/Bash) for deterministic operations
+<beginning of the code>references/<end of the code> (optional) - Documentation loaded into context as needed
+<beginning of the code>assets/<end of the code> (optional) - Files used in output (templates, images, fonts)
+Progressive Disclosure Design
+Skills use a three-level loading system:
+Metadata (name + description) - Always in context (~100 words)
+SKILL.md body - When skill triggers (<5k words)
+Bundled resources - As needed by Claude
+Common Commands
+Update Marketplace Configuration
+After adding or modifying skills, update the marketplace registry:
+./marketplace.update.sh
+This script uses the Claude CLI to scan the repository and regenerate .claude-plugin/marketplace.json.
+Initialize New Skill
+Create a new skill from template:
+skill-creator/scripts/init_skill.py <skill-name> --path .
+This creates a complete skill directory structure with template files.
+Validate Skill
+Check if a skill meets all requirements:
+skill-creator/scripts/quick_validate.py <path/to/skill-folder>
+Package Skill
+Create a distributable zip file (includes validation):
+skill-creator/scripts/package_skill.py <path/to/skill-folder> [output-dir]
+Key Implementation Details
+Skill Metadata Requirements
+The YAML frontmatter in <beginning of the code>SKILL.md<end of the code> must contain:
+<beginning of the code>name<end of the code> - Hyphen-case identifier matching directory name (max 40 chars)
+<beginning of the code>description<end of the code> - Complete, informative explanation of when to use the skill (use third-person: "This skill should be used when...")
+Skill Writing Style
+Use imperative/infinitive form (verb-first instructions), not second person
+Use objective, instructional language: "To accomplish X, do Y"
+Avoid duplication between SKILL.md and reference files
+Keep SKILL.md lean (<5k words); move detailed content to references/
+Resource Directory Purposes
+<beginning of the code>scripts/<end of the code> - Code that may be executed without loading into context, but can still be read for patching
+<beginning of the code>references/<end of the code> - Documentation loaded only when Claude determines it's needed
+<beginning of the code>assets/<end of the code> - Files used in final output, not loaded into context
+Marketplace Configuration
+The .claude-plugin/marketplace.json file defines all plugins in the marketplace. Each plugin entry includes:
+<beginning of the code>name<end of the code> - Plugin identifier
+<beginning of the code>description<end of the code> - When to use the skill (copied from SKILL.md frontmatter)
+<beginning of the code>source<end of the code> - Path to repository root (<beginning of the code>./<end of the code> )
+<beginning of the code>skills<end of the code> - Array of paths to skill directories
+Publishing Skills
+To publish a skill to the marketplace:
+Update marketplace.json - Run <beginning of the code>./marketplace.update.sh<end of the code> to scan the repository and update .claude-plugin/marketplace.json
+Commit changes - Commit the skill directory and updated marketplace.json
+Push to repository - Push to the GitHub repository
+Once pushed, users can install skills from the marketplace.
+Installation for End Users
+Users add this marketplace to Claude Code with:
+/plugin marketplace add https://github.com/2025laik/skills-marketplace.git
+Then install individual skills:
+/plugin install <skill-name>@2025laik-skills-marketplace</snippet><url>https://github.com/2025laik/skills-marketplace/blob/main/CLAUDE.md</url><last_update_time>2026年9月1日11时58分</last_update_time><text_length>1008</text_length></document><document reference_id="https://www.iesdouyin.com/share/video/7624120141948669190"><title>OpenClaw 技能平台避坑！这些坑千万别踩！
+给你们把每个平台的安全、中文、适配人群都标好了，直接按表选，再也不踩坑！
+#OpenClaw  #AI 工具避坑 #AI 技能 #Claude  #A</title><host>抖音</host><snippet>openclaw 技能skill在哪里装? 为您精选的ai代理技能平台与集市概览 平台名称 访问链接 核心定位 安全性 中文支持 适合人群 更快更安全的 cocoloop hub.cocoloop.cn2 配套杀毒软件 skills商店 最大claude skilsmp skillsmp.com/zh? 技能集市 通用agent agent agentskills.md? 无 技能库 skills.md 热门技能 skills.sh skills.she 排行榜 安全审核. skillstoreskilstore.o/zhanse 中文友好 skills skillsdirectory.com 社区推荐合集 社区审核 directory agentskills agentskills.me me 社区驱动技 smithery.aismithery.ai/skills 能发现 (开发者找高活跃技能 skillhub claudeskill claude专属 ls.info agentskills 多平台兼容 agentskill.,best? 技能库 best
+</snippet><url>https://www.iesdouyin.com/share/video/7624120141948669190</url><publish_time>2026年4月2日19时20分</publish_time><text_length>188</text_length></document><document reference_id="https://agskills.dev/aiskillstore/marketplace/plugin-settings"><title>plugin-settings</title><host>Agent Skills Marketplace</host><snippet>plugin-settings
+Security-audited skills for Claude, Codex & Claude Code. One-click install, quality verified.
+Installation
+CLI
+<beginning of the code>npx skills add https://github.com/aiskillstore/marketplace --skill plugin-settings<end of the code>
+Install this skill with the CLI and start using the SKILL.md workflow in your workspace.
+Last updated 9/10/2026
+AI Skillstore - Agent Skills Marketplace
+The official AI Skills marketplace for Claude Code and Codex. Discover, install, and manage AI agent skills following the Agent Skills specification.
+Quick Start
+Claude Code Installation
+Method 1: Quick Install (Recommended)
+Copy this prompt and paste it into Claude Code:
+<beginning of the code>
+Download all files from https://github.com/aiskillstore/marketplace/tree/main/skills/<skill-name> and save to ~/.claude/skills/
+<end of the code>
+Claude Code will automatically fetch and install the skill files.
+Method 2: Manual Install
+Download the skill ZIP from skillstore.io
+Extract to your preferred scope directory:
+Project scope: <beginning of the code>.claude/skills/<skill-name>/<end of the code> (current project only)
+User scope: <beginning of the code>~/.claude/skills/<skill-name>/<end of the code> (all projects)
+Each skill folder must contain a <beginning of the code>SKILL.md<end of the code> file
+Codex Installation
+Method 1: Use $skill-installer (Recommended)
+Run this command inside Codex:
+<beginning of the code>
+$skill-installer install https://github.com/aiskillstore/marketplace/tree/main/skills/<skill-name>
+<end of the code>
+Method 2: Manual Install
+Download the skill ZIP from skillstore.io
+Extract to your preferred scope directory:
+Repo scope: <beginning of the code>.codex/skills/<skill-name>/<end of the code> (current project)
+User scope: <beginning of the code>~/.codex/skills/<skill-name>/<end of the code> (your account)
+System scope: <beginning of the code>/etc/codex/skills/<skill-name>/<end of the code> (all users)
+Restart Codex to load new skills
+For Skill Developers
+Submit Your Skill
+Visit skillstore.io/submit
+Enter your GitHub repository URL containing a <beginning of the code>SKILL.md<end of the code> file
+Wait for automated security analysis
+Admin reviews and approves your submission
+Your skill becomes available in the marketplace
+Skill Requirements
+Your repository should contain:
+<beginning of the code>SKILL.md<end of the code> - The skill definition file (required)
+Supporting files referenced by the skill (optional)
+<beginning of the code>LICENSE<end of the code> - License file (recommended)
+Security Analysis
+All submitted skills undergo automated security analysis that checks for:
+Dangerous code patterns (eval, exec, system commands)
+File system access outside project scope
+Network requests to external hosts
+Obfuscated or minified code
+Credential/secret handling
+Skills that fail security checks will not be published.
+Repository Structure
+<beginning of the code>
+.
+├── skills/                    # Approved skills
+│   └── <skill-name>/
+│       ├── SKILL.md           # Skill definition (required)
+│       ├── scripts/           # Optional executable scripts
+│       ├── references/        # Optional additional docs
+│       └── assets/            # Optional static resources
+├── pending/                   # Skills awaiting review
+├── schemas/                   # JSON validation schemas
+└── .github/workflows/         # Automation workflows
+<end of the code>
+Available Skills
+Browse all available skills at skillstore.io .
+Links
+Website: skillstore.io
+Submit Skills: skillstore.io/submit
+Documentation: skillstore.io/docs
+Agent Skills Spec: agentskills.io/specification
+GitHub: github.com/aiskillstore
+License
+This marketplace catalog is licensed under MIT. Individual skills may have their own licenses - check each skill's LICENSE file.</snippet><url>https://agskills.dev/aiskillstore/marketplace/plugin-settings</url><publish_time>2026年9月10日0时0分</publish_time><text_length>924</text_length></document><document reference_id="https://github.com/token-eater/skills-marketplace"><title>Skills Marketplace</title><host>GitHub</host><snippet>Token-Eater
+/
+skills-marketplace
+PublicToken-Eater claude
+feat: Add DS-STAR multi-agent data science skill (#1)
+Folders and files| Name | Name | Last commit message | Last commit date |
+| --- | --- | --- | --- |
+| .claude-plugin | .claude-plugin | feat: Add graph-skills to preview marketplace (security verified) |  |
+| .github | .github | chore: Remove .github/README.md (template guide belongs only in Token… |  |
+| docs | docs | feat: Initialize Skills Marketplace |  |
+| skills | skills | feat: Add DS-STAR multi-agent data science skill (#1) |  |
+| .gitignore | .gitignore | feat: Initialize Skills Marketplace |  |
+| LICENSE | LICENSE | feat: Initialize Skills Marketplace |  |
+| README.md | README.md | feat: Initialize Skills Marketplace |  |
+
+Skills Marketplace
+⚡ Community marketplace for Claude Code skills - Install granular, single-purpose skills optimized for specific tasks
+A curated collection of Claude Code skills built by the community. Install only what you need, not the entire marketplace.
+Currently featuring example skills (real skills coming soon after visibility testing)
+Overview
+The Skills Marketplace is a public-facing catalog where developers can discover, install, and contribute Claude Code skills. Each skill is:
+🎯 Focused - Single-purpose tools for specific tasks
+📦 Granular - Install only what you need
+✅ Validated - Tested and documented
+🤝 Community-driven - Built and maintained by users like you
+Key Features
+Two-tier catalog system - Stable releases + preview/beta skills
+Category-based organization - Find skills by domain (productivity, development, data, etc.)
+Semantic versioning - Track updates and compatibility
+Easy installation - One command to add skills to Claude Code
+Open contribution - Submit your own skills to the marketplace
+How It Works
+Skills are distributed through catalog files that reference skill packages:
+{
+  "plugins": [
+    {
+      "name": "example-skill",
+      "description": "Demonstrates skill structure",
+      "version": "1.0.0",
+      "category": "examples",
+      "source": "./skills/example-skill"
+    }
+  ]
+}
+Install the marketplace, browse available skills, and add them to your Claude Code environment.
+Quick Start
+1. Install the Marketplace
+From GitHub:
+/plugin marketplace add token-eater/skills-marketplace
+From local clone:
+git clone https://github.com/token-eater/skills-marketplace.git
+/plugin marketplace add ./skills-marketplace
+2. Install Skills
+# Browse available skills
+/plugin list
+
+# Install a specific skill
+/plugin install example-skill
+
+# Update skills
+/plugin update
+Documentation
+Comprehensive guides for users and contributors:
+→ Installation Guide - How to add and use marketplace skills → Skills Reference - Complete catalog of available skills → Creating Skills - Build your own skills → Contributing Guide - Submit skills to the marketplace → Architecture - How the marketplace works
+What's New
+Marketplace Features
+Dual Catalog System - Separate stable and preview catalogs
+Category Organization - Skills organized by domain and use case
+Validation Pipeline - Automated skill testing before acceptance
+Semantic Versioning - Clear version tracking and compatibility
+Popular Use Cases
+Install productivity skills:
+/plugin install task-management
+Add development tools:
+/plugin install git-workflow
+Get data processing skills:
+/plugin install document-processing
+Install all recommended skills:
+/plugin marketplace refresh && /plugin install --recommended
+Skill Categories
+Skills are organized into focused categories for easy discovery:
+🎨 Productivity - Task management, workflows, automation
+💻 Development - Git, testing, code quality, deployment
+📊 Data & Analytics - Processing, visualization, reporting
+📝 Documentation - Markdown, diagrams, API docs
+🔧 DevOps - CI/CD, containers, infrastructure
+🤖 AI & ML - Model integration, training, evaluation
+🔒 Security - Scanning, verification, compliance
+🌐 Web - Scraping, APIs, frontend tools
+📚 Knowledge - Research, memory, note-taking
+🎯 Examples - Templates and learning resources
+Architecture Highlights
+Two-Tier Catalog System
+<beginning of the code>marketplace.json<end of the code> - Stable, production-ready skills
+Vetted and tested
+Semantic versioning
+Full documentation
+Suitable for production use
+<beginning of the code>marketplace-preview.json<end of the code> - Beta and experimental skills
+Early access to new features
+Community testing
+May have breaking changes
+Perfect for adventurous users
+Skill Structure
+Each skill follows a standardized format:
+<beginning of the code>
+skills/
+└── skill-name/
+    ├── SKILL.md           # Main skill definition (YAML frontmatter + content)
+    ├── scripts/           # Optional: Helper scripts
+    ├── references/        # Optional: Reference documentation
+    └── assets/            # Optional: Images, templates, etc.
+<end of the code>
+Quality Standards
+All marketplace skills must include:
+✅ Valid YAML frontmatter in SKILL.md
+✅ Clear description and usage examples
+✅ Semantic version number
+✅ Category and tags for discovery
+✅ Author information
+Contributing
+We welcome contributions! Here's how to add your skills:
+1. Create Your Skill
+Follow the Creating Skills Guide
+Test locally using <beginning of the code>/plugin marketplace add ./your-skill-path<end of the code>
+Validate with the skill-creator toolkit
+2. Submit for Review
+Fork this repository
+Add your skill to <beginning of the code>skills/<end of the code> directory
+Update <beginning of the code>marketplace-preview.json<end of the code> (beta skills)
+Open a Pull Request with description
+3. Review Process
+Automated validation checks
+Community review and feedback
+Approval by maintainers
+4. Promotion to Stable
+After testing period in preview catalog
+Based on user feedback and stability
+Moved to <beginning of the code>marketplace.json<end of the code> (stable catalog)
+5. Maintenance
+Update your skill as needed
+Respond to issues and feedback
+Submit updates via Pull Requests
+Resources
+Official Documentation:
+Claude Code Plugin Marketplaces
+Claude Code Skills Documentation
+Community:
+GitHub Discussions
+Report Issues
+Examples:
+wshobson/agents - Excellent reference marketplace
+Catalog Reference
+Stable Catalog (marketplace.json)
+Production-ready skills, fully tested and documented:
+/plugin marketplace add token-eater/skills-marketplace
+Preview Catalog (marketplace-preview.json)
+Beta skills for early adopters:
+/plugin marketplace add token-eater/skills-marketplace?ref=.claude-plugin/marketplace-preview.json
+Custom Catalogs
+Create your own filtered views:
+# Team-specific catalog
+/plugin marketplace add your-org/skills-marketplace?ref=.claude-plugin/marketplace-team.json
+
+# Personal development
+/plugin marketplace add ./skills-marketplace
+License
+MIT License - See LICENSE for details
+Ready to get started? Install the marketplace and browse available skills:
+/plugin marketplace add token-eater/skills-marketplace
+/plugin list</snippet><url>https://github.com/token-eater/skills-marketplace</url><last_update_time>2026年9月9日8时54分</last_update_time><text_length>1794</text_length></document><document reference_id="https://agentskills.best/zh"><title>AgentSkills.best - 掌握 Claude Agent Skills</title><host>AgentSkills.best</host><snippet>agentskills
+New ⭐ GitHub 开源 - 欢迎提交 PR！
+掌握 Claude Agent Skills，扩展 AI 能力
+全球首个 Claude Agent Skills 市场。发现精选 Skills，学习最佳实践，通过可下载的生产就绪功能释放 Claude 的全部潜力。
+Agent Skills 集合
+为 Claude Code 精选的生产就绪 Skills。浏览来自 Anthropic 的官方 Skills 和社区贡献。
+Artifacts 构建器
+Claude 官方
+使用 React、Tailwind CSS 与 shadcn/ui 构建复杂交互界面。
+适用场景: 富交互 Web 界面、仪表盘或交互组件
+React UI 开发
+MCP 构建器
+Claude 官方
+指导创建高质量 MCP（模型上下文协议）服务器以连接外部 API。
+适用场景: 集成第三方服务、构建自定义 API 连接器
+MCP API 集成
+Skill 创建器
+Claude 官方
+教授为 Claude 开发高质量 Skills 的最佳实践。
+适用场景: 创建新技能、学习技能开发模式
+元 学习 最佳实践
+会议情报
+Claude 官方
+从 Notion 收集背景、结合 Claude 调研生成内部预读与对外议程并保存到 Notion。
+适用场景: 充分准备背景并产出结构化会议材料
+Notion 会议 效率
+调研与文档
+Claude 官方
+在 Notion 工作区检索并综合多页信息，生成完整调研文档并保存为新页面。
+适用场景: 将零散信息整理成结构化报告，包含引用与可执行洞见
+Notion 调研 文档编写
+Shipany 文档
+社区
+Shipany AI SaaS 模板的完整文档，涵盖 Next.js 15、Drizzle、NextAuth、Stripe 与 AI 集成。
+适用场景: 构建 SaaS、配置支付、实现 AI 功能、设置 i18n
+Next.js SaaS Drizzle Stripe AI
+头脑风暴
+社区
+通过聚焦提问与分段确认将想法打磨成可落地的设计。
+适用场景: 写代码前把模糊想法变成清晰且经确认的设计/规格
+规划 设计 需求
+计划撰写
+社区
+生成包含文件路径、任务与验证步骤的完整实施计划。
+适用场景: 将多步骤工作拆成可执行小任务并给出测试步骤
+规划 文档编写 流程
+子代理驱动开发
+社区
+每个任务使用新的子代理执行并进行两阶段审查（规格符合性→代码质量）。
+适用场景: 通过并行化与更严格审查加速迭代
+子代理 质量 执行
+测试驱动开发
+社区
+以红-绿-重构和测试先行方式实现功能。
+适用场景: 在写生产代码前用测试验证变更
+测试 TDD 质量
+市场统计
+不断增长的生态系统
+加入全球首个 Claude Agent Skills 市场
+精选 Skills
+12+
+生产就绪
+下载量
+500+
+自10月16日起
+贡献者
+5+
+WaytoAGI 社区
+什么是 Claude Agent Skills？
+Agent Skills 是通过文件系统命令扩展 Claude 功能的模块化能力，支持专业工作流程和领域专长
+渐进式披露架构
+Skills 分三级加载：元数据 → 指令 → 资源。仅加载所需内容以获得最佳性能。
+基于文件系统设计
+简单的 SKILL.md 文件配合 YAML frontmatter。轻松创建、分享和版本控制您的 Skills。
+随处可用
+适用于 Claude API、Claude.ai 和 Claude Code。一个 Skill，多个平台。
+工具推荐
+Skill Seeker：把文档和仓库变成 Claude Skills
+将文档站点、GitHub 仓库与 PDF 自动转成可用的 Claude Skills，分钟级完成。
+多源抓取
+文档 + GitHub + PDF 一次处理，并自动检测冲突。
+深度代码分析
+AST 解析主流语言，提取 API 与最佳示例。
+一键打包
+生成 Claude 可用的 ZIP 包并快速上传。
+多源抓取
+文档 + GitHub + PDF 一次处理，并自动检测冲突。
+深度代码分析
+AST 解析主流语言，提取 API 与最佳示例。
+一键打包
+生成 Claude 可用的 ZIP 包并快速上传。
+对比
+为什么选择 Skills？看看有何不同
+Skills 结合了所有方法的优势：像 CLAUDE.md 一样自动加载，像 Agents/Commands 一样可执行，同时具有卓越的 token 效率和无限引用能力
+快速开始
+开始使用 Agent Skills
+通过 4 个简单步骤开始使用 Claude Agent Skills
+1
+探索市场
+按类别浏览精选 Skills。按用例、复杂度或平台筛选。
+2
+下载 Skill
+下载 SKILL.md 文件。每个都包含完整的文档和使用示例。
+3
+安装和测试
+将 Skill 添加到您的 Claude 环境。使用提供的评估标准进行测试。
+4
+学习和创建
+按照我们的教程创建您的第一个 Skill。与社区分享。
+优势
+为什么选择 AgentSkills.best？
+全球首个 Claude Agent Skills 市场，由拥有真实经验的从业者打造
+精选优质 Skills
+每个 Skill 都经过测试和文档化。下载真正有效的生产就绪 Skills，而非实验性 demo。
+深度实践教程
+社区驱动
+平台功能
+发现、学习和掌握 Claude Agent Skills 所需的一切
+Skills 市场
+按类别浏览精选 Skills。下载包含完整文档的生产就绪 SKILL.md 文件。
+互动教程
+创建第一个 Skill、渐进式披露模式和评估策略的分步指南。
+最佳实践库
+从真实经验中学习：简洁写作、资源组织、评估驱动开发。
+多语言支持
+内容提供英语、中文和日语版本。为全球 AI 从业者打造。
+搜索和筛选
+按用例、复杂度或平台（API/Web/Code）查找 Skills。由 Next.js 驱动的智能搜索。
+社区贡献
+提交您的 Skills，分享见解，与 WaytoAGI 社区协作。
+精选 Skills
+全球 AI 从业者在生产环境中使用的真实 Skills
+API 集成 Skill
+无缝集成外部 API。处理身份验证、速率限制和错误恢复。
+数据库查询助手
+智能 SQL 查询生成和优化。适用于 PostgreSQL、MySQL 和 MongoDB。
+DevOps 自动化
+自动化部署工作流。Docker、Kubernetes 和 CI/CD 流水线助手。
+按用例探索 Skills
+所有 Skills 免费且开源。选择您的类别开始
+开发者工具
+免费 永久
+用于编码工作流
+API 集成 Skills
+数据库查询助手
+DevOps 自动化
+代码审查助手
+内容与研究
+免费 永久
+用于作者和研究人员
+网页抓取 Skills
+文档分析
+引用管理
+写作工作流工具
+SEO 优化助手
+社区
+AI 从业者的评价
+听听正在构建和使用 Claude Agent Skills 的开发者的声音
+陈莎拉
+AI 工程师
+AgentSkills.best 帮我发现了我不知道存在的 Skills。教程实用且基于真实经验，不只是理论。
+迈克尔·罗德里格斯
+全栈开发者
+终于有一个有质量控制的 Skills 市场了！我下载的每个 Skill 在生产环境中都真正有效。最佳实践指南为我节省了数小时。
+田中由纪
+产品经理
+多语言内容太棒了。我可以用日语学习 Skills，并与讲英语的团队分享。社区驱动的最佳表现。
+常见问题
+常见问题解答
+还有其他问题？加入我们在 GitHub 上的社区
+1
+什么是 Claude Agent Skills？
+Agent Skills 是通过基于文件系统的命令扩展 Claude 功能的模块化能力。它们使用渐进式披露架构（元数据 → 指令 → 资源），适用于 Claude API、Claude.ai 和 Claude Code。
+2
+如何安装 Skill？
+从我们的市场下载 SKILL.md 文件。在 Claude Code 上，使用 'claude code skills add path/to/SKILL.md'。在 Claude.ai 上，通过 Skills 界面上传。完整说明请参阅我们的入门指南。
+3
+我可以创建自己的 Skills 吗？
+可以！我们的《创建您的第一个 Skill》教程将带您完成整个过程。从真实示例中学习渐进式披露模式、评估策略和最佳实践。
+4
+这些 Skills 是生产就绪的吗？
+我们市场中的所有 Skills 都经过测试和文档化。我们只展示在实际工作流程中使用过的 Skills。每个都包含完整的文档、评估标准和使用示例。
+准备好掌握 Claude Agent Skills 了吗？
+加入全球首个 Skills 市场。今天就发现、学习并扩展 Claude 的能力。
+</snippet><url>https://agentskills.best/zh</url><last_update_time>2026年8月27日13时36分</last_update_time><text_length>2126</text_length></document><document reference_id="https://skillsmp.com/creators/proskillsmd/proskills/skills-productivity-dongsheng123132-skill-multi-publisher"><title>skill-multi-publisher</title><host>Claude Skills Marketplace</host><snippet>skill-multi-publisher
+One-command publish a Claude Code skill to ALL major marketplaces: GitHub (npx skills), ClawHub, and community marketplaces (composiohq/awesome-claude-skills, anthropics/skills, daymade/claude-code-skills, obra/superpowers-marketplace). Validates SKILL.md, auto-generates missing files, creates repos, publishes, and submits PRs to community directories.ProSkillsMD
+<beginning of the code>npx skills add https://github.com/ProSkillsMD/proskills --skill skill-multi-publisher<end of the code>
+The command stays on one line. Scroll horizontally to inspect it before copying.
+Review the source files
+Read SKILL.md and any companion files shown by SkillsMP before deciding whether to install.
+File Explorer
+3 files
+md
+SKILL.md
+Source instructions · Read-only preview| name | skill-multi-publisher |
+| --- | --- |
+| version | 2.0.0 |
+| description | One-command publish a Claude Code skill to ALL major marketplaces: GitHub (npx skills), ClawHub, and community marketplaces (composiohq/awesome-claude-skills, anthropics/skills, daymade/claude-code-skills, obra/superpowers-marketplace). Validates SKILL.md, auto-generates missing files, creates repos, publishes, and submits PRs to community directories. |
+| tags | ["skill","publish","github","clawhub","marketplace","automation"] |
+| metadata | {"openclaw":{"emoji":"🚀"}} |
+
+Skill Multi-Publisher
+Publish a skill to ALL major marketplaces with one command.
+When to use
+When the user says:
+"Publish this skill" / "发布这个skill"
+"Push skill to all marketplaces" / "发布到所有平台"
+"Release this skill everywhere"
+"Submit to awesome-claude-skills"
+Prerequisites
+<beginning of the code>gh<end of the code> CLI installed and logged in (<beginning of the code>gh auth status<end of the code>)
+<beginning of the code>clawhub<end of the code> CLI available and logged in (<beginning of the code>clawhub whoami<end of the code>)
+Skill directory with valid <beginning of the code>SKILL.md<end of the code> containing YAML frontmatter (name + description)
+All Supported Platforms| Platform | Stars | Method | Install Command |
+| --- | --- | --- | --- |
+| GitHub (npx skills) | - | gh repo create + push | npx skills add user/repo |
+| ClawHub | - | clawhub publish | clawhub install slug |
+| composiohq/awesome-claude-skills | 41K+ | Fork + PR | /plugin install |
+| anthropics/skills | 86K+ | Fork + PR | /plugin install |
+| daymade/claude-code-skills | 600+ | Fork + PR | /plugin install |
+| obra/superpowers-marketplace | 595 | Fork + PR | /plugin install |
+| anthropics/claude-plugins-official | 9.3K | Form submission | /plugin install |
+| trailofbits/skills-curated | 252 | Fork + PR | /plugin install |
+| MadAppGang/claude-code | 242 | Fork + PR | /plugin install |
+
+Publish Flow
+Phase 1: Direct Publish (automated)
+Step 1: Validate
+<beginning of the code>
+head -10 SKILL.md
+<end of the code>
+Required format:
+--- name: my-skill-name version: 1.0.0 description: |
+  What this skill does. At least 50 characters.
+tags: ["tag1", "tag2"]
+---
+
+Step 2: Auto-generate missing files
+If missing, create:
+<beginning of the code>LICENSE<end of the code> (MIT, current year, git user.name)
+<beginning of the code>README.md<end of the code> (from SKILL.md content, bilingual CN/EN if user is Chinese-speaking)
+Step 3: Publish to GitHub
+<beginning of the code>
+cd <skill_dir>
+git init
+git add -A
+git commit -m "Release: <skill-name> v<version>"
+gh repo create <user>/<skill-name> --public --description "<desc>" --source . --push
+<end of the code>
+Step 4: Publish to ClawHub
+clawhub publish <skill_dir> \
+  --slug <skill-name> \
+  --name "<Display Name>" \
+  --version <version> \
+  --tags "<comma-separated-tags>" \
+  --changelog "<changelog text>"
+Phase 2: Community Marketplaces (PR submission)
+Step 5: Submit to composiohq/awesome-claude-skills (41K stars)
+This is the largest skill directory. Submit via PR:
+# Fork the repo
+gh repo fork composiohq/awesome-claude-skills --clone=false # Clone your fork
+gh repo clone <user>/awesome-claude-skills /tmp/awesome-claude-skills
+cd /tmp/awesome-claude-skills
+
+# Create branch
+git checkout -b add-<skill-name>
+
+# Copy skill folder (only SKILL.md needed) mkdir <skill-name>
+cp <skill_dir>/SKILL.# Commit and push
+git add -A
+git commit -m "Add <skill-name>: <short description>"
+git push origin add-<skill-name>
+Step 6: Submit to anthropics/skills (86K stars)
+Official Anthropic skill repo:
+gh repo fork anthropics/skills --clone=false
+gh repo clone <user>/skills /tmp/anthropics-skills
+cd /tmp/anthropics-skills
+
+git checkout -b add-<skill-name>
+mkdir -p skills/<skill-name>
+cp <skill_dir>/SKILL.md skills/<skill-name>/SKILL.md
+# Copy scripts if any cp -r <skill_dir>/tools skills/<skill-name>/tools 2>/dev/null || true cp -r <skill_dir>/scripts skills/<skill-name>/scripts 2>/dev/null || true
+
+git add -A
+git commit -m "Add <skill-name> skill"
+git push origin add-<skill-name>
+
+gh pr create \
+  --repo anthropics/skills \
+  --title "Add <skill-name> skill" \
+  --body "$(cat <<'EOF'
+## Summary
+<description>
+
+## Skill Structure
+- SKILL.md with frontmatter (name, description, tags)
+- tools/ or scripts/ directory
+
+## Testing
+Tested in Claude Code CLI.
+EOF
+)"
+Step 7: Submit to daymade/claude-code-skills (623 stars, Chinese community)
+gh repo fork daymade/claude-code-skills --clone=false
+gh repo clone <user>/claude-code-skills /tmp/daymade-skills
+cd /tmp/daymade-skills
+
+git checkout -b add-<skill-name>
+mkdir <skill-name>
+cp <skill_dir>/SKILL.md <skill-name>/SKILL.md
+cp -r <skill_dir>/scripts <skill-name>/scripts 2>/dev/null || true cp -r <skill_dir>/tools <skill-name>/tools 2>/dev/null || true cp -r <skill_dir>/references <skill-name>/references 2>/dev/null || true
+
+git add -A
+git commit -m "Add <skill-name>"
+git push origin add-<skill-name>
+
+gh pr create \
+  --repo daymade/claude-code-skills \
+  --title "Add <skill-name>" \
+  --body "$(cat <<'EOF'
+## New Skill: <skill-name>
+
+<description>
+
+### Structure
+- SKILL.md (with YAML frontmatter)
+- tools/ or scripts/
+
+### Also available at
+- npx skills add <user>/<skill-name>
+- clawhub install <skill-name>
+EOF
+)"
+Step 8: Submit to obra/superpowers-marketplace (595 stars)
+gh repo fork obra/superpowers-marketplace --clone=false
+gh repo clone <user>/superpowers-marketplace /tmp/superpowers
+cd /tmp/superpowers
+
+git checkout -b add-<skill-name>
+mkdir -p plugins/<skill-name>/skills/<skill-name>
+cp <skill_dir>/SKILL.md plugins/<skill-name>/skills/<skill-name>/SKILL.md
+
+# Create plugin.json cat > plugins/<skill-name>/.claude-plugin/plugin.json <<PJSON
+{
+  "name": "<skill-name>",
+  "description": "<description>",
+  "version": "<version>"
+}
+PJSON
+
+git add -A
+git commit -m "Add <skill-name> plugin"
+git push origin add-<skill-name>
+
+gh pr create \
+  --repo obra/superpowers-marketplace \
+  --title "Add <skill-name>" \
+  --body "<description>"
+Submit via official form:
+URL: https://clau.de/plugin-directory-submission
+Requires review by Anthropic team
+Best for mature, well-tested plugins
+Phase 3: Report
+After all submissions, show summary:
+<beginning of the code>
+Published <skill-name> v<version>:
+
+Direct publish:
+  ✅ GitHub:   https://github.com/<user>/<skill-name>
+  ✅ ClawHub:  clawhub install <skill-name>
+  ✅ Install:  npx skills add <user>/<skill-name>
+
+PR submitted:
+  🔄 composiohq/awesome-claude-skills (41K stars) - PR #xxx
+  🔄 anthropics/skills (86K stars) - PR #xxx
+  🔄 daymade/claude-code-skills (623 stars) - PR #xxx
+  🔄 obra/superpowers-marketplace (595 stars) - PR #xxx
+
+Manual:
+  📋 anthropics/claude-plugins-official - submit at clau.de/plugin-directory-submission
+<end of the code>
+Update Flow
+For already-published skills:
+# GitHub: commit + push cd <skill_dir> && git add -A && git commit -m "Update: <changelog>" && git push
+
+# ClawHub: re-publish with bumped version
+clawhub publish <skill_dir> --slug <name> --version <new_version> --changelog "<text>" # Community PRs: update existing PR or create new one
+Publishing Checklist
+on SKILL.md has YAML frontmatter (name, version, description)
+on description is at least 50 characters
+on No secrets (.env, credentials) in the directory
+on README.md exists with install instructions
+on LICENSE exists
+on All scripts are executable (chmod +x)
+Example prompts
+"Publish this skill to all platforms"
+"发布skill到所有市场"
+"Submit to awesome-claude-skills"
+"Release v2.0.0 everywhere"</snippet><url>https://skillsmp.com/creators/proskillsmd/proskills/skills-productivity-dongsheng123132-skill-multi-publisher</url><last_update_time>2026年8月31日9时13分</last_update_time><text_length>3100</text_length></document><document reference_id="https://blog.csdn.net/Once_day/article/details/159215390"><title>AI实践(8)Skills技能_skills 实践-CSDN博客</title><host>CSDN博客</host><snippet>2. Skills公开仓库
+随着 <beginning of the code>Skills<end of the code> 机制在开发者社区中的普及，围绕其生态已经形成了多个公开的共享仓库。这些仓库为用户提供了开箱即用的 <beginning of the code>Skill<end of the code> 资源，同时也为 <beginning of the code>Skill<end of the code> 的创作者搭建了分发与协作的平台。根据维护主体和定位的不同，当前主流的公开仓库大致可以分为官方市场和社区生态两类。
+Anthropic 官方 Skills 市场是最具权威性的资源来源。该市场由 <beginning of the code>Anthropic<end of the code> 直接维护，收录的 <beginning of the code>Skill<end of the code> 经过官方审核，在质量和安全性方面有较高保障。官方市场通常会提供与 <beginning of the code>Claude Code<end of the code> 深度集成的安装方式，用户可以通过 <beginning of the code>/install-skill<end of the code> 等命令直接将 <beginning of the code>Skill<end of the code> 部署到本地项目中。对于初次接触 <beginning of the code>Skills<end of the code> 的开发者而言，官方市场是最推荐的起步资源。
+<beginning of the code>GitHub<end of the code> 社区生态则是规模最大、覆盖面最广的分发渠道。大量开发者将自己编写的 <beginning of the code>Skill<end of the code> 以独立仓库或 <beginning of the code>monorepo<end of the code> 的形式托管在 <beginning of the code>GitHub<end of the code> 上，涵盖代码审查、测试生成、文档撰写、DevOps 流程等多种场景。这类仓库通常附带 <beginning of the code>README<end of the code> 说明和使用示例，用户通过 <beginning of the code>git clone<end of the code> 获取后，将 <beginning of the code>Skill<end of the code> 文件放置到项目的 <beginning of the code>.claude/skills/<end of the code> 目录即可启用。由于缺乏统一的审核机制，使用前需自行评估其指令内容的合理性。
+| 仓库 | 维护方 | 特点 | 获取方式 |
+| --- | --- | --- | --- |
+| Anthropic 官方市场 | Anthropic | 质量可靠，官方审核 | /install-skill 命令集成 |
+| GitHub 社区生态 | 开源社区 | 数量丰富，覆盖广泛 | git clone 手动部署 |
+| ObraSuperpowers | Obra 社区 | 聚焦工程实践，工具链完善 | 社区平台下载 |
+| awesome-claude-skills | 社区策展 | 精选索引，分类清晰 | 链接导航至源仓库 |
+| skillsmp | 社区市场 | 市场化运营，支持检索与评价 | 平台直接安装 |
+
+<beginning of the code>ObraSuperpowers<end of the code> 是一个较为活跃的社区驱动项目，其定位偏向于工程实践场景，提供的 <beginning of the code>Skill<end of the code> 多与开发工作流、项目管理和自动化任务相关。该社区维护了相对完善的工具链支持，方便用户对 <beginning of the code>Skill<end of the code> 进行本地调试和版本管理。
+<beginning of the code>awesome-claude-skills<end of the code> 遵循 <beginning of the code>GitHub<end of the code> 上经典的 <beginning of the code>awesome-list<end of the code> 模式，Level 1 — Metadata，此层级的内容始终被加载。每个 <beginning of the code>Skill<end of the code> 在 <beginning of the code>SKILL.md<end of the code> 文件头部通过 <beginning of the code>YAML frontmatter<end of the code> 声明元数据，包括名称、描述、触发条件等发现信息。<beginning of the code>Claude<end of the code> 在会话初始化时会扫描所有可用 <beginning of the code>Skill<end of the code> 的元数据，以判断当前对话场景是否与某个 <beginning of the code>Skill<end of the code> 相关。由于仅加载轻量的描述字段，这一阶段对上下文窗口的占用极小。一个典型的元数据声明如下：
+--- name: code-review
+description: Performs structured code review following team standards
+trigger: When user asks for code review or submits a PR
+tools: bash, read_file
+---
+yaml
+Level 2 — Instructions，当元数据匹配成功后，<beginning of the code>Claude<end of the code> 会进一步加载 <beginning of the code>SKILL.md<end of the code> 的主体部分。这部分包含过程性知识，即具体的工作流步骤、最佳实践准则和行为指导。其内容本质上是结构化的 <beginning of the code>Markdown<end of the code> 文本，描述模型在该场景下"应该如何思考和行动"。这一层级的设计使得 <beginning of the code>Skill<end of the code> 的核心逻辑与触发条件解耦，便于独立维护和更新。
+Level 3 — Resources and Code，这是最细粒度的加载层级，仅在执行过程中按需引入。其包含三类资源：附加的 <beginning of the code>Markdown<end of the code> 指令文件（如 <beginning of the code>FORMS.md<end of the code> 、<beginning of the code>REFERENCE.md<end of the code> ），用于提供更专业的子流程指导；可执行脚本（如 <beginning of the code>fill_form.py<end of the code>、<beginning of the code>validate.py<end of the code> ），<beginning of the code>Claude<end of the code> 通过 <beginning of the code>bash<end of the code> 工具调用这些脚本来完成确定性操作，避免将计算逻辑交由模型推理从而消耗上下文；以及静态参考资料，包括数据库 Schema、API 文档、模板文件等。
+4. Skills结构
+<beginning of the code>Skills<end of the code> 遵循开放的 <beginning of the code>Agent Skills Standard<end of the code> 规范。该标准定义了一套通用的 <beginning of the code>Skill<end of the code> 描述与组织格式，旨在使不同平台和工具链之间的 <beginning of the code>Skill<end of the code> 资源能够互相兼容。其核心思想是以文件系统目录作为 <beginning of the code>Skill<end of the code> 的封装边界，通过约定的文件命名和元数据格式实现自描述能力。遵循该标准编写的 <beginning of the code>Skill<end of the code>，不仅可以在 <beginning of the code>Claude Code<end of the code> 中使用，也具备向其他兼容 Agent 框架迁移的潜力。
+每个 <beginning of the code>Skill<end of the code> 的入口文件是 <beginning of the code>SKILL.md<end of the code>，其结构由两部分组成：头部的 <beginning of the code>YAML frontmatter<end of the code> 和主体的 <beginning of the code>Markdown<end of the code> 正文。<beginning of the code>YAML frontmatter<end of the code> 用于声明元数据，对应前文所述的 Level 1 层级；<beginning of the code>Markdown<end of the code> 正文则承载具体的指令内容，对应 Level 2 层级。一个最小可用的 <beginning of the code>SKILL.md<end of the code> 文件结构如下：
+<beginning of the code>
+---
+name: your-skill-name
+description: Brief description of what this Skill does and when to use it
+---
+# Your Skill Name
+## Instructions
+[Clear, step-by-step guidance for Claude to follow]
+## Examples
+[Concrete examples of using this Skill]
+<end of the code>
+markdown
+<beginning of the code>YAML frontmatter<end of the code> 中有两个必填字段：<beginning of the code>name<end of the code> 和 <beginning of the code>description<end of the code> 。<beginning of the code>name<end of the code> 作为 <beginning of the code>Skill<end of the code> 的唯一标识符，在加载和引用时起到索引作用；<beginning of the code>description<end of the code> 则为模型提供语义层面的匹配依据，<beginning of the code>Claude<end of the code> 根据该字段判断当前任务是否应触发此 <beginning of the code>Skill<end of the code>。两个字段各自有明确的格式约束：
+| 字段 | 约束条件 | 说明 |
+| --- | --- | --- |
+| name | 最长 64 字符 | 用作唯一标识 |
+|  | 仅允许小写字母、数字和连字符 | 如 code-review 、pdf-analyzer |
+|  | 不得包含 XML 标签 | 防止注入风险 |
+|  | 不得使用保留词 anthropic 、claude | 避免与官方资源冲突 |
+| description | 不得为空，最长 1024 字符 | 供模型进行语义匹配 |
+|  | 不得包含 XML 标签 | 同上 |
+
+<beginning of the code>name<end of the code> 字段的命名约定值得注意。小写字母加连字符的格式（<beginning of the code>kebab-case<end of the code>）与常见的 <beginning of the code>npm<end of the code> 包名、 <beginning of the code>Docker<end of the code> 镜像标签等命名规则保持一致，有利于在文件系统和命令行环境中无歧义地引用。禁止使用保留词的规则则确保用户自定义的 <beginning of the code>Skill<end of the code> 不会与 <beginning of the code>Anthropic<end of the code> 官方发布的资源产生标识冲突。
+<beginning of the code>Markdown<end of the code> 正文部分通常包含 <beginning of the code>Instructions<end of the code> 和 <beginning of the code>Examples<end of the code> 两个核心章节。8.2 SKILL.md 编写
+<beginning of the code>SKILL.md<end of the code> 作为入口文件，控制在 500 行以内，聚焦于工作流的整体编排：
+<beginning of the code>
+---
+name: cpp-code-review
+description: >
+Performs structured C/C++ code review focusing on memory safety,
+coding standards, and performance. Trigger when asked to review
+C or C++ source files, pull requests, or code changes.
+---
+# C/C++ Code Review
+## Instructions
+When asked to review C/C++ code, follow these steps in order.
+Copy the checklist from `checklist.md` into your response and
+check off items as you complete them.
+### Step 1:...
+</snippet><url>https://blog.csdn.net/Once_day/article/details/159215390</url><publish_time>2026年3月18日23时12分</publish_time><text_length>4197</text_length></document><document reference_id="https://blog.csdn.net/weixin_63132747/article/details/160924993"><title>高手进阶(四):装一堆 Skill 怕爆上下文?Claude Code 三层加载机制 + 自建 Skill 实操指南_claude code扫描大型项目代码如何防止上下文爆满-CSDN博客</title><host>CSDN博客</host><snippet>三、SKILL.md 文件格式详解：16 个 Frontmatter 字段
+每个 Skill 对应一个目录，目录下至少有一个 <beginning of the code>SKILL.md<end of the code> 文件。目录名就是 Skill 名，也就是你输入 <beginning of the code>/<end of the code> 后面跟的那个名字。
+<beginning of the code>
+~/.claude/skills/my-skill/
+├── SKILL.md          ← 必需：技能入口
+├── scripts/          ← 可选：可执行脚本
+├── references/       ← 可选：参考文档
+└── templates/        ← 可选：模板文件
+<end of the code>
+3.1 最小可用 SKILL.md
+<beginning of the code>
+---
+name: my-skill
+description: 当用户提到"代码规范检查"时自动触发，检查代码是否符合团队规范。
+---
+# 代码规范检查
+## 检查步骤
+1. 用 Grep 搜索 `console.log`，确认无遗留调试代码
+2. 用 Grep 搜索 `any` 类型，确认 TypeScript 无类型逃逸
+3. 检查文件命名是否 kebab-case
+4. 输出检查结果：通过项 / 不通过项 / 修复建议
+<end of the code>
+markdown
+只要两个字段——<beginning of the code>name<end of the code> 和 <beginning of the code>description<end of the code> ——Claude Code 就能识别并加载这个 Skill。
+3.2 完整 Frontmatter 字段参考表
+Claude Code v2.1.x 支持 16 个 frontmatter 字段，分为三组：
+核心控制（每次必用）
+| 字段 | 默认值 | 作用 |
+| --- | --- | --- |
+| name | 目录名 | 显示名称，小写字母/数字/连字符，≤64字符 |
+| description | 正文首段 | 功能描述 + 触发条件，Claude 用此文本做语义匹配。与 when_to_use 合并后截断至 1536 字符 |
+
+精准控制（推荐掌握）
+| 字段 | 默认值 | 作用 |
+| --- | --- | --- |
+| when_to_use | — | 额外触发上下文，与 description 共享 1536 字符上限 |
+| argument-hint | — | 自动补全提示，如 [issue-number] |
+| arguments | — | 命名位置参数，用 $1 / $2 在正文中引用 |
+| disable-model-invocation | false | true 则禁止自动加载，仅手动 /name 触发。适用 deploy/commit 等副作用 Skill |
+| user-invocable | true | false 则从 / 菜单隐藏，变为纯背景知识 |
+| allowed-tools | 全部 | 预批准工具白名单。支持 glob：Bash(git *) |
+| paths | — | glob 限制自动激活的文件范围，如 "**/*.ts" |
+
+高级配置（按需使用）
+| 字段 | 默认值 | 作用 |
+| --- | --- | --- |
+| model | 继承 | 模型覆盖，如 claude-opus-4-6 ，仅当前 turn 有效 |
+| effort | 继承 | low / medium / high / xhigh / max |
+| context | — | fork = 隔离子代理中运行 |
+| agent | — | 配合 context: fork 的子代理类型 |
+| hooks | — | Skill 生命周期钩子脚本 |
+| shell | bash | 内联命令的 shell，可选 powershell |
+
+七、Skill 安装与分发：四层体系
+一个 Skill 的生命周期有四个层次的位置：
+| 层次 | 路径 | 作用域 | 安装方式 | 适用场景 |
+| --- | --- | --- | --- | --- |
+| 项目级 | .claude/skills// | 当前项目 | 手动创建目录 + SKILL.md | 项目特定的规范、团队协作规则 |
+| 用户全局 | ~/.claude/skills// | 所有项目 | 手动创建 / Git clone | 个人常用的通用 Skill |
+| Git 拉取 | 由 plugin 系统管理 | 按需 | /plugin install @ | 社区 Skill 安装 |
+| 插件市场 | 由 marketplace 系统管理 | 按需 | /plugin marketplace add | 持续获取更新 |
+
+7.1 项目级安装
+# 在你的项目根目录下
+mkdir -p .claude/skills/my-project-skill
+New-Item -Path .claude/skills/my-project-skill/SKILL.md -ItemType File
+# 编辑 SKILL.md，写入你的指令
+powershell
+项目级 Skill 只在这个项目中生效。适合团队的编码规范、项目特定的审查规则。
+7.2 全局安装（适合个人使用）
+# 从 Git 仓库手动安装
+git clone https://github.com/someone/useful-skill.git "$env:USERPROFILE\.claude\skills\useful-skill" # 或者自己创建一个
+mkdir -p "$env:USERPROFILE\.claude\skills\my-skill"
+powershell
+7.3 通过插件市场安装（推荐）
+# 第一步：添加市场
+/plugin marketplace add athola/claude-night-market
+# 第二步：安装插件
+/plugin install sanctum@claude-night-market
+# 或通过交互界面
+/plugin   # 打开 Discover 标签页，浏览并点选安装
+bash
+7.4 分发你的 Skill
+如果你写了一个好用的 Skill，想分享给社区：
+GitHub 发布：把 Skill 目录上传到 GitHub，写清楚 README
+创建 <beginning of the code>marketplace.json<end of the code>：在仓库根目录的 <beginning of the code>.claude-plugin/marketplace.json<end of the code> 中注册
+提交到现有市场：向 Night Market 或 Superpowers 提 PR，加入你的 Skill
+最小的 <beginning of the code>marketplace.json<end of the code> 示例：
+{
+"name": "my-marketplace",
+"plugins": {
+"my-skill": {
+八、插件市场生态概览
+截至 2026 年 5 月，Claude Code 插件生态有四个主要市场。以下是一张表概览：
+8.1 四大市场一览
+| 维度 | Anthropic 官方市场 | Night Market | Superpowers | Trail of Bits |
+| --- | --- | --- | --- | --- |
+| 定位 | 官方精选、高质量保证 | 社区驱动、品类最全 | 开发者工作流、TDD/调试 | 安全审计专用 |
+| 插件数 | ~15（精选） | 23 个插件 / 167 Skills / 51 Agents | 20+ Skills | 安全扫描 Skill 集合 |
+| 安装命令 | 自动可用 | /plugin marketplace add athola/claude-night-market | /plugin marketplace add obra/superpowers-marketplace | 按项目安装 |
+| 更新机制 | 自动更新 | 手动 / 可选自动 | 手动 | 手动 |
+| 适合人群 | 所有人，首选安全 | 需要全套工作流的重度用户 | 需要 TDD/调试/开发流程的用户 | 安全工程师、第三方审计 |
+| GitHub Stars | 19K+（官方市场仓库） | 248 | 925（市场） + 167K（核心） | — |
+
+8.2 Night Market 深度介绍
+Night Market 是目前最大的社区市场，23 个插件按四层架构组织：
+| 层级 | 代表插件 | 能力 |
+| --- | --- | --- |
+| Domain（业务） | pensive（代码审查）、attune（项目生命周期）、spec-kit（规格驱动）、minister（Issue 管理） | 高频开发任务自动化 |
+| Utility （工具） | conserve（Token 优化）、conjure（多 LLM 委派） | 资源管理 |
+| Foundation（基础） | sanctum（Git 工作流）、leyline（认证/注入检测）、imbue（TDD 执行） | 核心机制 |
+| Meta （元） | abstract（Skill 编写、Hook 开发） | 自举工具 |
+
+建议首次装这三个：<beginning of the code>sanctum<end of the code>（Git 自动化）、<beginning of the code>conserve<end of the code> （Token 控制）、<beginning of the code>pensive<end of the code> （代码审查）。
+8.3 Superpowers
+Superpowers 已进入 Anthropic 官方市场。核心能力：
+<beginning of the code>/brainstorm<end of the code>、<beginning of the code>/write-plan<end of the code> 、<beginning of the code>/execute-plan<end of the code> 三步开发流程
+子代理驱动的代码开发 + 内建代码审查
+TDD 红-绿循环
+Skill 搜索工具
+安装：
+<beginning of the code>
+/plugin install superpowers@superpowers-marketplace
+<end of the code>
+bash
+8.4 如何找到适合你技术栈的 Skill
+打开 <beginning of the code>/plugin<end of the code> → Discover 标签页，浏览分类
+在 GitHub 搜索 <beginning of the code>claude-code-plugin<end of the code> + 你的语言/框架
+在 Night Market 的 GitHub 仓库 athola/claude-night-market 查看完整插件目录
+用 Superpowers 的 skills-search 工具搜索
+记住：先看源码，再安装。下一节告诉你具体怎么看。
+11.1 文件路径汇总
+| 文件/目录 | 绝对路径 |
+| --- | --- |
+| 全局 Skill 目录 | C:\Users\\.claude\skills\ |
+| 项目级 Skill 目录 | \.claude\skills\ |
+| 项目级 Command 目录 | \.claude\commands\ |
+| 插件市场目录 | C:\Users\\.claude\marketplaces\ |
+| ECC 市场目录 | C:\Users\\.claude\marketplaces\everything-claude-code\ |
+
+11.2 SKILL.md Frontmatter 速查
+| 字段 | 必需 | 典型值 | 一句话 |
+| --- | --- | --- | --- |
+| name | 否 | my-skill | 显示名，小写+连字符 |
+| description | 推荐 | 首段前置触发词 | 决定自动触发率 |
+| when_to_use | 否 | 额外触发场景 | 追加到 description 后 |
+| argument-hint | 否 | [file] | 自动补全提示 |
+| disable-model-invocation | 否 | true | 禁止自动加载 |
+| user-invocable | 否 | false | 从菜单隐藏 |
+| allowed-tools | 否 | Read Grep Bash(git *) | 权限白名单 |
+| model | 否 | claude-opus-4-6 | 模型覆盖 |
+| effort | 否 | high | 努力级别 |
+| context | 否 | fork | 子代理隔离 |
+| paths | 否 | "**/*.ts" | 限制文件范围 |
+| shell | 否 | powershell | 内联命令 shell |
+
+11.3 常见报错 → 解决方案
+| 报错特征 | 解决 |
+| --- | --- |
+| Skill 不自动触发 | 检查 description 是否含高频触发词 → Debug #1 |
+
+</snippet><url>https://blog.csdn.net/weixin_63132747/article/details/160924993</url><publish_time>2026年5月9日21时44分</publish_time><text_length>4447</text_length></document><document reference_id="https://www.developersdigest.tech/blog/claude-code-skills-marketplace-launch"><title>Skills Marketplace: 312 Claude Code Skills, Curated</title><host>Developers Digest</host><snippet>Skills Marketplace: 312 Claude Code Skills, Curated
+Developers Digest
+April 28, 2026
+• Updated Jun 4, 2026 • 8 min read
+Claude Code Skills Marketplace Developer Tools DirectoryTL;DR
+A curated directory of 312 Claude Code skills, plus Pro tools for authors who want analytics, version pinning, and a real submission flow.
+In this article (17)| Official Sources |  |
+| --- | --- |
+| Claude Code Overview | docs.anthropic.com/en/docs/claude-code/overview |
+| Claude Code Skills | docs.anthropic.com/en/docs/claude-code/skills |
+| Claude Code Memory | docs.anthropic.com/en/docs/claude-code/memory |
+| Claude Code Settings | docs.anthropic.com/en/docs/claude-code/settings |
+| Anthropic Pricing | anthropic.com/pricing |
+
+The skill discovery problem nobody is talking about
+Claude Code skills are good. The discovery story for them is not.
+If you have spent any time in the ecosystem this year, you know the loop. Someone posts a skill in a Discord. Someone else screenshots it into an X thread. A third person forks a gist, renames it, and pushes a slightly different version to their dotfiles. By the time you find the skill you actually want, you are reading a six-month-old README that references a deprecated SDK version and a hook format that changed two minor releases ago.
+There is no canonical index. There is no version pinning. There is no signal for which skills are maintained, which are abandoned, and which are just somebody's afternoon experiment that got 80 stars and never shipped a v1.
+We have been collecting skills internally for the DD app portfolio for about a year. The internal index started as a flat JSON file. It became a search UI. It became a thing other people wanted access to. So we shipped it.
+Skills Marketplace is live. 312 skills indexed at launch. Curated, versioned, searchable, and free to browse.
+What is in the directory
+The 312 skills at launch are everything we could verify works against the current Claude Code release. That number is the result of ingesting a much larger pile and dropping anything that failed our smoke test.Code review skills, refactor skills, test generation, security audit, dependency triage, migration helpers. If you have ever wanted a skill that does the boring half of a PR before you read the diff, this is where to look.
+Content and marketing is the second-biggest. Blog drafting, video script outlining, distribution pack generation, newsletter drafts, social copy. We use most of these on this site daily.
+Workflow and ops covers the meta-skills. Schedulers, loops, handoff generators, prune tools for archiving stale skills, audit tools that count tokens across your install. Less glamorous, more load-bearing than people give them credit for.
+Domain-specific is everything else. Browser automation, scraping pipelines, image generation, audio transcription, vault management for Obsidian users, deploy helpers for Coolify and Vercel. Long tail by design.
+Every skill page has the same shape. Description. Trigger phrases. Required tools and permissions. Last-updated date. Source repo. Install command. A version selector if the skill has tagged releases. A small graph showing install count over the last 30 days for skills that opted into telemetry.
+Search is fast because the index is small and pre-built. Filters stack. Submitting a skill
+The submission flow is the thing we spent the most design time on, because the failure mode for marketplaces is always "the submission queue is a graveyard and nothing ships."
+Submit a skill at <beginning of the code>/submit<end of the code>. Paste a GitHub URL. The form pulls metadata, runs a static lint pass on the SKILL.md frontmatter, and shows you a preview of how the directory page will render before you commit to publishing. If the lint fails, it tells you exactly which field is wrong and links to the spec.
+After preview, the skill enters a review queue. Review is currently human, currently us, currently fast. Median review time at launch is under 24 hours. We are not gatekeeping on quality, we are gatekeeping on "does this skill do what its description says." The bar is low and clear.
+Once approved, the skill is live and the author gets an authorship record they can claim with a verified-author flow later. If you submitted skills before the verified-author flow existed, you can retroactively claim them by signing a commit on the source repo.
+If you have written a tutorial showing how to build a skill, point at it from the submission. We highlight skills that come with real tutorials. Two examples worth reading: the Hookyard tutorial on shipping hook-based skills and the SkillForge build log from earlier this month. Both walk through a real skill from idea to publish.
+Roadmap
+The launch directory is the floor, not the ceiling.Abstract systems illustration for Roadmap
+Community curation. Right now review is centralized. The plan is to move to a trust-graded curator model where established authors can approve submissions in their category. The infrastructure for that is half-built, the policy questions are still open. Expect this in the next 60 days.
+Paid skill marketplace. Some skills are worth paying for. A skill that wraps a non-trivial pipeline, ships with hosted infrastructure, or includes a dataset belongs behind a price tag. We are building a Stripe-backed transactions layer with revenue split for authors. Free skills stay free, paid skills are opt-in only, and the directory will always show free alternatives next to paid ones so the comparison is honest.
+Skill bundles. Most people do not install one skill, they install a stack. Bundles let an author or curator group skills into a starter pack, version it, and let installers pull the whole thing. Useful for onboarding, useful for opinionated workflows, useful for the agentfs filesystem-as-skills pattern we wrote up last week.
+Cross-tool indexing. Skills are a Claude Code concept today, but the same metadata model fits Codex prompts, Cursor rules, and Augment commands. The directory will eventually index across all of them with a clear filter, so you can see the full landscape and not just the Claude slice. If you want a head-to-head view of the underlying tools, the comparison page covers that.
+Telemetry the user controls. Install counts are opt-in. We are adding finer-grained controls so authors can request specific telemetry and installers can grant or deny it per skill. The default will always be off.
+If somebody forks a popular skill and republishes it under a different slug, you will see both. We have a clustering plan but it is not in the launch build.
+It does not solve the "skill conflicts with another skill" problem. Two skills can claim the same trigger phrase, and Claude Code picks one with rules that are not always obvious. The directory shows trigger phrases on every page so you can spot a conflict before installing, but the resolution is on you.
+It does not have a real moderation policy yet. We have an acceptable-use list and we will reject skills that exfiltrate data, ship malware, or scrape protected APIs. The full policy will land before we open community curation, because community curation without a clear policy is how you end up with a marketplace nobody trusts.
+It is a directory. The hard parts of the skill ecosystem (versioning at scale, signed manifests, deterministic installs, conflict resolution) are still hard. We are not pretending to have solved them. We are pretending to have indexed the ones that exist so you can find them faster.
+Try it
+The directory is live. Browse 312 skills, filter by category, install with one command. If you write skills, the Pro tier is open for early access. If you have a skill we missed, submit it and we will review within a day.
+The whole point of skills is that the boring parts of the work get cheaper every week. A directory of 312 of them, with version pinning and an honest submission flow, is the smallest thing we could ship that makes that compounding go faster.
+That is the bet.
+Frequently Asked Questions
+What is the Skills Marketplace?
+The Skills Marketplace is a curated directory of Claude Code skills - reusable capability files that extend what Claude Code can do. It indexes 312 verified skills at launch, organized by category (engineering, content, workflow, domain-specific), with search, version pinning, and install-count analytics. Free to browse, with a Pro tier for skill authors who want dashboards and verified badges.
+How do I install a skill from the marketplace?
+Every skill page shows an install command you can copy and run. Skills land in your local Claude config folder (typically <beginning of the code>~/.claude/skills/<end of the code>) and work the next time you start Claude Code. The install is a one-liner, but always read the SKILL.md before installing - the marketplace is a directory, not a sandbox.
+What does Skills Pro include for authors?
+Skills Pro gives authors a dashboard with install counts per skill, per version, per day. You see which trigger phrases fire in the wild, geographic distribution, and version adoption curves. There is a verified-author badge (GitHub identity confirmation), working version pinning with rollback, and a private skills tier for teams who want internal skills without making them public.
+How do I submit a skill to the marketplace?
+Submit at the <beginning of the code>/submit<end of the code> page by pasting a GitHub URL. The form pulls metadata, runs a lint pass on the SKILL.md frontmatter, and shows a preview before publishing. After submission, the skill enters a human review queue - median review time is under 24 hours. The bar is low: "does this skill do what its description says."
+Is the Skills Marketplace free?
+Browsing and installing skills is free and stays free. The paid tier (Skills Pro) is for authors who write skills and want analytics, verified badges, version pinning, and private team skills. The paid tier funds the infrastructure; the free tier is the core product.
+Does the marketplace sandbox or verify skill safety?
+No. The marketplace hosts metadata, not execution. When you install a skill, it runs with whatever permissions you give Claude Code. The verified-author badge confirms identity (this skill came from the GitHub account it claims), not quality or safety. Read the SKILL.md before installing any skill from any source.
+What categories of skills are in the marketplace?
+The launch index covers four main categories. Engineering is the biggest - code review, refactoring, test generation, security audit, migration helpers. Content and marketing is second - blog drafting, video scripts, distribution packs, social copy. Workflow and ops covers schedulers, loops, handoffs, pruning, and audit tools. Domain-specific is the long tail - browser automation, scraping, image generation, audio transcription, vault management, deploy helpers.
+What is coming next for the Skills Marketplace?
+The roadmap includes community curation (trusted authors can approve submissions), a paid skill marketplace (Stripe-backed with author revenue share), skill bundles (install a whole stack at once), cross-tool indexing (skills, Codex prompts, Cursor rules, Augment commands in one directory), and user-controlled telemetry with finer-grained permissions.</snippet><url>https://www.developersdigest.tech/blog/claude-code-skills-marketplace-launch</url><publish_time>2026年4月28日0时0分</publish_time><text_length>2298</text_length></document></search>
