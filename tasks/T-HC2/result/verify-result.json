@@ -1,0 +1,14 @@
+{
+  "task": "T-HC2",
+  "ts": "2026-09-12T09:30:55.379Z",
+  "total": 1,
+  "passed": 0,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": false,
+      "detail": "F:\\market-repo-extracted\\market-repo\\tasks\\T-HC2\\result\\result.md 缺失"
+    }
+  ],
+  "verdict": "FAIL"
+}
