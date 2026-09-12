@@ -103,6 +103,8 @@ function eventTsFromFile(taskDir, fname) {
 function statusOf(spec, events, taskDir) {
   if (events.some(f => f.startsWith("settled-"))) return "completed";
   if (events.some(f => f.startsWith("forfeited-"))) return "failed";
+  if (events.some(f => f.startsWith("auto-failed-"))) return "failed";   // 幂等：自动核验 FAIL 不再重复
+  if (events.some(f => f.startsWith("expired-"))) return "expired";      // 幂等：过期清理不再重复
   const vf = events.filter(f => f.startsWith("verified-")).sort().pop();
   if (vf) {
     const vrPath = path.join(taskDir, "result", "verify-result.json");
@@ -196,8 +198,8 @@ function actAutoReview(taskId, taskDir, spec) {
   if (fs.existsSync(vrPath)) {
     try { verdict = JSON.parse(fs.readFileSync(vrPath, "utf-8")).verdict === "PASS" ? "PASS" : "FAIL"; } catch (e) {}
   }
-  const { sig, fp } = signOperator(`auto-review ${taskId} ${verdict}`);
   const opNote = `自动核验 ${taskId}: ${verdict}（发布者 ${CFG.review_window_h}h 未 review）`;
+  const { sig, fp } = signOperator(opNote);  // 签名必须覆盖文件正文（sigcheck 校验口径）
   const eSigLine = fp ? `signer: ${fp}\nsignature: ${sig}` : "signature: (unsigned)";
 
   if (verdict === "PASS") {

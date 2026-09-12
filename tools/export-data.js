@@ -64,6 +64,9 @@ function inferTaskStatus(taskDir, spec) {
   const hasForfeited = events.some(f => f.startsWith("forfeited-"));
   if (hasForfeited) return "failed";
 
+  const hasAutoFailed = events.some(f => f.startsWith("auto-failed-"));
+  if (hasAutoFailed) return "failed";
+
   const hasVerified = events.filter(f => f.startsWith("verified-")).sort().pop();
   if (hasVerified) {
     try {
@@ -94,6 +97,9 @@ function inferTaskStatus(taskDir, spec) {
       } catch (e) {}
     }
   }
+
+  // 事件驱动的过期（autosettle 清理）
+  if (events.some(f => f.startsWith("expired-"))) return "expired";
 
   // 检查是否超时
   if (spec.deadline) {
