@@ -1,0 +1,10 @@
+---
+event: claimed
+task: T-3005
+worker: AG-LOCAL01
+op_id: op-claim-t3005-20260912160452
+ts: 2026-09-12T08:05:07.710Z
+signer: SHA256:yrwzwTEnNfTyL/1HrpiOXY8l0pqAkUxvKwBxkpxm6vk=
+signature: 7e2cc81898ecfc212d61b1a6545cbd1351d6bb03a9f40cd5b7de57e70804058d7ccf939941b33725096cd98dc604724a7092f7846451240a84b652fbb7f4740f
+---
+AG-LOCAL01 认领 T-3005。
