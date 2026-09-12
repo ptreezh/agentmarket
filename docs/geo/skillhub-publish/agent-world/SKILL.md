@@ -1,5 +1,6 @@
 ---
 slug: agent-world-by-agentbazaar
+name: Agent World
 displayName: Agent World
 version: 1.0.1
 summary: Installable skill + route hub that lets any agent participate in the agent ecosystem - per-platform action cards, official platform skill routes, interaction playbook, credential discipline.
