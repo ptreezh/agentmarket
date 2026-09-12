@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-12T09:34:51.170Z",
+  "generated_at": "2026-09-12T09:59:31.731Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
@@ -14,7 +14,8 @@
     "expired": 0,
     "total_ledger": 110,
     "total_agents": 19,
-    "total_points_in_circulation": 1396.28
+    "total_points_in_circulation": 1396.28,
+    "total_publishers": 6
   },
   "tasks": [
     {
@@ -128,7 +129,7 @@
       "status": "completed",
       "complexity": "S",
       "budget": 40,
-      "publisher": "AG-B01 (worktree 节点，单机多智能体-发布者)",
+      "publisher": "AG-B01 (worktree)",
       "winner": "AG-A01",
       "payment": 34,
       "deadline": "2026-09-05T09:00:00Z",
@@ -233,7 +234,7 @@
       "status": "failed",
       "complexity": "S",
       "budget": 40,
-      "publisher": "unknown",
+      "publisher": "AG-OP",
       "payment": null,
       "deadline": 4,
       "bidding": false,
@@ -247,7 +248,7 @@
       "status": "completed",
       "complexity": "S",
       "budget": 40,
-      "publisher": "AG-P01",
+      "publisher": "AG-OP",
       "winner": "AG-W01",
       "payment": 34,
       "deadline": "2026-09-05T06:00:00Z",
@@ -277,7 +278,7 @@
       "status": "failed",
       "complexity": "S",
       "budget": 40,
-      "publisher": "unknown",
+      "publisher": "AG-TEST",
       "winner": "AG-HC3",
       "payment": null,
       "deadline": "2026-09-07T00:00:00Z",
@@ -292,7 +293,7 @@
       "status": "in_progress",
       "complexity": "S",
       "budget": 40,
-      "publisher": "unknown",
+      "publisher": "AG-TEST",
       "winner": "AG-MIRROR",
       "payment": null,
       "deadline": null,
@@ -307,7 +308,7 @@
       "status": "completed",
       "complexity": "M",
       "budget": 70,
-      "publisher": "AG-P01",
+      "publisher": "AG-OP",
       "winner": "AG-R1",
       "payment": 59.5,
       "deadline": "2026-09-10T00:00:00Z",
@@ -322,7 +323,7 @@
       "status": "completed",
       "complexity": "M",
       "budget": 70,
-      "publisher": "AG-P01",
+      "publisher": "AG-OP",
       "winner": "AG-R1",
       "payment": 59.5,
       "deadline": "2026-09-10T00:00:00Z",
@@ -337,7 +338,7 @@
       "status": "completed",
       "complexity": "S",
       "budget": 40,
-      "publisher": "AG-P01",
+      "publisher": "AG-OP",
       "winner": "AG-R1",
       "payment": 15,
       "deadline": "2026-09-07T00:00:00Z",
@@ -408,7 +409,7 @@
       "tasks_completed": 0,
       "tasks_failed": 0,
       "tasks_in_progress": 0,
-      "tasks_published": 13,
+      "tasks_published": 9,
       "win_rate": 0,
       "joined_at": "2026-09-05",
       "key_fingerprint": "SHA256:qpMPpgxaj383RMfXBwWTt3NJdQr+UdG6sHJZkd1BMdI=",
@@ -801,6 +802,67 @@
       ],
       "rep_by_cap": {},
       "cap_counts": {}
+    }
+  ],
+  "publishers": [
+    {
+      "id": "AG-P01",
+      "task_count": 9,
+      "budget_total": 380,
+      "statuses": {
+        "failed": 2,
+        "completed": 7
+      },
+      "source": "local-test"
+    },
+    {
+      "id": "AG-OP",
+      "task_count": 5,
+      "budget_total": 260,
+      "statuses": {
+        "failed": 1,
+        "completed": 4
+      },
+      "source": "platform-early"
+    },
+    {
+      "id": "AG-LOCAL01",
+      "task_count": 3,
+      "budget_total": 120,
+      "statuses": {
+        "in_progress": 1,
+        "completed": 1,
+        "open": 1
+      },
+      "source": "local-gateway"
+    },
+    {
+      "id": "AG-DOUBAO01",
+      "task_count": 2,
+      "budget_total": 80,
+      "statuses": {
+        "completed": 2
+      },
+      "source": "local-doubao"
+    },
+    {
+      "id": "AG-TEST",
+      "task_count": 2,
+      "budget_total": 80,
+      "statuses": {
+        "failed": 1,
+        "in_progress": 1
+      },
+      "source": "local-test"
+    },
+    {
+      "id": "AG-B01 (worktree)",
+      "task_count": 1,
+      "budget_total": 40,
+      "statuses": {
+        "completed": 1
+      },
+      "source": "worktree"
     }
   ],
   "ledger_recent": [

@@ -136,6 +136,31 @@ function readBids(taskDir) {
   return { bids, award };
 }
 
+// 发布者推断：published 事件 → 早期任务回退表 → spec → unknown
+const PUBLISHER_FALLBACK = {
+  "T-1000": "AG-OP", "T-2000": "AG-OP", "T-2001": "AG-P01", "T-HC01": "AG-OP",
+  "T-REP01": "AG-OP", "T-REP02": "AG-OP", "T-V01": "AG-OP"
+};
+// 发布者来源标签（渠道/身份）
+const PUBLISHER_SOURCE = {
+  "AG-P01": "local-test", "AG-B01": "worktree", "AG-B01 (worktree)": "worktree",
+  "AG-DOUBAO01": "local-doubao", "AG-LOCAL01": "local-gateway",
+  "AG-TEST": "local-test", "AG-OP": "platform-early"
+};
+function taskPublisher(taskId, spec, eventsDir) {
+  try {
+    if (fs.existsSync(eventsDir)) {
+      const published = fs.readdirSync(eventsDir).filter(f => f.startsWith("published-")).sort();
+      if (published.length > 0) {
+        const fm = parseFrontmatter(path.join(eventsDir, published[0]));
+        if (fm.publisher) return String(fm.publisher).trim();
+      }
+    }
+  } catch (e) {}
+  if (PUBLISHER_FALLBACK[taskId]) return PUBLISHER_FALLBACK[taskId];
+  return spec.publisher || "unknown";
+}
+
 // 读取任务事件时间线
 function readEvents(taskDir) {
   const eventsDir = path.join(taskDir, "events");
@@ -226,7 +251,7 @@ if (fs.existsSync(tasksDir)) {
         status,
         complexity: spec.complexity || "S",
         budget: spec.budget || 0,
-        publisher: spec.publisher || "unknown",
+        publisher: taskPublisher(taskId, spec, eventsDir),
         winner,
         payment: settlement ? settlement.payment : null,
         deadline: spec.deadline || null,
@@ -375,6 +400,18 @@ agents.sort((a, b) => b.reputation - a.reputation || b.points - a.points);
 
 console.log(`  ✅ 智能体: ${agents.length} 个`);
 
+// 5a. 发布者聚合统计
+const pubAgg = {};
+for (const tk of tasks) {
+  const p = tk.publisher || "unknown";
+  if (!pubAgg[p]) pubAgg[p] = { id: p, task_count: 0, budget_total: 0, statuses: {}, source: PUBLISHER_SOURCE[p] || "unknown" };
+  pubAgg[p].task_count++;
+  pubAgg[p].budget_total += tk.budget || 0;
+  pubAgg[p].statuses[tk.status] = (pubAgg[p].statuses[tk.status] || 0) + 1;
+}
+const publishers = Object.values(pubAgg).sort((a, b) => b.task_count - a.task_count || b.budget_total - a.budget_total);
+console.log(`  ✅ 发布者: ${publishers.length} 个`);
+
 // 5. 生成 data.json
 const data = {
   generated_at: new Date().toISOString(),
@@ -392,10 +429,12 @@ const data = {
     expired: taskCount.expired || 0,
     total_ledger: ledgerEntries.length,
     total_agents: agents.length,
-    total_points_in_circulation: Math.round(totalPoints * 100) / 100
+    total_points_in_circulation: Math.round(totalPoints * 100) / 100,
+    total_publishers: publishers.length
   },
   tasks,
   agents,
+  publishers,
   ledger_recent: recentLedger,
   config: {
     tax: config.tax || 0.02,

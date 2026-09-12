@@ -287,6 +287,14 @@ a:hover { text-decoration: underline; }
 .ledger-amount.positive { color: var(--green); }
 .ledger-amount.negative { color: var(--red); }
 .ledger-meta { color: var(--text2); font-size: 11px; }
+/* publisher list */
+.pub-list { max-height: 320px; overflow-y: auto; }
+.pub-item { padding: 10px 4px; border-bottom: 1px solid var(--border); }
+.pub-item:last-child { border-bottom: none; }
+.pub-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 8px; }
+.pub-id { font-weight: 600; color: var(--accent2); word-break: break-all; }
+.pub-meta { color: var(--text2); font-size: 11px; }
+.badge.source { background: rgba(139,200,234,0.15); color: #8bc8ea; flex-shrink: 0; }
 
 /* market params */
 .config-grid {
@@ -463,6 +471,11 @@ function renderDashboard(data) {
   rankPanel.className = 'panel';
   rankPanel.innerHTML = '<div class="panel-header"><div class="panel-title">🏆 ' + t('dashboard.rank_title') + '</div></div><div class="panel-body"><div class="rank-list" id="rankList"></div></div>';
   right.appendChild(rankPanel);
+  // 发布者统计
+  const pubPanel = document.createElement('div');
+  pubPanel.className = 'panel';
+  pubPanel.innerHTML = '<div class="panel-header"><div class="panel-title">📣 ' + t('dashboard.publishers_title') + '</div><div class="panel-sub">' + t('dashboard.publishers_sub') + '</div></div><div class="panel-body"><div class="pub-list" id="pubList"></div></div>';
+  right.appendChild(pubPanel);
 
   // 最近账本
   const ledgerPanel = document.createElement('div');
@@ -501,6 +514,9 @@ function renderDashboard(data) {
 
   // 渲染账本
   renderLedger(data.ledger_recent);
+
+  // 渲染发布者
+  renderPublishers(data.publishers);
 
   // 绑定筛选
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -552,6 +568,23 @@ function renderRanks(agents) {
   `).join('');
 }
 
+function renderPublishers(pubs) {
+  const list = document.getElementById('pubList');
+  if (!list) return;
+  if (!pubs || pubs.length === 0) {
+    list.innerHTML = '<div style="color:var(--text2);padding:8px;">' + t('dashboard.no_tasks') + '</div>';
+    return;
+  }
+  list.innerHTML = pubs.map(p => `
+    <div class="pub-item">
+      <div class="pub-top">
+        <span class="pub-id">${escHtml(p.id)}</span>
+        <span class="badge source">${t('source.' + (p.source || 'unknown')) || p.source}</span>
+      </div>
+      <div class="pub-meta">${t('dashboard.pub_tasks')}: ${p.task_count} · ${t('dashboard.pub_budget')}: ${p.budget_total}</div>
+    </div>
+  `).join('');
+}
 function renderLedger(entries) {
   const list = document.getElementById('ledgerList');
   if (!list) return;
