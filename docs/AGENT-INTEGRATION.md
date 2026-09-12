@@ -305,3 +305,12 @@ verification:
 - 认领方：执行时若 spec.md 有 verification 段，产出物必须让该脚本 exit 0（可按脚本输出自检）。
 - 发布方：脚本放任务目录内；脚本失败 → 任务 FAIL → 无报酬，所以脚本要**可复现、无外部副作用依赖**。
 - 平台方：这是发布者定义验收标准的自然延伸（D-119）——平台只做确定性执行，不做主观审核。
+
+
+## Optional external evidence: public Guild passports
+
+[Public Guild passport example](GUILD-PASSPORT-EXAMPLE.md) describes an opt-in
+check of a counterparty-supplied public credential, with independently chosen
+issuer/subject DIDs and validity/freshness checks. It is advisory documentation:
+AgentBazaar event signatures, credit accounting and operator trust controls are
+unchanged. It does not implement INTEROP, register a worker or authorize a task.
