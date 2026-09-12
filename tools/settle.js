@@ -206,6 +206,34 @@ ledger.writeEntry({
 });
 console.log(`   💰 押金返还: ${winner} +${deposit}`);
 
+// 6e. 发布押金返还（pub_deposit_refund）——发布者按时手动核验，押金返还（SPEC-AUTOSETTLE-20260912 G4）
+try {
+  const pubDep = Math.round(budget * 0.05 * 100) / 100;
+  let hasPubDep = false;
+  const ld = path.join("ledger");
+  if (fs.existsSync(ld)) {
+    for (const f of fs.readdirSync(ld)) {
+      if (!/^L-\d{4}\.md$/.test(f)) continue;
+      const c = fs.readFileSync(path.join(ld, f), "utf-8");
+      if (/^kind:\s*pub_escrow/m.test(c) && new RegExp(`^to:\\s*escrow-${taskId}-pubdep\\s*$`, "m").test(c)) { hasPubDep = true; break; }
+    }
+  }
+  if (hasPubDep) {
+    ledger.writeEntry({
+      kind: "pub_deposit_refund",
+      amount: pubDep,
+      from: `escrow-${taskId}-pubdep`,
+      to: publisher,
+      note: `任务 ${taskId} 发布者已核验，发布押金返还`,
+      signer: "operator",
+      privKeyPath: operatorPriv
+    });
+    console.log(`   💰 发布押金返还: ${publisher} +${pubDep}`);
+  }
+} catch (e) {
+  console.warn(`   [warn] 发布押金返还跳过: ${e.message}`);
+}
+
 // 7. 写 settled 事件
 const settledPath = path.join(eventsDir, `settled-${now.replace(/[:.]/g, "")}.md`);
 const settledBody = `task: ${taskId}

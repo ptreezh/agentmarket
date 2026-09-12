@@ -15,6 +15,7 @@ const path = require("path");
 const crypto = require("crypto");
 const readline = require("readline");
 const { execSync } = require("child_process");
+const ledger = require("./ledger.js");
 
 // 输入抽象：TTY 用 readline，非 TTY 用预读取行数组（支持管道/文件输入）
 const IS_TTY = process.stdin.isTTY;
@@ -207,6 +208,31 @@ function runJsonMode(arg, publisher, publishSig) {
   try {
     execSync("git push origin HEAD:refs/tasks/" + taskId, { encoding: "utf-8", stdio: "pipe" });
   } catch (e) { /* 忽略：无 origin 或权限时不影响本地发布 */ }
+
+  // 预算托管 + 发布押金（SPEC-AUTOSETTLE-20260912 G4/G5）：发布即冻结，结算/过期/弃单时解冻
+  const opPriv = path.join("keys", "operator", "private.pem");
+  if (fs.existsSync(opPriv)) {
+    const budgetNum = Number(p.budget);
+    try {
+      ledger.writeEntry({
+        kind: "escrow", amount: budgetNum, from: publisher, to: `escrow-${taskId}`,
+        note: `任务 ${taskId} 预算托管冻结`, signer: "operator", privKeyPath: opPriv
+      });
+      const pubDep = Math.round(budgetNum * 0.05 * 100) / 100;
+      if (pubDep > 0) {
+        ledger.writeEntry({
+          kind: "pub_escrow", amount: pubDep, from: publisher, to: `escrow-${taskId}-pubdep`,
+          note: `任务 ${taskId} 发布押金托管冻结（${pubDep}）`, signer: "operator", privKeyPath: opPriv
+        });
+      }
+      execSync("git add ledger/ && git commit -q -m \"publish: " + taskId + " escrow+pubdep freeze\"", { encoding: "utf-8", stdio: "pipe" });
+    } catch (e) {
+      console.warn("  [warn] 预算/发布押金托管写入失败: " + e.message);
+    }
+  } else {
+    console.warn("  [warn] 缺运营者私钥，跳过预算/发布押金托管（仅测试用，勿用于生产发布）");
+  }
+
   console.log(JSON.stringify({ ok: true, taskId, specPath, budget: Number(p.budget), publisher }));
   process.exit(0);
 }

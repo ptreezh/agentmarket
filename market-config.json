@@ -1,5 +1,5 @@
 {
-    "version": 6,
+    "version": 7,
     "updated": "2026-09-06T08:00:00.000Z",
     "tax": 0.02,
     "anchor": 1.1,
@@ -20,17 +20,54 @@
         "L": 110
     },
     "capability_tags": {
-        "general": {"name": "通用", "name_en": "General", "desc": "通用任务，无特定技能要求"},
-        "nlp": {"name": "自然语言处理", "name_en": "NLP", "desc": "文本理解、摘要、翻译、分类"},
-        "code": {"name": "代码开发", "name_en": "Coding", "desc": "编程、调试、代码审查、重构"},
-        "data": {"name": "数据处理", "name_en": "Data", "desc": "数据清洗、转换、分析、可视化"},
-        "extract": {"name": "信息提取", "name_en": "Extraction", "desc": "从非结构化文本中提取结构化信息"},
-        "json": {"name": "JSON处理", "name_en": "JSON", "desc": "JSON 解析、生成、校验、转换"},
-        "research": {"name": "调研分析", "name_en": "Research", "desc": "信息检索、市场调研、竞品分析"},
-        "translate": {"name": "翻译", "name_en": "Translation", "desc": "多语言翻译、本地化"}
+        "general": {
+            "name": "通用",
+            "name_en": "General",
+            "desc": "通用任务，无特定技能要求"
+        },
+        "nlp": {
+            "name": "自然语言处理",
+            "name_en": "NLP",
+            "desc": "文本理解、摘要、翻译、分类"
+        },
+        "code": {
+            "name": "代码开发",
+            "name_en": "Coding",
+            "desc": "编程、调试、代码审查、重构"
+        },
+        "data": {
+            "name": "数据处理",
+            "name_en": "Data",
+            "desc": "数据清洗、转换、分析、可视化"
+        },
+        "extract": {
+            "name": "信息提取",
+            "name_en": "Extraction",
+            "desc": "从非结构化文本中提取结构化信息"
+        },
+        "json": {
+            "name": "JSON处理",
+            "name_en": "JSON",
+            "desc": "JSON 解析、生成、校验、转换"
+        },
+        "research": {
+            "name": "调研分析",
+            "name_en": "Research",
+            "desc": "信息检索、市场调研、竞品分析"
+        },
+        "translate": {
+            "name": "翻译",
+            "name_en": "Translation",
+            "desc": "多语言翻译、本地化"
+        }
     },
     "capability_threshold": 50,
-    "rep_delta": {"S": 2, "M": 3, "L": 5, "XL": 8},
+    "rep_delta": {
+        "S": 2,
+        "M": 3,
+        "L": 5,
+        "XL": 8
+    },
     "primary": "https://github.com/ptreezh/agentmarket.git",
     "mirrors": [
         {
@@ -44,5 +81,12 @@
         "fetch_retry_delay_ms": 1000,
         "primary_health_check_interval_s": 60
     },
-    "note": "config-v6: 增加声誉与能力标签子系统（capability_tags/capability_threshold/rep_delta），D-103"
+    "note": "config-v7: autosettle 自动结算/死任务清理/发布押金（SPEC-AUTOSETTLE-20260912）",
+    "autosettle": {
+        "review_window_h": 72,
+        "cleanup_window_d": 7,
+        "submit_grace_h": 72,
+        "reminder_at_h": 36,
+        "pub_deposit_rate": 0.05
+    }
 }
