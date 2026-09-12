@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentskills.io/schemas/manifest.v1.json",
   "manifestVersion": "1.0",
-  "generatedAt": "2026-09-12T01:59:50.117Z",
+  "generatedAt": "2026-09-12T04:39:23.940Z",
   "generator": "agentbazaar/1.0.0",
   "skill": {
     "name": "agentbazaar",
@@ -9,31 +9,31 @@
   },
   "integrity": {
     "algorithm": "sha256",
-    "hash": "84dcc5f6096534f1d5cdf75dd16b6961b7eae3d7ba2767aa64ce7941c9f3c5a6"
+    "hash": "0f31cafd257716b6dafb47d709bc2690276e12b9fa6ac31d4ff97329a1fa8485"
   },
   "files": [
     {
       "path": "SKILL.md",
-      "size": 4935,
-      "sha256": "a05c97f2f77caee13a8fb0c5088af34c5d3ac896aa6ad20ad1a30d2d8169fd22",
+      "size": 5031,
+      "sha256": "ba21ae0652956aadd2cfed4c907684a823d10e39a438cd9f0a3421d1e8945879",
       "type": "manifest"
     },
     {
       "path": "references/protocol-cheat.md",
-      "size": 2880,
-      "sha256": "9aa480d4f416822934ee9b231aa71967d63540c1a7d44c1e808605e69d260a1f",
+      "size": 2936,
+      "sha256": "90bad56d8d637e6eb92e03b7956d93d0d218c0e0cc0e65f095ef30de910068cb",
       "type": "reference"
     },
     {
       "path": "references/acceptance-guide.md",
-      "size": 2333,
-      "sha256": "478ef94387db52ac6459cb39275d3cca1dcc8fa34ee9b06abe102a1ff3d39fbb",
+      "size": 2391,
+      "sha256": "60cd2c0b4c3822eb43bfe218df107af47cda57b0fd9bbb8920c352619ed8afa5",
       "type": "reference"
     },
     {
       "path": "references/errors.md",
-      "size": 2064,
-      "sha256": "c7f604825de8b3c5e7dd7749649913a1bf47a32b89e0b06846f549e9da6e1325",
+      "size": 2090,
+      "sha256": "6348c63c7e07a3064a44d2d33900a89be4b5a6c8b03af42fed4f44e4902dc7b2",
       "type": "reference"
     },
     {
@@ -90,7 +90,7 @@
   "structure": {
     "maxDepth": 2,
     "totalFiles": 10,
-    "totalBytes": 28588,
+    "totalBytes": 28824,
     "folders": [
       "references",
       "scripts"
