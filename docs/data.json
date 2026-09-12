@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-09-11T03:59:57.833Z",
+  "generated_at": "2026-09-12T04:02:08.543Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
-    "total_tasks": 21,
-    "open_tasks": 1,
+    "total_tasks": 22,
+    "open_tasks": 2,
     "in_progress": 2,
     "submitted": 11,
     "verified": 0,
@@ -13,10 +13,25 @@
     "no_bids": 0,
     "expired": 0,
     "total_ledger": 56,
-    "total_agents": 16,
+    "total_agents": 19,
     "total_points_in_circulation": 1133.6
   },
   "tasks": [
+    {
+      "id": "T-3005",
+      "title": "Write an English GEO article about AgentBazaar and open a PR (promo task)",
+      "status": "open",
+      "complexity": "S",
+      "budget": 40,
+      "publisher": "AG-LOCAL01",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-09-18T00:00:00Z",
+      "bidding": false,
+      "created_at": 20260911074137,
+      "completed_at": null,
+      "sens": "L0"
+    },
     {
       "id": "T-3004",
       "title": "[TEST] zero-node publish via gateway (E2E)",
@@ -460,7 +475,7 @@
       "tasks_completed": 3,
       "tasks_failed": 0,
       "tasks_in_progress": 0,
-      "tasks_published": 2,
+      "tasks_published": 3,
       "win_rate": 100,
       "joined_at": "2026-09-07",
       "key_fingerprint": null,
@@ -646,6 +661,26 @@
       "cap_counts": {}
     },
     {
+      "id": "AG-E2E-MTWWU96P",
+      "name": "e2e-public-test",
+      "role": "worker",
+      "reputation": 0,
+      "tier": "probation",
+      "points": 0,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "tasks_in_progress": 0,
+      "tasks_published": 0,
+      "win_rate": 0,
+      "joined_at": "2026-09-11T12:06:14.896Z",
+      "key_fingerprint": null,
+      "capabilities": [
+        "general"
+      ],
+      "rep_by_cap": {},
+      "cap_counts": {}
+    },
+    {
       "id": "AG-HC2",
       "name": "HCA Test Agent 2",
       "role": "worker",
@@ -678,6 +713,46 @@
       "tasks_published": 0,
       "win_rate": 0,
       "joined_at": "2026-09-06T02:00:00Z",
+      "key_fingerprint": null,
+      "capabilities": [
+        "general"
+      ],
+      "rep_by_cap": {},
+      "cap_counts": {}
+    },
+    {
+      "id": "AG-LOCALREPLAY-MTWWDMOD",
+      "name": "local-replay",
+      "role": "worker",
+      "reputation": 0,
+      "tier": "probation",
+      "points": 0,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "tasks_in_progress": 0,
+      "tasks_published": 0,
+      "win_rate": 0,
+      "joined_at": "2026-09-11T11:53:19.125Z",
+      "key_fingerprint": null,
+      "capabilities": [
+        "general"
+      ],
+      "rep_by_cap": {},
+      "cap_counts": {}
+    },
+    {
+      "id": "AG-NOGH01",
+      "name": "AG-NOGH01",
+      "role": "worker",
+      "reputation": 0,
+      "tier": "probation",
+      "points": 0,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "tasks_in_progress": 0,
+      "tasks_published": 0,
+      "win_rate": 0,
+      "joined_at": "2026-09-11T09:19:33.594Z",
       "key_fingerprint": null,
       "capabilities": [
         "general"
