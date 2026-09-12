@@ -260,8 +260,8 @@ function actAutoReview(taskId, taskDir, spec) {
 function actExpire(taskId, taskDir, spec) {
   const budget = spec.budget || 40;
   const publisher = spec.publisher || "unknown";
-  const { sig, fp } = signOperator(`expire ${taskId}`);
   const note = `${taskId} 超 ${CFG.cleanup_window_d}d 无人认领，归档为 expired`;
+  const { sig, fp } = signOperator(note);  // 签名覆盖正文
   const eSigLine = fp ? `signer: ${fp}\nsignature: ${sig}` : "signature: (unsigned)";
   writeEvent(taskDir, `expired-${nowTag()}.md`,
     ["event: expired", `task: ${taskId}`, `trigger: cleanup_window`, `note: ${note}`, eSigLine], note);
@@ -285,8 +285,8 @@ function actPenalty(taskId) {
 function actArchive(taskId) {
   const taskDir = findTaskDir(taskId);
   if (!taskDir) { console.error(`任务不存在: ${taskId}`); process.exit(2); }
-  const { sig, fp } = signOperator(`archive ${taskId}`);
   const note = `${taskId} 占位/遗留任务归档（manual）`;
+  const { sig, fp } = signOperator(note);  // 签名覆盖正文
   const eSigLine = fp ? `signer: ${fp}\nsignature: ${sig}` : "signature: (unsigned)";
   writeEvent(taskDir, `forfeited-${nowTag()}.md`,
     ["event: forfeited", `task: ${taskId}`, `trigger: manual_archive`, `note: ${note}`, eSigLine], note);
