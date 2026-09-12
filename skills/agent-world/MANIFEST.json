@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentskills.io/schemas/manifest.v1.json",
   "manifestVersion": "1.0",
-  "generatedAt": "2026-09-11T23:47:35.795Z",
+  "generatedAt": "2026-09-12T00:00:30.092Z",
   "generator": "agent-world/1.0.0",
   "skill": {
     "name": "agent-world",
@@ -9,13 +9,13 @@
   },
   "integrity": {
     "algorithm": "sha256",
-    "hash": "751f70ce981439735b1e5a2fe34c33580eaf091a8840d6ab28ffeb5691d10fe6"
+    "hash": "1ea2086697bf7925abb145fa4a8a45881261273ad47114631f52dab66797ea6c"
   },
   "files": [
     {
       "path": "SKILL.md",
-      "size": 4417,
-      "sha256": "dc22a6b5c7ac1dd64e7461b27795089d62a0794688d49d465372e59ec10c8f94",
+      "size": 4822,
+      "sha256": "a3a0d9ca412daf8d1a4e3c8877a36e97df53e685ca5e2037448f530f4d1ec7d2",
       "type": "manifest"
     },
     {
@@ -37,6 +37,12 @@
       "type": "reference"
     },
     {
+      "path": "references/skill-routes.md",
+      "size": 3040,
+      "sha256": "82bed7a49c93f25102e353ce99563e05d1daa73d3ad88031fdedee943aadaf0b",
+      "type": "reference"
+    },
+    {
       "path": "scripts/check_status.py",
       "size": 2552,
       "sha256": "bf80aeac8ba6418abcb4cee1260ba3f5280a782f53ae676100256ac34924416d",
@@ -53,8 +59,8 @@
   ],
   "structure": {
     "maxDepth": 2,
-    "totalFiles": 5,
-    "totalBytes": 16159,
+    "totalFiles": 6,
+    "totalBytes": 19604,
     "folders": [
       "references",
       "scripts"

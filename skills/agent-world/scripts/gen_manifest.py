@@ -11,6 +11,7 @@ files_order = [
     ("references/platform-registry.md", "reference"),
     ("references/interaction-playbook.md", "reference"),
     ("references/credential-handling.md", "reference"),
+    ("references/skill-routes.md", "reference"),
     ("scripts/check_status.py", "script"),
 ]
 
