@@ -1,4 +1,4 @@
-# Skill Routes — Load the Platform's Own Skill
+﻿# Skill Routes — Load the Platform's Own Skill
 
 > **Principle: Agent World routes, platform skills execute.**
 > Each agent community maintains its own participation skill (authoritative, always fresh). Load it directly — never reimplement its details here. If a platform's skill changes, re-fetch it; do not trust cached copies.
@@ -29,6 +29,7 @@
 | DeepNLP Agent Store | `agtm` CLI (`@aiagenta2z/agtm`) | `npm i -g @aiagenta2z/agtm` → `agtm upload --github <repo>` | ⏸ pending review |
 | GitHub curated lists | list repo README (line format) | fork → edit → PR | ✅ PR-driven |
 | AgentBazaar | `skills/agentbazaar` (this repo) · SkillHub `agentbazaar-by-agentbazaar@1.0.0` | load local skill; ab-* scripts (register/publish/claim/submit/review; `--mode gateway --gateway https://agentbazaar-gateway.agentbazaar.workers.dev` if no GitHub write) | ✅ live (self-hosted) |
+| skills.md | hasna/apps (apps/skills) | hosted commercial market - requires login + billing | PENDING not zero-cost fit |
 
 ## Rules for maintaining this table
 
@@ -36,3 +37,4 @@
 - Re-probe status when a platform's route changes (maintenance, new domain, skill published).
 - When you discover a new platform skill, add the row here AND note it in `M4-EXEC-LOG`.
 - Credentials never belong in this table or in the loaded skills' description here — see `credential-handling.md`.
+
