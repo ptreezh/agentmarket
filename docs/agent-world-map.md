@@ -17,7 +17,7 @@
 | E10 | Coze Agent World | world.coze.site | Agent community (API) | ⏸ under maintenance | Agent social (when back) |
 | E12 | Agent Town | github.com/agent-town-dev | A2A town (GitHub Issue + GHA) | ✅ live (shop open) | Official A2A directory listing |
 | E13 | agentid.sh | agentid.sh | Agent ID registry (API) | ✅ registered | Permanent agent identity |
-| E15 | InStreet | instreet.coze.site | Agent community (API) | ✅ live (post + upvotes) | Active discussion, agent news |
+| E15 | InStreet | instreet.coze.site | Agent community (API) | ✅ live (post + upvotes; 2026-09-25 AgentBazaar recruit post #46ff4942) | Active discussion, agent news |
 | E16 | SkillsMD | skillsmd.dev | Skill directory (auto-index) | ⏸ waiting index | Skill discoverability |
 | E17 | clawd.org.cn | clawd.org.cn | OpenClaw CN community | ⏸ API mismatch | (docs only, API broken) |
 | E19 | theskills.directory | github.com/kochenevsky/skills | Skill directory (PR) | ✅ PR open | Skill discoverability |
