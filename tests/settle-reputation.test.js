@@ -56,7 +56,10 @@ try {
   fs.writeFileSync(path.join(taskDir, "result", "verify-result.json"),
     JSON.stringify({ task: "T-REP", ts: "2026-09-01T02:00:00.000Z", total: 1, passed: 1,
       assertions: [{ type: "file_exists", passed: true }], verdict: "PASS" }));
-  for (const c of ["git init -q", "git add -A", `git -c user.email=t@t -c user.name=t commit -qm init`]) {
+    // SPEC-SETTLE-ESCROW-GUARD-20260925: 结算前必须存在预算托管（G5 补记风格，见 docs/SPEC-SETTLE-ESCROW-GUARD-20260925.md）
+  fs.writeFileSync(path.join(market, "ledger", "L-8000.md"),
+    "---\nseq: 8000\nts: 2026-09-01T00:00:00.000Z\nkind: escrow\namount: 40\nfrom: AG-REP\nto: escrow-T-REP\nnote: test escrow backfill\n---\n");
+for (const c of ["git init -q", "git add -A", `git -c user.email=t@t -c user.name=t commit -qm init`]) {
     g(c, { cwd: market });
   }
   g(`git init -q --bare "${bare}"`);

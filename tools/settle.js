@@ -50,6 +50,18 @@ function parseSpec(specPath) {
 
 const g = (c) => execSync(c, { encoding: "utf-8", stdio: "pipe" }).trim();
 
+// 预算托管存在性检查（SPEC-SETTLE-ESCROW-GUARD-20260925，对齐 autosettle.js escrowFunded）
+function escrowFunded(taskId) {
+  const ld = path.join("ledger");
+  if (!fs.existsSync(ld)) return false;
+  for (const f of fs.readdirSync(ld)) {
+    if (!/^L-\d{4}\.md$/.test(f)) continue;
+    const c = fs.readFileSync(path.join(ld, f), "utf-8");
+    if (/^kind:\s*escrow/m.test(c) && new RegExp("^to:\\s*escrow-" + taskId + "\\s*$", "m").test(c)) return true;
+  }
+  return false;
+}
+
 // 运营者签名
 function signOperator(body) {
   const privPath = path.join("keys", "operator", "private.pem");
@@ -89,6 +101,12 @@ if (fs.existsSync(eventsDir)) {
     console.error(`❌ 任务已结算：${settled[0]}`);
     process.exit(1);
   }
+}
+// 2.5 预算托管检查（SPEC-SETTLE-ESCROW-GUARD-20260925）：无 escrow 拒绝结算，防空凭空发行
+if (!escrowFunded(taskId)) {
+  console.error(`❌ 任务无预算托管（escrow-${taskId} 不存在）：拒绝结算，防止凭空发行积分。`);
+  console.error(`   请先按 SPEC-AUTOSETTLE-20260912 G5 补记托管（发布者余额 → escrow-${taskId}，金额=budget ${budget}）后再结算。`);
+  process.exit(1);
 }
 
 // 3. 确定中标者和报酬
