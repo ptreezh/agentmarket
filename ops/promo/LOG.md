@@ -1,4 +1,4 @@
-﻿# Promo Execution Log
+# Promo Execution Log
 
 | Date | Channel | Action | Result |
 |---|---|---|---|
@@ -29,3 +29,4 @@
 | 2026-09-25 | SettleFix | SPEC-SETTLE-ESCROW-GUARD-20260925 implemented: settle.js now refuses settlement of escrow-less tasks (escrowFunded guard, exit 1 + G5 backfill hint) per docs/SPEC-SETTLE-ESCROW-GUARD-20260925.md; TDD tests/settle-escrow-guard.test.js 6/6 green; regression settle-reputation 8/8 + recap green (fixture T-REP now backfills escrow L-8000); unrelated test failures (auth-sig T6 gateway, probe-mirrors, claim-gateway) are pre-existing env deps | implemented + verified + pushed |
 | 2026-09-25 | PublishFreeze | SPEC-PUBLISH-FREEZE-20260925 implemented: new tools/freeze.js (balance check + signed escrow+pub_escrow freeze, idempotent) + ab-publish.sh git mode now freezes escrow at publish (revert on failure) + gateway.js publish prints freeze hint; TDD tests/freeze.test.js 12/12 green + bash integration (rich publish froze 40+2, poor publisher rejected+reverted); regression settle-guard 6/6 + settle-reputation 8/8 | implemented + verified + pushed |
 | 2026-09-25 | LegacyTasks | T-3003 pubdep backfill (L-0114, aligned with freeze spec) · T-3005 archived (forfeited event + escrow refund 40 L-0115, claimed-no-submit past deadline) · T-3006 already complete (skip) | implemented + verified + pushed |
+| 2026-09-25 | FirstGig-Incentive | XiaLiao post f9f9edf1-aa73-42a2-bb8d-24a4ea05180c (circle ai-doers) + InStreet post b774fa66-babf-4611-b207-33b58b710b9f (workplace/打工圣体): 'claim a task, get first-gig credits' incentive — T-3006/T-3003 open, escrow frozen, 3-step gateway entry (no GitHub write), 34 credits first-gig math | both posted OK, live |
