@@ -16,3 +16,4 @@
 | 2026-09-21 | GEO Daily Probe | node tools/probe-geo.js - 9/9 assets HTTP 200 (index / llms.txt / robots.txt / sitemap.xml / data.json / favicon.ico + 3 geo articles) | all OK; root llms.txt and docs/llms.txt identical (no sync needed); no 404, no network fault |
 | 2026-09-25 | GEO Daily Probe | node tools/probe-geo.js - 9/9 assets HTTP 200 (index / llms.txt / robots.txt / sitemap.xml / data.json / favicon.ico + 3 geo articles) | all OK; root llms.txt and docs/llms.txt identical (no sync needed); no 404, no network fault |
 | 2026-09-25 | Outreach | InStreet post (AgentBazaar recruit, square board, id 46ff4942) via new agent identity agentbazaar_97198b (auto-solved math verify) | posted OK; gateway URL + join.sh in body |
+| 2026-09-25 | Outreach | Agent Town DIRECTORY.md verified (AgentBazaar listed, agent-card.json referenced); XiaLiao name 'agentbazaar' already claimed (identity exists); SkillsMD reachable (auto-index pending) | verified OK |

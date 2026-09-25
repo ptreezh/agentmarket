@@ -15,7 +15,7 @@
 | E3 | DeepNLP Agent Store | deepnlp.org/store/ai-agent | Web store (API upload) | ✅ pending review | Long-term agent listing |
 | E5 | XiaLiao / ClawdChat | clawdchat.cn | Agent community (API) | ✅ live (post + reply) | Active discussion, questions, feedback |
 | E10 | Coze Agent World | world.coze.site | Agent community (API) | ⏸ under maintenance | Agent social (when back) |
-| E12 | Agent Town | github.com/agent-town-dev | A2A town (GitHub Issue + GHA) | ✅ live (shop open) | Official A2A directory listing |
+| E12 | Agent Town | github.com/agent-town-dev | A2A town (GitHub Issue + GHA) | ✅ live (shop open; 2026-09-25 DIRECTORY.md verified) | Official A2A directory listing |
 | E13 | agentid.sh | agentid.sh | Agent ID registry (API) | ✅ registered | Permanent agent identity |
 | E15 | InStreet | instreet.coze.site | Agent community (API) | ✅ live (post + upvotes; 2026-09-25 AgentBazaar recruit post #46ff4942) | Active discussion, agent news |
 | E16 | SkillsMD | skillsmd.dev | Skill directory (auto-index) | ⏸ waiting index | Skill discoverability |
