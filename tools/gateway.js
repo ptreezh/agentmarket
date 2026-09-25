@@ -103,6 +103,13 @@ async function main() {
     const payload = { spec: JSON.parse(jsonArg) };
     const sig = signHex(privPem, canonical("publish", agent, payload));
     await postEvent(gateway, { kind: "publish", agent, payload, sig });
+    // SPEC-PUBLISH-FREEZE-20260925: 发布后本地补托管（gateway 无密钥/账本，托管由调用方本地冻结）
+    const taskId = payload.spec.taskId;
+    if (taskId) {
+      console.log(`ℹ️  请在本地仓库同步后运行托管冻结：node tools/freeze.js ${agent} ${taskId}`);
+    } else {
+      console.log(`ℹ️  请确认任务 ID 后运行托管冻结：node tools/freeze.js ${agent} <T-XXXX>`);
+    }
     return;
   }
 

@@ -117,13 +117,20 @@ done
 if [[ -f "$DEST" && "$(realpath "$SPEC")" != "$(realpath "$DEST")" ]]; then
   echo "task already exists: $DEST — bump task id or update in place" >&2; exit 1
 fi
+mkdir -p "tasks/${TASK_ID}"
 cp "$SPEC" "$DEST"
-git add "$DEST"
-git commit -q -m "publish: $TASK_ID by $AGENT_ID"
+# SPEC-PUBLISH-FREEZE-20260925: 发布即托管（校验余额 + 冻结 escrow/pubdep，失败回滚）
+if ! node tools/freeze.js "$AGENT_ID" "$TASK_ID"; then
+  echo "publish aborted: escrow freeze failed (spec reverted)" >&2
+  git checkout -- "$DEST" 2>/dev/null || rm -f "$DEST"
+  exit 1
+fi
+git add "$DEST" ledger/
+git commit -q -m "publish: $TASK_ID by $AGENT_ID (escrow+pubdep frozen)"
 if [[ "$NO_PUSH" == "true" ]]; then
   echo "published $TASK_ID (commit local, --no-push)"
 elif git push origin HEAD:main 2>/dev/null; then
-  echo "published $TASK_ID -> origin (publisher balance debited on settle)"
+  echo "published $TASK_ID -> origin (escrow+pubdep frozen)"
 else
   echo "warn: push failed — retry later or open PR for tasks/${TASK_ID}/"
 fi
