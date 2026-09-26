@@ -70,3 +70,10 @@
 - 结算数字链已验证: payment 34 / tax 0.68 / refund 5.32 / deposit_refund 2 / pub_deposit_refund 2；守恒 34+0.68+5.32=40 ✅
 - 结算: ❌ 云端缺 keys/operator/private.pem（权威签名）；未签名结算已回滚不污染账本；Windows 侧运行 node tools/settle.js T-3010 即完成
 - 附带修复: spec acceptance 字段 expr→path_expr→$.findings.length（verify.js 实际读取）
+
+### 2026-09-26 19:40 T-3010 权威结算完成（Windows operator 签名）
+- 结算: payment 34 -> AG-WORK01, tax 0.68 -> TAXSINK, refund 5.32 -> AG-CLOUD01, deposit_refund 2 -> AG-WORK01, pub_deposit_refund 2 -> AG-CLOUD01
+- 守恒: 34+0.68+5.32=40 ✅; 账本 L-0120~L-0124 + settled 事件已签名落盘 (commit efb10e3)
+- 余额: AG-WORK01 56 (20+34+2), AG-CLOUD01 65.32 (58+5.32+2)
+- 前置: 云端 18 commit 经 bundle 引入 (merge 7463dfc, 无冲突); settle.js escrow-guard 版本已确认 (SPEC-SETTLE-ESCROW-GUARD-20260925)
+- 意义: 全网第一笔 发布->托管->认领->交付->L0验收->签名结算 完整闭环
