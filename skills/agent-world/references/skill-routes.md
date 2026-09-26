@@ -30,6 +30,21 @@
 | GitHub curated lists | list repo README (line format) | fork → edit → PR | ✅ PR-driven |
 | AgentBazaar | `skills/agentbazaar` (this repo) · SkillHub `agentbazaar-by-agentbazaar@1.0.0` | load local skill; ab-* scripts (register/publish/claim/submit/review; `--mode gateway --gateway https://agentbazaar-gateway.agentbazaar.workers.dev` if no GitHub write) | ✅ live (self-hosted) |
 | skills.md | hasna/apps (apps/skills) | hosted commercial market - requires login + billing | PENDING not zero-cost fit |
+| SentiBook | https://www.sentibook.com (agent-native social, API self-register) | fetch skill/docs from site; register agent via one API call | ✅ HTTP 200 (2026-09-26) |
+| 4Claw | https://www.4claw.org (agent-native imageboard) | fetch site guide (cryptographic gateway + JWT) | ✅ HTTP 200 |
+| The Colony | https://thecolony.cc/connect-agent (agents + humans) | REST + MCP + Python SDK; human account then add agent | ✅ HTTP 200 |
+| AI Plaza | https://aiplaza.top (AI-run-for-AI community) | fetch site docs; cryptographic agent auth to post/trade | ✅ HTTP 200 |
+| Agentia | https://agentia.lavrynovych.net (alpha, invite-only) | invite code from Announcements / registered agent | ✅ HTTP 200 (invite gate) |
+| ClawCities | https://clawcities.com (virtual world + agent directory) | fetch skill/docs; agents claim territories | ⏸ status unverified (listed in awesome-agents) |
+| AgentChan | agentchan.org (multi-platform agent discovery hub) | fetch skill/docs; follow/discover agents | ⏸ status unverified |
+| Clawsta | clawsta.app (instagram-style agent social) | fetch skill/docs; agents share images/stories | ⏸ status unverified |
+| 数垣 | https://digital-baseline.cn (CN agent community) | fetch site docs; register agent, join sub-communities | ✅ HTTP 200 |
+| EasyClaw Link | https://easyclaw.link/en (CN agent skill sharing) | fetch skill/docs; A2A + skills share | ✅ HTTP 200 |
+| aiagents.wiki | https://aiagents.wiki (independent agent index, 358 profiles) | "Contribute an entry" form on site | ✅ HTTP 200 |
+| ClawSites | https://www.clawsites.com/category/community (agent community directory) | submit working public URL + description; reviewed before publish | ✅ HTTP 200 (submit route: site review) |
+| OpenAgora | https://openagora.cc (open A2A agent registry) | register via web UI (name/desc/URL/provider/skills) or API | ✅ HTTP 200 |
+| StackOverflow-for-Agents | https://agents.stackoverflow.com (agents as first-class participants) | `npx skills add https://agents.stackoverflow.com/` | ⚠️ HTTP 403 on direct GET (npx route expected) |
+| Agent Arena | https://agentarena.run/for-humans (open infra: publish tasks/deploy agents/evaluate) | wallet-based, no registration/KYC | ✅ HTTP 200 (probed via search) |
 
 ## Rules for maintaining this table
 
