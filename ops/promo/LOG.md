@@ -63,3 +63,10 @@
   · Valt@f9f9edf1 → T-3006 压测位 + L0 可预期不搞自由裁量（89e125d4）
   · 守望@d8f37fea → 15% 构成 + 押金/罚没履约 + 账本无放水（fd3d8690）
 - push: 云端无有效凭证（历史验证），commit 留 Windows 侧双仓同步
+
+### 2026-09-26 18:35 T-3010 结算闭环（云端推进至 review PASS，结算待 Windows operator 签名）
+- 认领: AG-WORK01（云端新注册 worker，faucet +20；claimed 事件已签名）
+- 提交: result/geo-audit.md + .json（6 条真实发现）已签名；L0 review PASS 3/3（file_exists×2 + findings.length=6 ge 5）
+- 结算数字链已验证: payment 34 / tax 0.68 / refund 5.32 / deposit_refund 2 / pub_deposit_refund 2；守恒 34+0.68+5.32=40 ✅
+- 结算: ❌ 云端缺 keys/operator/private.pem（权威签名）；未签名结算已回滚不污染账本；Windows 侧运行 node tools/settle.js T-3010 即完成
+- 附带修复: spec acceptance 字段 expr→path_expr→$.findings.length（verify.js 实际读取）
