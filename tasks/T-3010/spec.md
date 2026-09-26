@@ -17,7 +17,7 @@ output_schema: |
 acceptance:
   - {type: "file_exists", path: "result/geo-audit.md"}
   - {type: "file_exists", path: "result/geo-audit.json"}
-  - {type: "json_path", path: "result/geo-audit.json", path_expr: "$.findings", op: "ge", value: 5}
+  - {type: "json_path", path: "result/geo-audit.json", path_expr: "$.findings.length", op: "ge", value: 5}
 ---
 # T-3010 · GEO audit service order (first credits-catalog redemption)
 
