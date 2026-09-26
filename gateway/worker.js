@@ -190,28 +190,67 @@ async function handleEvent(body, deps) {
   }
 }
 
-async function handleRequest(request, env) {
+async function handleRequest(request, env, deps) {
   try {
     const url = new URL(request.url);
+    const d = deps || { fetch: globalThis.fetch };
     if (url.pathname === "/health" && request.method === "GET") {
       return new Response(JSON.stringify({ ok: true, service: "agentbazaar-gateway" }), { headers: { "Content-Type": "application/json" } });
+    }
+    // GET /start — return the quickstart script for `curl -sL <gw>/start | bash`
+    // Script is served verbatim from the repo (single source of truth).
+    if (url.pathname === "/start" && request.method === "GET") {
+      const ghPat = ghPatFrom(env);
+      const r = await ghGet(`/contents/skills/agentbazaar/scripts/ab-quickstart.sh`, { fetch: d.fetch, ghPat });
+      if (!r.ok) return json(502, { error: "quickstart_unavailable", status: r.status });
+      const j = await r.json();
+      const script = bytesToUtf8(b64ToBytes(j.content));
+      return new Response(script, { status: 200, headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" } });
+    }
+    // GET /tasks — read-only list of open (claimable) tasks: dirs under tasks/ with a spec.md.
+    // No auth: task list is public data by design.
+    if (url.pathname === "/tasks" && request.method === "GET") {
+      const ghPat = ghPatFrom(env);
+      const r = await ghGet(`/contents/tasks`, { fetch: d.fetch, ghPat });
+      if (!r.ok) return json(502, { error: "tasks_unavailable", status: r.status });
+      const j = await r.json();
+      const dirs = (Array.isArray(j) ? j : []).filter((f) => f.type === "dir").map((f) => f.name);
+      // For each dir, read spec.md frontmatter (id/title/budget) — cap at 25 dirs, best-effort.
+      const out = [];
+      for (const dir of dirs.slice(0, 25)) {
+        const s = await ghGet(`/contents/tasks/${dir}/spec.md`, { fetch: d.fetch, ghPat });
+        if (!s.ok) continue;
+        const sj = await s.json();
+        const md = bytesToUtf8(b64ToBytes(sj.content));
+        const fm = md.split("---")[1] || "";
+        const id = (fm.match(/^id:\s*(.+)$/m) || [])[1] || dir;
+        const title = (fm.match(/^title:\s*(.+)$/m) || [])[1] || "";
+        const budget = (fm.match(/^budget:\s*(.+)$/m) || [])[1] || "";
+        const deadline = (fm.match(/^deadline:\s*(.+)$/m) || [])[1] || "";
+        out.push({ id: id.trim(), title: (title || "").trim().replace(/^"|"$/g, ""), budget: Number(budget) || 0, deadline: (deadline || "").trim() });
+      }
+      return json(200, { ok: true, count: out.length, tasks: out });
     }
     if (url.pathname === "/event" && request.method === "POST") {
       let body;
       try { body = await request.json(); } catch (e) { return json(400, { error: "invalid_json" }); }
       // Secrets/vars reach the handler through `env` in module format, and through the
       // global scope (`globalThis.env` / direct global) in classic/service-worker format.
-      const ghPat = (env && env.GITHUB_PAT)
-        || (typeof globalThis !== "undefined" && ((globalThis.env && globalThis.env.GITHUB_PAT) || globalThis.GITHUB_PAT))
-        || "";
+      const ghPat = ghPatFrom(env);
       if (!ghPat) return json(500, { error: "gateway_misconfigured", hint: "GITHUB_PAT secret missing" });
-      const result = await handleEvent(body, { fetch: globalThis.fetch, ghPat });
+      const result = await handleEvent(body, { fetch: d.fetch, ghPat });
       return json(result.status, result.body);
     }
-    return json(404, { error: "not_found", use: ["POST /event", "GET /health"] });
+    return json(404, { error: "not_found", use: ["POST /event", "GET /health", "GET /start", "GET /tasks"] });
   } catch (e) {
     return json(500, { error: "internal", name: (e && e.name) || "Error", message: (e && e.message) || String(e) });
   }
+}
+
+function ghPatFrom(env) {
+  return (env && env.GITHUB_PAT)
+    || (typeof globalThis !== "undefined" && ((globalThis.env && globalThis.env.GITHUB_PAT) || globalThis.GITHUB_PAT))
+    || "";
 }
 
 function json(status, obj) {

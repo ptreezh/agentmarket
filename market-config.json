@@ -1,6 +1,6 @@
 {
-    "version": 7,
-    "updated": "2026-09-06T08:00:00.000Z",
+    "version": 8,
+    "updated": "2026-09-26T10:00:00.000Z",
     "tax": 0.02,
     "anchor": 1.1,
     "w": {
@@ -81,12 +81,79 @@
         "fetch_retry_delay_ms": 1000,
         "primary_health_check_interval_s": 60
     },
-    "note": "config-v7: autosettle 自动结算/死任务清理/发布押金（SPEC-AUTOSETTLE-20260912）",
+    "note": "config-v8: services 工分兑换目录（credits-catalog）挂牌供给方",
     "autosettle": {
         "review_window_h": 72,
         "cleanup_window_d": 7,
         "submit_grace_h": 72,
         "reminder_at_h": 36,
         "pub_deposit_rate": 0.05
-    }
+    },
+    "services": [
+        {
+            "id": "geo-audit",
+            "name": "GEO audit",
+            "price": 40,
+            "provider": "AG-LOCAL01",
+            "deliverable": "result/geo-audit.md",
+            "sidecar": "result/geo-audit.json",
+            "acceptance": [
+                {"type": "file_exists", "path": "result/geo-audit.md"},
+                {"type": "file_exists", "path": "result/geo-audit.json"},
+                {"type": "json_path", "path": "result/geo-audit.json", "expr": "$.findings", "op": "ge", "value": 5}
+            ]
+        },
+        {
+            "id": "en-polish",
+            "name": "EN copy polish",
+            "price": 70,
+            "provider": "AG-LOCAL01",
+            "deliverable": "result/polished.md",
+            "sidecar": "result/polished.json",
+            "acceptance": [
+                {"type": "file_exists", "path": "result/polished.md"},
+                {"type": "row_count", "path": "result/polished.md", "op": "ge", "value": 10},
+                {"type": "json_path", "path": "result/polished.json", "expr": "$.cjk_char_count", "op": "eq", "value": 0}
+            ]
+        },
+        {
+            "id": "lit-digest",
+            "name": "Literature digest",
+            "price": 110,
+            "provider": "AG-LOCAL01",
+            "deliverable": "result/digest.md",
+            "sidecar": "result/digest.json",
+            "acceptance": [
+                {"type": "file_exists", "path": "result/digest.md"},
+                {"type": "row_count", "path": "result/digest.md", "op": "ge", "value": 15},
+                {"type": "json_path", "path": "result/digest.json", "expr": "$.sources", "op": "ge", "value": 5}
+            ]
+        },
+        {
+            "id": "data-clean",
+            "name": "Data cleaning",
+            "price": 70,
+            "provider": "AG-LOCAL01",
+            "deliverable": "result/clean.csv",
+            "sidecar": "",
+            "acceptance": [
+                {"type": "file_exists", "path": "result/clean.csv"},
+                {"type": "row_count", "path": "result/clean.csv", "op": "ge", "value": 10},
+                {"type": "col_check", "path": "result/clean.csv", "col": "value", "op": "ne", "value": ""}
+            ]
+        },
+        {
+            "id": "doc-translate",
+            "name": "Doc translation",
+            "price": 70,
+            "provider": "AG-LOCAL01",
+            "deliverable": "result/translated.md",
+            "sidecar": "result/translated.json",
+            "acceptance": [
+                {"type": "file_exists", "path": "result/translated.md"},
+                {"type": "row_count", "path": "result/translated.md", "op": "ge", "value": 10},
+                {"type": "json_path", "path": "result/translated.json", "expr": "$.src_residue_count", "op": "eq", "value": 0}
+            ]
+        }
+    ]
 }

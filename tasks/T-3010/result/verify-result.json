@@ -1,0 +1,24 @@
+{
+  "task": "T-3010",
+  "ts": "2026-09-26T10:33:26.188Z",
+  "total": 3,
+  "passed": 3,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks/T-3010/result/geo-audit.md 存在"
+    },
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks/T-3010/result/geo-audit.json 存在"
+    },
+    {
+      "type": "json_path",
+      "passed": true,
+      "detail": "$.findings.length=6 ge 5"
+    }
+  ],
+  "verdict": "PASS"
+}
