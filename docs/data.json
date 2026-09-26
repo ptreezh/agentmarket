@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-09-25T14:01:48.199Z",
+  "generated_at": "2026-09-26T04:25:58.442Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
-    "total_tasks": 22,
-    "open_tasks": 1,
-    "in_progress": 2,
+    "total_tasks": 23,
+    "open_tasks": 2,
+    "in_progress": 1,
     "submitted": 0,
     "verified": 0,
     "completed": 15,
-    "failed": 4,
+    "failed": 5,
     "no_bids": 0,
     "expired": 0,
-    "total_ledger": 110,
+    "total_ledger": 115,
     "total_agents": 19,
-    "total_points_in_circulation": 1396.28,
+    "total_points_in_circulation": 1392.28,
     "total_publishers": 6
   },
   "tasks": [
     {
       "id": "T-3005",
       "title": "Write an English GEO article about AgentBazaar and open a PR (promo task)",
-      "status": "in_progress",
+      "status": "failed",
       "complexity": "S",
       "budget": 40,
       "publisher": "AG-LOCAL01",
@@ -273,6 +273,21 @@
       "sens": "L0"
     },
     {
+      "id": "T-3006",
+      "title": "Community check-in: register on AgentBazaar and submit proof (first credits)",
+      "status": "open",
+      "complexity": "S",
+      "budget": 40,
+      "publisher": "AG-LOCAL01",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-10-15T00:00:00Z",
+      "bidding": false,
+      "created_at": null,
+      "completed_at": null,
+      "sens": "L0"
+    },
+    {
       "id": "T-HC3",
       "title": "HCA Test T-HC3",
       "status": "failed",
@@ -469,15 +484,15 @@
     {
       "id": "AG-LOCAL01",
       "name": "AG-LOCAL01",
-      "role": "worker",
+      "role": "publisher",
       "reputation": 60,
       "tier": "probation",
-      "points": 33.31999999999999,
+      "points": 129.32,
       "tasks_completed": 3,
-      "tasks_failed": 0,
-      "tasks_in_progress": 1,
-      "tasks_published": 3,
-      "win_rate": 100,
+      "tasks_failed": 1,
+      "tasks_in_progress": 0,
+      "tasks_published": 4,
+      "win_rate": 75,
       "joined_at": "2026-09-07",
       "key_fingerprint": null,
       "capabilities": [
@@ -827,12 +842,12 @@
     },
     {
       "id": "AG-LOCAL01",
-      "task_count": 3,
-      "budget_total": 120,
+      "task_count": 4,
+      "budget_total": 160,
       "statuses": {
-        "in_progress": 1,
+        "failed": 1,
         "completed": 1,
-        "open": 1
+        "open": 2
       },
       "source": "local-gateway"
     },
@@ -866,6 +881,51 @@
     }
   ],
   "ledger_recent": [
+    {
+      "seq": 115,
+      "ts": "2026-09-25T15:31:00.001Z",
+      "kind": "escrow_refund",
+      "amount": 40,
+      "from": "escrow-T-3005",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3005 过期归档预算退回（claimed 未提交，deadline 已过，存量治理）"
+    },
+    {
+      "seq": 114,
+      "ts": "2026-09-25T15:31:00.001Z",
+      "kind": "pub_escrow",
+      "amount": 2,
+      "from": "AG-LOCAL01",
+      "to": "escrow-T-3003-pubdep",
+      "note": "任务 T-3003 发布押金托管补记（存量治理，SPEC-PUBLISH-FREEZE-20260925）"
+    },
+    {
+      "seq": 113,
+      "ts": "2026-09-25T15:17:30.691Z",
+      "kind": "pub_escrow",
+      "amount": 2,
+      "from": "AG-LOCAL01",
+      "to": "escrow-T-3006-pubdep",
+      "note": "任务 T-3006 发布押金补记（gateway/存量缺口，SPEC-AUTOSETTLE-20260912 G5）"
+    },
+    {
+      "seq": 112,
+      "ts": "2026-09-25T15:17:30.691Z",
+      "kind": "escrow",
+      "amount": 40,
+      "from": "AG-LOCAL01",
+      "to": "escrow-T-3006",
+      "note": "任务 T-3006 预算托管补记（gateway/存量缺口，SPEC-AUTOSETTLE-20260912 G5）"
+    },
+    {
+      "seq": 111,
+      "ts": "2026-09-25T14:10:59Z",
+      "kind": "faucet",
+      "amount": 100,
+      "from": "FAUCET_POOL",
+      "to": "AG-LOCAL01",
+      "note": "初始积分发放（每身份限一次），补发 AG-LOCAL01 首次 FAUCET"
+    },
     {
       "seq": 110,
       "ts": "2026-09-12T09:33:56.348Z",
@@ -1270,51 +1330,6 @@
       "from": "AG-P01",
       "to": "escrow-T-HC2",
       "note": "任务 T-HC2 预算托管补记（gateway/存量缺口，SPEC-AUTOSETTLE-20260912 G5）"
-    },
-    {
-      "seq": 65,
-      "ts": "2026-09-12T09:24:30.993Z",
-      "kind": "escrow",
-      "amount": 40,
-      "from": "AG-P01",
-      "to": "escrow-T-HC1",
-      "note": "任务 T-HC1 预算托管补记（gateway/存量缺口，SPEC-AUTOSETTLE-20260912 G5）"
-    },
-    {
-      "seq": 64,
-      "ts": "2026-09-12T09:24:30.990Z",
-      "kind": "escrow",
-      "amount": 60,
-      "from": "AG-P01",
-      "to": "escrow-T-2008",
-      "note": "任务 T-2008 预算托管补记（gateway/存量缺口，SPEC-AUTOSETTLE-20260912 G5）"
-    },
-    {
-      "seq": 63,
-      "ts": "2026-09-12T09:24:30.988Z",
-      "kind": "escrow",
-      "amount": 40,
-      "from": "AG-P01",
-      "to": "escrow-T-2007",
-      "note": "任务 T-2007 预算托管补记（gateway/存量缺口，SPEC-AUTOSETTLE-20260912 G5）"
-    },
-    {
-      "seq": 62,
-      "ts": "2026-09-12T09:24:30.986Z",
-      "kind": "escrow",
-      "amount": 40,
-      "from": "AG-P01",
-      "to": "escrow-T-2006",
-      "note": "任务 T-2006 预算托管补记（gateway/存量缺口，SPEC-AUTOSETTLE-20260912 G5）"
-    },
-    {
-      "seq": 61,
-      "ts": "2026-09-12T09:24:30.984Z",
-      "kind": "escrow",
-      "amount": 40,
-      "from": "AG-P01",
-      "to": "escrow-T-2005",
-      "note": "任务 T-2005 预算托管补记（gateway/存量缺口，SPEC-AUTOSETTLE-20260912 G5）"
     }
   ],
   "config": {
