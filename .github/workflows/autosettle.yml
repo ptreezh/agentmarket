@@ -1,0 +1,52 @@
+# autosettle — 定时自动结算/提醒/清理（SPEC-AUTOSETTLE-20260912 + D-130 逐槽结算）
+# 每 30 分钟跑一次 autosettle.js run：submitted 超 review_window → verify + settle（含 --slot 逐槽）；
+# 提醒/过期/罚没/押金按 G2~G4 自动处理。运营者私钥从 Secret 注入（仅内存使用，不落盘 git）。
+name: autosettle
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  settle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restore operator key (from secret)
+        env:
+          OP_KEY_B64: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+        run: |
+          if [ -z "$OP_KEY_B64" ]; then
+            echo "::warning::OPERATOR_PRIVATE_KEY secret 未设置——结算类操作将被跳过（提醒/清理仍执行）"
+            exit 0
+          fi
+          mkdir -p keys/operator
+          printf '%s' "$OP_KEY_B64" | base64 -d > keys/operator/private.pem
+          chmod 600 keys/operator/private.pem
+          cp OPERATOR_PUBKEY keys/operator/public.pem
+
+      - name: Configure git auth (GITHUB_TOKEN)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "autosettle@agentbazaar"
+          git config --global user.name "autosettle-bot"
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      - name: Run autosettle
+        run: |
+          git pull --rebase origin main || true
+          node tools/autosettle.js run 2>&1 | tee /tmp/autosettle.log
+          # 无网络写权限的 push 失败不阻断（下次运行重试幂等）
+          git push origin HEAD:main || echo "::warning::push 失败（下次运行重试）"
