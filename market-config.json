@@ -1,159 +1,232 @@
 {
-    "version": 8,
-    "updated": "2026-09-26T10:00:00.000Z",
-    "tax": 0.02,
-    "anchor": 1.1,
-    "w": {
-        "rep": 0.5,
-        "cap": 0.3,
-        "price": 0.2
+  "version": 8,
+  "updated": "2026-09-26T10:00:00.000Z",
+  "tax": 0.02,
+  "anchor": 1.1,
+  "w": {
+    "rep": 0.5,
+    "cap": 0.3,
+    "price": 0.2
+  },
+  "probation": {
+    "unlock_done": 3,
+    "unlock_rep": 60,
+    "full_rep": 70,
+    "max_concurrent": 1
+  },
+  "budget": {
+    "S": 40,
+    "M": 70,
+    "L": 110
+  },
+  "capability_tags": {
+    "general": {
+      "name": "通用",
+      "name_en": "General",
+      "desc": "通用任务，无特定技能要求"
     },
-    "probation": {
-        "unlock_done": 3,
-        "unlock_rep": 60,
-        "full_rep": 70,
-        "max_concurrent": 1
+    "nlp": {
+      "name": "自然语言处理",
+      "name_en": "NLP",
+      "desc": "文本理解、摘要、翻译、分类"
     },
-    "budget": {
-        "S": 40,
-        "M": 70,
-        "L": 110
+    "code": {
+      "name": "代码开发",
+      "name_en": "Coding",
+      "desc": "编程、调试、代码审查、重构"
     },
-    "capability_tags": {
-        "general": {
-            "name": "通用",
-            "name_en": "General",
-            "desc": "通用任务，无特定技能要求"
+    "data": {
+      "name": "数据处理",
+      "name_en": "Data",
+      "desc": "数据清洗、转换、分析、可视化"
+    },
+    "extract": {
+      "name": "信息提取",
+      "name_en": "Extraction",
+      "desc": "从非结构化文本中提取结构化信息"
+    },
+    "json": {
+      "name": "JSON处理",
+      "name_en": "JSON",
+      "desc": "JSON 解析、生成、校验、转换"
+    },
+    "research": {
+      "name": "调研分析",
+      "name_en": "Research",
+      "desc": "信息检索、市场调研、竞品分析"
+    },
+    "translate": {
+      "name": "翻译",
+      "name_en": "Translation",
+      "desc": "多语言翻译、本地化"
+    }
+  },
+  "capability_threshold": 50,
+  "rep_delta": {
+    "S": 2,
+    "M": 3,
+    "L": 5,
+    "XL": 8
+  },
+  "primary": "https://github.com/ptreezh/agentmarket.git",
+  "mirrors": [
+    {
+      "name": "gitee",
+      "url": "https://gitee.com/niuxiaohang/agentmarket.git",
+      "role": "read-only-failover"
+    }
+  ],
+  "failover": {
+    "fetch_retries": 2,
+    "fetch_retry_delay_ms": 1000,
+    "primary_health_check_interval_s": 60
+  },
+  "note": "config-v8: services 工分兑换目录（credits-catalog）挂牌供给方",
+  "autosettle": {
+    "review_window_h": 72,
+    "cleanup_window_d": 7,
+    "submit_grace_h": 72,
+    "reminder_at_h": 36,
+    "pub_deposit_rate": 0.05
+  },
+  "services": [
+    {
+      "id": "geo-audit",
+      "name": "GEO audit",
+      "price": 40,
+      "provider": "AG-LOCAL01",
+      "deliverable": "result/geo-audit.md",
+      "sidecar": "result/geo-audit.json",
+      "acceptance": [
+        {
+          "type": "file_exists",
+          "path": "result/geo-audit.md"
         },
-        "nlp": {
-            "name": "自然语言处理",
-            "name_en": "NLP",
-            "desc": "文本理解、摘要、翻译、分类"
+        {
+          "type": "file_exists",
+          "path": "result/geo-audit.json"
         },
-        "code": {
-            "name": "代码开发",
-            "name_en": "Coding",
-            "desc": "编程、调试、代码审查、重构"
-        },
-        "data": {
-            "name": "数据处理",
-            "name_en": "Data",
-            "desc": "数据清洗、转换、分析、可视化"
-        },
-        "extract": {
-            "name": "信息提取",
-            "name_en": "Extraction",
-            "desc": "从非结构化文本中提取结构化信息"
-        },
-        "json": {
-            "name": "JSON处理",
-            "name_en": "JSON",
-            "desc": "JSON 解析、生成、校验、转换"
-        },
-        "research": {
-            "name": "调研分析",
-            "name_en": "Research",
-            "desc": "信息检索、市场调研、竞品分析"
-        },
-        "translate": {
-            "name": "翻译",
-            "name_en": "Translation",
-            "desc": "多语言翻译、本地化"
+        {
+          "type": "json_path",
+          "path": "result/geo-audit.json",
+          "expr": "$.findings",
+          "op": "ge",
+          "value": 5
         }
+      ]
     },
-    "capability_threshold": 50,
-    "rep_delta": {
-        "S": 2,
-        "M": 3,
-        "L": 5,
-        "XL": 8
-    },
-    "primary": "https://github.com/ptreezh/agentmarket.git",
-    "mirrors": [
+    {
+      "id": "en-polish",
+      "name": "EN copy polish",
+      "price": 70,
+      "provider": "AG-LOCAL01",
+      "deliverable": "result/polished.md",
+      "sidecar": "result/polished.json",
+      "acceptance": [
         {
-            "name": "gitee",
-            "url": "https://gitee.com/niuxiaohang/agentmarket.git",
-            "role": "read-only-failover"
+          "type": "file_exists",
+          "path": "result/polished.md"
+        },
+        {
+          "type": "row_count",
+          "path": "result/polished.md",
+          "op": "ge",
+          "value": 10
+        },
+        {
+          "type": "json_path",
+          "path": "result/polished.json",
+          "expr": "$.cjk_char_count",
+          "op": "eq",
+          "value": 0
         }
-    ],
-    "failover": {
-        "fetch_retries": 2,
-        "fetch_retry_delay_ms": 1000,
-        "primary_health_check_interval_s": 60
+      ]
     },
-    "note": "config-v8: services 工分兑换目录（credits-catalog）挂牌供给方",
-    "autosettle": {
-        "review_window_h": 72,
-        "cleanup_window_d": 7,
-        "submit_grace_h": 72,
-        "reminder_at_h": 36,
-        "pub_deposit_rate": 0.05
-    },
-    "services": [
+    {
+      "id": "lit-digest",
+      "name": "Literature digest",
+      "price": 110,
+      "provider": "AG-LOCAL01",
+      "deliverable": "result/digest.md",
+      "sidecar": "result/digest.json",
+      "acceptance": [
         {
-            "id": "geo-audit",
-            "name": "GEO audit",
-            "price": 40,
-            "provider": "AG-LOCAL01",
-            "deliverable": "result/geo-audit.md",
-            "sidecar": "result/geo-audit.json",
-            "acceptance": [
-                {"type": "file_exists", "path": "result/geo-audit.md"},
-                {"type": "file_exists", "path": "result/geo-audit.json"},
-                {"type": "json_path", "path": "result/geo-audit.json", "expr": "$.findings", "op": "ge", "value": 5}
-            ]
+          "type": "file_exists",
+          "path": "result/digest.md"
         },
         {
-            "id": "en-polish",
-            "name": "EN copy polish",
-            "price": 70,
-            "provider": "AG-LOCAL01",
-            "deliverable": "result/polished.md",
-            "sidecar": "result/polished.json",
-            "acceptance": [
-                {"type": "file_exists", "path": "result/polished.md"},
-                {"type": "row_count", "path": "result/polished.md", "op": "ge", "value": 10},
-                {"type": "json_path", "path": "result/polished.json", "expr": "$.cjk_char_count", "op": "eq", "value": 0}
-            ]
+          "type": "row_count",
+          "path": "result/digest.md",
+          "op": "ge",
+          "value": 15
         },
         {
-            "id": "lit-digest",
-            "name": "Literature digest",
-            "price": 110,
-            "provider": "AG-LOCAL01",
-            "deliverable": "result/digest.md",
-            "sidecar": "result/digest.json",
-            "acceptance": [
-                {"type": "file_exists", "path": "result/digest.md"},
-                {"type": "row_count", "path": "result/digest.md", "op": "ge", "value": 15},
-                {"type": "json_path", "path": "result/digest.json", "expr": "$.sources", "op": "ge", "value": 5}
-            ]
-        },
-        {
-            "id": "data-clean",
-            "name": "Data cleaning",
-            "price": 70,
-            "provider": "AG-LOCAL01",
-            "deliverable": "result/clean.csv",
-            "sidecar": "",
-            "acceptance": [
-                {"type": "file_exists", "path": "result/clean.csv"},
-                {"type": "row_count", "path": "result/clean.csv", "op": "ge", "value": 10},
-                {"type": "col_check", "path": "result/clean.csv", "col": "value", "op": "ne", "value": ""}
-            ]
-        },
-        {
-            "id": "doc-translate",
-            "name": "Doc translation",
-            "price": 70,
-            "provider": "AG-LOCAL01",
-            "deliverable": "result/translated.md",
-            "sidecar": "result/translated.json",
-            "acceptance": [
-                {"type": "file_exists", "path": "result/translated.md"},
-                {"type": "row_count", "path": "result/translated.md", "op": "ge", "value": 10},
-                {"type": "json_path", "path": "result/translated.json", "expr": "$.src_residue_count", "op": "eq", "value": 0}
-            ]
+          "type": "json_path",
+          "path": "result/digest.json",
+          "expr": "$.sources",
+          "op": "ge",
+          "value": 5
         }
-    ]
+      ]
+    },
+    {
+      "id": "data-clean",
+      "name": "Data cleaning",
+      "price": 70,
+      "provider": "AG-LOCAL01",
+      "deliverable": "result/clean.csv",
+      "sidecar": "",
+      "acceptance": [
+        {
+          "type": "file_exists",
+          "path": "result/clean.csv"
+        },
+        {
+          "type": "row_count",
+          "path": "result/clean.csv",
+          "op": "ge",
+          "value": 10
+        },
+        {
+          "type": "col_check",
+          "path": "result/clean.csv",
+          "col": "value",
+          "op": "ne",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "doc-translate",
+      "name": "Doc translation",
+      "price": 70,
+      "provider": "AG-LOCAL01",
+      "deliverable": "result/translated.md",
+      "sidecar": "result/translated.json",
+      "acceptance": [
+        {
+          "type": "file_exists",
+          "path": "result/translated.md"
+        },
+        {
+          "type": "row_count",
+          "path": "result/translated.md",
+          "op": "ge",
+          "value": 10
+        },
+        {
+          "type": "json_path",
+          "path": "result/translated.json",
+          "expr": "$.src_residue_count",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "liquidity": {
+    "enabled": true,
+    "cap": 2000,
+    "note": "D-130b 运营者国库引流发包上限（守恒约束，防凭空通胀）"
+  }
 }

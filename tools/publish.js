@@ -217,8 +217,34 @@ function runJsonMode(arg, publisher, publishSig) {
   } catch (e) { /* 忽略：无 origin 或权限时不影响本地发布 */ }
 
   // 预算托管 + 发布押金（SPEC-AUTOSETTLE-20260912 G4/G5）：发布即冻结，结算/过期/弃单时解冻
+  // D-130b 运营者流动性通道：--treasury 由国库(TREASURY)出资托管，受 market-config.liquidity.cap 封顶
   const opPriv = path.join("keys", "operator", "private.pem");
-  if (fs.existsSync(opPriv)) {
+  const useTreasury = process.argv.includes("--treasury");
+  if (useTreasury) {
+    if (!fs.existsSync(opPriv)) { console.error("  [error] --treasury 需要运营者私钥"); process.exit(1); }
+    let cap = 1000;
+    try {
+      const mc = JSON.parse(fs.readFileSync("market-config.json", "utf8"));
+      cap = (mc.liquidity && mc.liquidity.cap) || 1000;
+    } catch (e) {}
+    // 已用额度 = 现存国库 escrow 分录总额
+    let used = 0;
+    for (const f of fs.readdirSync("ledger").filter(x => /^L-\d{4}\.md$/.test(x))) {
+      const c = fs.readFileSync(path.join("ledger", f), "utf8");
+      if (/^kind:\s*escrow/m.test(c) && /^from:\s*TREASURY$/m.test(c)) used += Number((c.match(/^amount:\s*([\d.]+)/m) || [])[1]);
+    }
+    const totalNum = Number(p.slots) > 1 ? Number(p.unit_budget) * Number(p.slots) : Number(p.budget);
+    if (used + totalNum > cap) {
+      console.error(JSON.stringify({ error: `liquidity cap exceeded: used ${used} + ${totalNum} > cap ${cap}`, code: 1 }));
+      process.exit(1);
+    }
+    try {
+      ledger.writeEntry({ kind: "escrow", amount: totalNum, from: "TREASURY", to: `escrow-${taskId}`,
+        note: `任务 ${taskId} 国库流动性注入（运营者引流发包，D-130b）`, signer: "operator", privKeyPath: opPriv });
+      execSync("git add ledger/ && git commit -q -m \"publish: " + taskId + " treasury liquidity escrow\"", { encoding: "utf-8", stdio: "pipe" });
+      console.log(`  🏦 国库托管 ${totalNum}（流动性已用 ${used + totalNum}/${cap}）`);
+    } catch (e) { console.warn("  [warn] 国库托管写入失败: " + e.message); }
+  } else if (fs.existsSync(opPriv)) {
     const budgetNum = Number(p.slots) > 1 ? Number(p.unit_budget) * Number(p.slots) : Number(p.budget);
     try {
       ledger.writeEntry({
