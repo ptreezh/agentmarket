@@ -85,7 +85,17 @@ function cmp(a, op, b){
 
 const results = [];
 function run(a){
-  const p = path.join(taskDir, a.path);
+  // 简易 glob：路径含 * 时按 basename 模式在父目录匹配（D-? acceptance 通配符支持）
+  let rp = a.path;
+  if (rp.includes("*")) {
+    const dir = path.dirname(path.join(taskDir, rp));
+    const pat = path.basename(rp).replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
+    if (fs.existsSync(dir)) {
+      const hit = fs.readdirSync(dir).find(f => new RegExp("^" + pat + "$").test(f));
+      if (hit) rp = path.join(path.dirname(rp), hit);
+    }
+  }
+  const p = path.join(taskDir, rp);
   let ok = false, detail = "";
   try {
     switch(a.type){

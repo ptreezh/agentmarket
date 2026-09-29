@@ -1,0 +1,19 @@
+{
+  "task": "T-3006",
+  "ts": "2026-09-29T07:39:57.076Z",
+  "total": 2,
+  "passed": 1,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks\\T-3006\\result\\checkin-AG-R1.md 存在"
+    },
+    {
+      "type": "row_count",
+      "passed": false,
+      "detail": "rows=2 ge 3"
+    }
+  ],
+  "verdict": "FAIL"
+}
