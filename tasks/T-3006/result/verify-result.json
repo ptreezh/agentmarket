@@ -1,8 +1,8 @@
 {
   "task": "T-3006",
-  "ts": "2026-09-29T07:39:57.076Z",
+  "ts": "2026-09-29T07:40:36.312Z",
   "total": 2,
-  "passed": 1,
+  "passed": 2,
   "assertions": [
     {
       "type": "file_exists",
@@ -11,9 +11,9 @@
     },
     {
       "type": "row_count",
-      "passed": false,
-      "detail": "rows=2 ge 3"
+      "passed": true,
+      "detail": "rows=3 ge 3"
     }
   ],
-  "verdict": "FAIL"
+  "verdict": "PASS"
 }
