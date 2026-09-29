@@ -137,6 +137,15 @@ function taskState(t) {
   const ev = path.join("tasks", t, "events");
   if (!fs.existsSync(ev)) return "unknown";
   const f = fs.readdirSync(ev);
+  // D-130 slots：名额制任务，已认领数 < slots 时仍视为可认领（published）
+  const specP = path.join("tasks", t, "spec.md");
+  if (fs.existsSync(specP)) {
+    const slots = Number((fs.readFileSync(specP, "utf8").match(/^slots:\s*(\d+)/m) || [])[1] || 1);
+    if (slots > 1) {
+      const claimedN = f.filter(x => x.startsWith("claimed-")).length;
+      return claimedN < slots ? "published" : "claimed";
+    }
+  }
   const sd = f.some(x => x.startsWith("settled-")); // settled 事件存在 = 已结算（D-114，优先于 verify-result 判定）
   if (sd) return "settled";
   const cl = f.some(x => x.startsWith("claimed-"));

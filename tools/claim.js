@@ -63,19 +63,36 @@ if (requiredCapsMatch) {
 
 const g = (c) => execSync(c, { encoding: "utf-8", stdio: "pipe" }).trim();
 
-// 1. ref 检查（只读，~103字节）
-try {
-  const out = g(`git ls-remote origin refs/claims/${taskId}`);
-  if (out.length > 0) {
-    console.log(`[${worker}] ref 检查：${taskId} 已被认领 → 放弃`);
+// 1. ref 检查 + 槽位推导（D-130：slots>1 用 refs/claims/<task>/<slot>，先到先得占空槽）
+const specText = fs.readFileSync(path.join(taskDir, "spec.md"), "utf8");
+const slots = Number((specText.match(/^slots:\s*(\d+)/m) || [])[1] || 1);
+let slot = null;
+if (slots > 1) {
+  let taken = [];
+  try {
+    const out = g(`git ls-remote origin "refs/claims/${taskId}/*"`);
+    taken = out.split("\n").map(l => (l.match(/refs\/claims\/[^/]+\/(\d+)$/) || [])[1]).filter(Boolean);
+  } catch (e) { /* ls-remote 失败时按无占用处理 */ }
+  if (taken.length >= slots) {
+    console.log(`[${worker}] ref 检查：${taskId} 名额已满（${taken.length}/${slots}）→ 放弃`);
     process.exit(1);
   }
-} catch (e) { /* ls-remote 失败时继续尝试 refClaim */ }
+  for (let s = 0; s < slots; s++) if (!taken.includes(String(s))) { slot = s; break; }
+} else {
+  try {
+    const out = g(`git ls-remote origin refs/claims/${taskId}`);
+    if (out.length > 0) {
+      console.log(`[${worker}] ref 检查：${taskId} 已被认领 → 放弃`);
+      process.exit(1);
+    }
+  } catch (e) { /* ls-remote 失败时继续尝试 refClaim */ }
+}
 
 // 2. ref 原子认领（push ref，成功=认领，失败=已被认领）
+const claimRef = slot == null ? `refs/claims/${taskId}` : `refs/claims/${taskId}/${slot}`;
 try {
-  g(`git push origin HEAD:refs/claims/${taskId}`);
-  console.log(`[${worker}] [hca] ref 原子认领成功 ${taskId}`);
+  g(`git push origin HEAD:${claimRef}`);
+  console.log(`[${worker}] [hca] ref 原子认领成功 ${taskId}${slot == null ? "" : " slot=" + slot}`);
 } catch (e) {
   console.log(`[${worker}] ref 原子认领失败（他人先占）→ 放弃`);
   process.exit(1);
@@ -85,9 +102,9 @@ try {
 const evDir = path.join(taskDir, "events");
 if (!fs.existsSync(evDir)) fs.mkdirSync(evDir, { recursive: true });
 const ts = new Date().toISOString().replace(/[-:.]/g, "").slice(0, 15);
-const fname = `claimed-${ts}-${worker}.md`;
+const fname = `claimed-${ts}-${worker}${slot == null ? "" : "-s" + slot}.md`;
 fs.writeFileSync(path.join(evDir, fname),
-  `---\nevent: claimed\ntask: ${taskId}\nworker: ${worker}\nop_id: ${fname.replace(/\.md$/, "")}\nts: ${new Date().toISOString()}\n---\n${worker} 认领 ${taskId}（ref 原子锁）。\n`);
+  `---\nevent: claimed\ntask: ${taskId}\nworker: ${worker}\nop_id: ${fname.replace(/\.md$/, "")}${slot == null ? "" : "\nslot: " + slot}\nts: ${new Date().toISOString()}\n---\n${worker} 认领 ${taskId}${slot == null ? "" : " slot=" + slot}（ref 原子锁）。\n`);
 
 // 3b. 签名 claimed 事件（worker 私钥，D-19 事件链完整性；认领有效性已由 ref 锁定，签名失败不阻断）
 try {

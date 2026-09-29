@@ -76,7 +76,7 @@ function isoDeadline(hoursFromNow) {
 const BUDGET_BY_COMPLEXITY = { S: 40, M: 70, L: 110, XL: 200 };
 
 // ---------- D-127 JSON 自动派发模式（SPEC-REPO-CONTEXT-TASK v0.4 §12）----------
-const SPEC_FIELDS = ["title", "description", "deadline", "complexity", "budget", "sens", "timeout_penalty", "est_range", "use_bidding", "bidding_deadline", "min_bid", "max_bid", "input_files", "output_schema", "assertions", "verification", "context"];
+const SPEC_FIELDS = ["title", "description", "deadline", "complexity", "budget", "sens", "timeout_penalty", "est_range", "use_bidding", "bidding_deadline", "min_bid", "max_bid", "input_files", "output_schema", "assertions", "verification", "context", "slots", "unit_budget"];
 const ASSERT_TYPES = ["file_exists", "row_count", "col_check", "json_path", "hash_match"];
 
 function parseJsonArg() {
@@ -112,6 +112,11 @@ function validateJsonPayload(p) {
     if (typeof p.verification.script !== "string") return { error: "verification.script must be a string" };
     if (p.verification.timeout != null && (isNaN(Number(p.verification.timeout)) || Number(p.verification.timeout) <= 0)) return { error: "verification.timeout must be > 0" };
   }
+  if (p.slots != null) {
+    const s = Number(p.slots);
+    if (!Number.isInteger(s) || s < 1 || s > 1000) return { error: "slots must be integer 1..1000 (D-130)" };
+    if (s > 1 && (p.unit_budget == null || isNaN(Number(p.unit_budget)) || Number(p.unit_budget) <= 0)) return { error: "unit_budget required (>0) when slots > 1 (D-130)" };
+  }
   if (p.context != null) {
     if (typeof p.context !== "object" || !p.context.repo || !/^https:\/\//.test(p.context.repo)) return { error: "context.repo must be an https URL" };
     try {
@@ -139,6 +144,7 @@ function buildSpecContent(o) {
     "title: " + o.title + "\n" +
     "complexity: " + o.complexity + "\n" +
     "budget: " + o.budget + "\n" +
+    (o.slots > 1 ? "slots: " + o.slots + "\nunit_budget: " + o.unitBudget + "\n" : "") +
     "sens: " + o.sens + "\n" +
     "est_range: [" + o.estMin + ", " + o.estMax + "]\n" +
     'deadline: "' + o.deadline + '"\n' +
@@ -196,7 +202,8 @@ function runJsonMode(arg, publisher, publishSig) {
     useBidding: !!p.use_bidding, biddingDeadline: p.bidding_deadline, minBid: p.min_bid, maxBid: p.max_bid,
     outputSchema, assertions,
     description: p.description || p.title + ".",
-    verification: p.verification, context: p.context
+    verification: p.verification, context: p.context,
+    slots: p.slots == null ? 1 : Number(p.slots), unitBudget: p.unit_budget == null ? Number(p.budget) : Number(p.unit_budget)
   });
   const specPath = path.join(taskDir, "spec.md");
   fs.writeFileSync(specPath, specContent);
@@ -212,7 +219,7 @@ function runJsonMode(arg, publisher, publishSig) {
   // 预算托管 + 发布押金（SPEC-AUTOSETTLE-20260912 G4/G5）：发布即冻结，结算/过期/弃单时解冻
   const opPriv = path.join("keys", "operator", "private.pem");
   if (fs.existsSync(opPriv)) {
-    const budgetNum = Number(p.budget);
+    const budgetNum = Number(p.slots) > 1 ? Number(p.unit_budget) * Number(p.slots) : Number(p.budget);
     try {
       ledger.writeEntry({
         kind: "escrow", amount: budgetNum, from: publisher, to: `escrow-${taskId}`,
