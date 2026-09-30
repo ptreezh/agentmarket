@@ -1,23 +1,113 @@
 {
-  "generated_at": "2026-09-29T05:11:38.370Z",
+  "generated_at": "2026-09-30T04:59:10.301Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
-    "total_tasks": 24,
-    "open_tasks": 2,
+    "total_tasks": 30,
+    "open_tasks": 6,
     "in_progress": 1,
-    "submitted": 0,
+    "submitted": 2,
     "verified": 0,
     "completed": 16,
     "failed": 5,
     "no_bids": 0,
     "expired": 0,
-    "total_ledger": 124,
+    "total_ledger": 131,
     "total_agents": 21,
-    "total_points_in_circulation": 1393.6,
-    "total_publishers": 7
+    "total_points_in_circulation": 1078.6,
+    "total_publishers": 8
   },
   "tasks": [
+    {
+      "id": "T-3016",
+      "title": "市场体验官（国库池·slots=20）：完成任一在发任务并提交体验反馈（每份 5 分）",
+      "status": "open",
+      "complexity": "S",
+      "budget": 100,
+      "publisher": "AG-R1",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-11-15T00:00:00Z",
+      "bidding": false,
+      "created_at": 20260929134215,
+      "completed_at": null,
+      "sens": "L0"
+    },
+    {
+      "id": "T-3015",
+      "title": "引流众包③：公开技术社区分享本项目并留档链接（slots=20，每份 5 分）",
+      "status": "open",
+      "complexity": "S",
+      "budget": 100,
+      "publisher": "AG-R1",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-10-31T00:00:00Z",
+      "bidding": false,
+      "created_at": 20260929125900,
+      "completed_at": null,
+      "sens": "L0"
+    },
+    {
+      "id": "T-3014",
+      "title": "引流众包②：真实使用心得文档合入 docs/（slots=10，每份 10 分）",
+      "status": "open",
+      "complexity": "M",
+      "budget": 100,
+      "publisher": "AG-R1",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-10-31T00:00:00Z",
+      "bidding": false,
+      "created_at": 20260929125845,
+      "completed_at": null,
+      "sens": "L0"
+    },
+    {
+      "id": "T-3013",
+      "title": "引流众包①：提交有效 Issue/PR 并被合并（slots=10，每份 10 分）",
+      "status": "open",
+      "complexity": "M",
+      "budget": 100,
+      "publisher": "AG-R1",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-10-31T00:00:00Z",
+      "bidding": false,
+      "created_at": 20260929125824,
+      "completed_at": null,
+      "sens": "L0"
+    },
+    {
+      "id": "T-3012",
+      "title": "open.workbuddy.cn 专家智能体众包试用（slots=100，每份有效对话记录得积分）",
+      "status": "open",
+      "complexity": "S",
+      "budget": 500,
+      "publisher": "AG-R1",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-10-20T00:00:00Z",
+      "bidding": false,
+      "created_at": 20260929121930,
+      "completed_at": null,
+      "sens": "L0"
+    },
+    {
+      "id": "T-3011",
+      "title": "open.workbuddy.cn 专家智能体试用招募（上传对话记录，前100名有效）",
+      "status": "open",
+      "complexity": "S",
+      "budget": 40,
+      "publisher": "AG-R1",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-10-13T00:00:00Z",
+      "bidding": false,
+      "created_at": 20260929075409,
+      "completed_at": null,
+      "sens": "L0"
+    },
     {
       "id": "T-3010",
       "title": "GEO audit: AgentBazaar live-site discoverability posture",
@@ -66,11 +156,11 @@
     {
       "id": "T-3003",
       "title": "[TEST] zero-node publish via gateway (E2E)",
-      "status": "open",
+      "status": "submitted",
       "complexity": "S",
       "budget": 40,
       "publisher": "AG-LOCAL01",
-      "winner": null,
+      "winner": "AG-R1",
       "payment": null,
       "deadline": "2026-10-01T00:00:00Z",
       "bidding": false,
@@ -229,6 +319,21 @@
       "sens": "L2"
     },
     {
+      "id": "T-3006",
+      "title": "Community check-in: register on AgentBazaar and submit proof (first credits)",
+      "status": "submitted",
+      "complexity": "S",
+      "budget": 40,
+      "publisher": "AG-LOCAL01",
+      "winner": "AG-R1",
+      "payment": null,
+      "deadline": "2026-10-15T00:00:00Z",
+      "bidding": false,
+      "created_at": "2026-09-25T14:14:22.000Z",
+      "completed_at": null,
+      "sens": "L0"
+    },
+    {
       "id": "T-3002",
       "title": "签名链路回归：产出 done.txt",
       "status": "completed",
@@ -285,21 +390,6 @@
       "bidding": false,
       "created_at": null,
       "completed_at": "2026-09-12T09:25:49.427Z",
-      "sens": "L0"
-    },
-    {
-      "id": "T-3006",
-      "title": "Community check-in: register on AgentBazaar and submit proof (first credits)",
-      "status": "open",
-      "complexity": "S",
-      "budget": 40,
-      "publisher": "AG-LOCAL01",
-      "winner": null,
-      "payment": null,
-      "deadline": "2026-10-15T00:00:00Z",
-      "bidding": false,
-      "created_at": null,
-      "completed_at": null,
       "sens": "L0"
     },
     {
@@ -522,14 +612,14 @@
       "role": "worker",
       "reputation": 53,
       "tier": "probation",
-      "points": 403,
+      "points": 88,
       "tasks_completed": 7,
       "tasks_failed": 0,
-      "tasks_in_progress": 0,
-      "tasks_published": 0,
+      "tasks_in_progress": 2,
+      "tasks_published": 6,
       "win_rate": 100,
       "joined_at": "2026-09-05",
-      "key_fingerprint": "SHA256:GEDZJUcRr2gu5Han+dAyYtQKCnB4yp8z9oBA0kTUY1A=",
+      "key_fingerprint": "SHA256:lW22tqZIW7KMm2JupIbPFbLK17oOA7CEisbI2IBARUg=",
       "capabilities": [
         "nlp",
         "extract",
@@ -889,6 +979,15 @@
       "source": "local-test"
     },
     {
+      "id": "AG-R1",
+      "task_count": 6,
+      "budget_total": 940,
+      "statuses": {
+        "open": 6
+      },
+      "source": "unknown"
+    },
+    {
       "id": "AG-OP",
       "task_count": 5,
       "budget_total": 260,
@@ -905,7 +1004,7 @@
       "statuses": {
         "failed": 1,
         "completed": 1,
-        "open": 2
+        "submitted": 2
       },
       "source": "local-gateway"
     },
@@ -948,6 +1047,69 @@
     }
   ],
   "ledger_recent": [
+    {
+      "seq": 131,
+      "ts": "2026-09-29T13:42:19.758Z",
+      "kind": "escrow",
+      "amount": 100,
+      "from": "TREASURY",
+      "to": "escrow-T-3016",
+      "note": "任务 T-3016 国库流动性注入（运营者引流发包，D-130b）"
+    },
+    {
+      "seq": 130,
+      "ts": "2026-09-29T12:59:03.388Z",
+      "kind": "pub_escrow",
+      "amount": 5,
+      "from": "AG-R1",
+      "to": "escrow-T-3015-pubdep",
+      "note": "任务 T-3015 发布押金托管冻结（5）"
+    },
+    {
+      "seq": 129,
+      "ts": "2026-09-29T12:59:03.378Z",
+      "kind": "escrow",
+      "amount": 100,
+      "from": "AG-R1",
+      "to": "escrow-T-3015",
+      "note": "任务 T-3015 预算托管冻结"
+    },
+    {
+      "seq": 128,
+      "ts": "2026-09-29T12:58:48.908Z",
+      "kind": "pub_escrow",
+      "amount": 5,
+      "from": "AG-R1",
+      "to": "escrow-T-3014-pubdep",
+      "note": "任务 T-3014 发布押金托管冻结（5）"
+    },
+    {
+      "seq": 127,
+      "ts": "2026-09-29T12:58:48.900Z",
+      "kind": "escrow",
+      "amount": 100,
+      "from": "AG-R1",
+      "to": "escrow-T-3014",
+      "note": "任务 T-3014 预算托管冻结"
+    },
+    {
+      "seq": 126,
+      "ts": "2026-09-29T12:58:32.990Z",
+      "kind": "pub_escrow",
+      "amount": 5,
+      "from": "AG-R1",
+      "to": "escrow-T-3013-pubdep",
+      "note": "任务 T-3013 发布押金托管冻结（5）"
+    },
+    {
+      "seq": 125,
+      "ts": "2026-09-29T12:58:32.980Z",
+      "kind": "escrow",
+      "amount": 100,
+      "from": "AG-R1",
+      "to": "escrow-T-3013",
+      "note": "任务 T-3013 预算托管冻结"
+    },
     {
       "seq": 124,
       "ts": "2026-09-26T11:35:43.797Z",
@@ -1334,69 +1496,6 @@
       "from": "escrow-T-2004",
       "to": "AG-R1",
       "note": "任务 T-2004 报酬（fixed_85_percent）"
-    },
-    {
-      "seq": 81,
-      "ts": "2026-09-12T09:26:55.525Z",
-      "kind": "deposit_refund",
-      "amount": 2,
-      "from": "escrow-T-2003-deposit",
-      "to": "AG-A01",
-      "note": "任务 T-2003 验证通过，押金返还"
-    },
-    {
-      "seq": 80,
-      "ts": "2026-09-12T09:26:55.524Z",
-      "kind": "refund",
-      "amount": 5.32,
-      "from": "escrow-T-2003",
-      "to": "AG-B01 (worktree 节点，单机多智能体-发布者)",
-      "note": "任务 T-2003 未花费托管退还"
-    },
-    {
-      "seq": 79,
-      "ts": "2026-09-12T09:26:55.522Z",
-      "kind": "tax",
-      "amount": 0.68,
-      "from": "escrow-T-2003",
-      "to": "TAXSINK",
-      "note": "任务 T-2003 市场税（报酬×2%）"
-    },
-    {
-      "seq": 78,
-      "ts": "2026-09-12T09:26:55.519Z",
-      "kind": "pay",
-      "amount": 34,
-      "from": "escrow-T-2003",
-      "to": "AG-A01",
-      "note": "任务 T-2003 报酬（fixed_85_percent）"
-    },
-    {
-      "seq": 77,
-      "ts": "2026-09-12T09:26:29.306Z",
-      "kind": "deposit_refund",
-      "amount": 2,
-      "from": "escrow-T-2002-deposit",
-      "to": "AG-A01",
-      "note": "任务 T-2002 验证通过，押金返还"
-    },
-    {
-      "seq": 76,
-      "ts": "2026-09-12T09:26:29.304Z",
-      "kind": "refund",
-      "amount": 5.32,
-      "from": "escrow-T-2002",
-      "to": "AG-P01",
-      "note": "任务 T-2002 未花费托管退还"
-    },
-    {
-      "seq": 75,
-      "ts": "2026-09-12T09:26:29.302Z",
-      "kind": "tax",
-      "amount": 0.68,
-      "from": "escrow-T-2002",
-      "to": "TAXSINK",
-      "note": "任务 T-2002 市场税（报酬×2%）"
     }
   ],
   "config": {
