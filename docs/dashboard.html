@@ -542,10 +542,10 @@ function renderTasks(tasks) {
   tbody.innerHTML = filtered.map(task => `
     <tr onclick="location.href='task.html?id=${task.id}'" style="cursor:pointer;">
       <td class="task-id">${task.id}</td>
-      <td class="task-title">${escHtml(task.title)}${task.bidding ? '<span class="badge bidding">' + t('dashboard.bidding_tag') + '</span>' : ''}</td>
+      <td class="task-title">${escHtml(task.title)}${task.bidding ? '<span class="badge bidding">' + t('dashboard.bidding_tag') + '</span>' : ''}${task.slots ? '<span class="badge bidding" title="' + (task.claimed_slots || 0) + '/' + task.slots + '">' + t('dashboard.slots_tag') + ' ' + (task.claimed_slots || 0) + '/' + task.slots + '</span>' : ''}</td>
       <td><span class="badge ${task.status}">${t('status.' + task.status) || task.status}</span></td>
       <td>${task.complexity}</td>
-      <td>${task.budget}</td>
+      <td>${task.slots ? task.unit_budget + ' × ' + task.slots : task.budget}</td>
       <td>${task.publisher}</td>
       <td>${task.winner || '-'}</td>
       <td>${task.payment !== null ? task.payment : '-'}</td>

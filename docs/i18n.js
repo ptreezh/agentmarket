@@ -288,6 +288,7 @@
       "dashboard.config_budget_l": "L Budget",
       "dashboard.config_deposit": "Deposit Rate",
       "dashboard.bidding_tag": "Auction",
+      "dashboard.slots_tag": "Crowdsourced",
       "dashboard.win_rate": "Win Rate",
       "dashboard.tasks_completed": "Completed",
 
@@ -704,6 +705,7 @@
       "dashboard.config_budget_l": "L 预算",
       "dashboard.config_deposit": "押金率",
       "dashboard.bidding_tag": "竞价",
+      "dashboard.slots_tag": "众包",
       "dashboard.win_rate": "胜率",
       "dashboard.tasks_completed": "完成",
 

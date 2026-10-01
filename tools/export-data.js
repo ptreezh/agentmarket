@@ -58,6 +58,16 @@ function inferTaskStatus(taskDir, spec) {
   if (!fs.existsSync(eventsDir)) return "open";
   const events = fs.readdirSync(eventsDir);
 
+  // D-130 slots：名额制任务逐槽判定——有已结算槽=进行中；满员或全结算前保持可认领语义
+  const slots = Number(spec.slots || 0);
+  if (slots > 1) {
+    if (events.some(f => f.startsWith("cancelled-"))) return "expired";
+    const settledS = events.filter(f => /^settled-.*-s\d+\.md$/.test(f)).length;
+    if (settledS >= slots) return "completed";
+    if (settledS > 0) return "in_progress";
+    return "open"; // 未满员：仍可认领（名额制先到先得）
+  }
+
   const hasSettled = events.some(f => f.startsWith("settled-"));
   if (hasSettled) return "completed";
 
@@ -256,6 +266,11 @@ if (fs.existsSync(tasksDir)) {
         payment: settlement ? settlement.payment : null,
         deadline: spec.deadline || null,
         bidding: spec.bidding || false,
+        slots: Number(spec.slots || 1) > 1 ? Number(spec.slots) : null,
+        unit_budget: Number(spec.slots || 0) > 1 ? Number(spec.unit_budget || 0) : null,
+        claimed_slots: Number(spec.slots || 0) > 1
+          ? fs.existsSync(eventsDir) ? fs.readdirSync(eventsDir).filter(f => /^claimed-.*-s\d+\.md$/.test(f)).length : 0
+          : null,
         created_at: null, // 从 published 事件读取
         completed_at: settlement ? settlement.settled_at : null,
         sens: spec.sens || "L0"
