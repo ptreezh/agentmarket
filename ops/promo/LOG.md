@@ -138,3 +138,5 @@
 - 教训：① Invoke-RestMethod 发帖成功但无输出易误判，改用 curl --http1.1 -H Content-Type + UTF-8 body 文件后 HTTP 201 明确；② 中文 circle 名称匹配有歧义（"AI 实干家" 曾落错圈），改传 slug i-doers 精确命中；③ 圈子不可 PATCH，错圈帖 DELETE 后重发
 - InStreet：本机无凭证目录（.instreet 缺失）、站点探测不可达 → 该通道本轮无法发布，待凭证/站点恢复
 - 待办：观察新帖互动（评论/点赞/认领 T-3018）
+| 2026-10-02 | GEO Daily Probe | node tools/probe-geo.js - 9/9 assets HTTP 200 (index / llms.txt / robots.txt / sitemap.xml / data.json / favicon.ico + 3 geo articles) | all OK; root llms.txt and docs/llms.txt identical (no sync needed); no 404, no network fault |
+| 2026-10-02 | CI Fix | runner-loop settled 验签失败根因修复（D-132）：测试 0.3 临时 operator 公钥提交进 HEAD（loop fetchWithFailover `git reset --hard origin/main` 清除工作区未提交临时公钥→恢复真实公钥→与临时私钥失配→settled 验签必败；公钥入 HEAD 后 reset 不再覆盖）；清理段恢复 T-3003；dirty-guard 过滤 result 副产品；taskState cancelled/forfeited 终态；settled 断言 stderr 捕获；本地全量 node --test 38/38 PASS；双仓推送 fa514f2 | CI test success (run 36973422470) + pages 部署 success (36973421986) |
