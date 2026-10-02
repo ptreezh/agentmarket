@@ -117,3 +117,9 @@
 - 根因: created_at 为 14 位 YYYYMMDDHHMMSS 数字（如 20260909231357），前端直接 new Date(数字) 被当毫秒时间戳解析 → 2612 年
 - 修复: docs/task.html 新增 fmtT()（识别 14 位格式正确切分，ISO 走 new Date 兜底），替换 Created/Completed/deadline/timeline 4 处渲染
 - 验证: node 单测 14-digit→2026-09-09 23:13:57 / ISO→2026/10/2 09:35:40 / null→- ；全仓仅 task.html 受影响
+
+### 2026-10-02 11:05 修复 test workflow 回归失败
+- 现象: CI test 在 23a5fcd/4b56673 失败（"Cannot find module './ledger.js'"）
+- 根因: tests/auth-sig.test.js 夹具只复制 tools/publish.js 到临时目录，publish.js require('./ledger.js') 在复制版下解析失败
+- 修复: 夹具补复制 ledger.js（publish.js 唯一 tools 内依赖，ledger.js 仅依赖内置模块）
+- 验证: node --test 全量 38/38 PASS；Pages 部署 d8f079e 已 success

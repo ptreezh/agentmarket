@@ -42,6 +42,8 @@ try {
   fs.mkdirSync(path.join(market, "keys", "AG-TEST"), { recursive: true });
   fs.mkdirSync(path.join(market, "tools"), { recursive: true });
   fs.copyFileSync(path.join(ROOT, "tools", "publish.js"), path.join(market, "tools", "publish.js"));
+  // publish.js requires ./ledger.js — copy the dependency so the fixture is self-contained
+  fs.copyFileSync(path.join(ROOT, "tools", "ledger.js"), path.join(market, "tools", "ledger.js"));
   fs.writeFileSync(path.join(market, "keys", "AG-TEST", "private.pem"), privPem);
   fs.writeFileSync(path.join(market, "agents", "AG-TEST", "agent.md"),
     "---\nid: AG-TEST\n---\nkey_fingerprint: " +
