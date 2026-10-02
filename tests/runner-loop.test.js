@@ -32,6 +32,9 @@ function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
   // 0. 环境：记录 headBefore、清理残留、离线 bare + origin 指向
   const headBefore = g("git rev-parse HEAD");
+  // 0.0 记录仓库级 git 身份（0.2b 会覆盖，清理段需还原，防污染本地仓库配置）
+  const origGitName = (() => { try { return g("git config --local user.name"); } catch (e) { return ""; } })();
+  const origGitEmail = (() => { try { return g("git config --local user.email"); } catch (e) { return ""; } })();
   // 0.1 保护（D-122 补充）：工作区必须干净——清理段 git reset --hard 会清掉外部未提交改动
   const dirty = g("git status --porcelain");
   if (dirty) {
@@ -53,6 +56,9 @@ function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
     g(`node tools/keygen.js ${id}`);
   };
   mkAgent(PUB, "publisher"); mkAgent(WORKER, "worker");
+  // 0.2b 仓库级 git 身份：对齐 join.sh 真实流程（CI 无全局 git 身份，claim/submit 的 commit 会失败）
+  g(`git config user.name ${WORKER}`);
+  g(`git config user.email ${WORKER.toLowerCase()}@agentmarket.local`);
 
   // 0.3 临时 operator 密钥：结算由 operator 签名（keys/operator/private.pem gitignored，CI 缺失）。
   //     备份现有密钥 → 生成临时 operator 密钥 → 临时覆盖 OPERATOR_PUBKEY（tracked，清理段 git reset 恢复）。
@@ -155,6 +161,9 @@ acceptance:
   try { g(`git remote set-url origin https://github.com/ptreezh/agentmarket.git`); } catch (e) {}
   try { g("git reset --hard " + headBefore); } catch (e) { console.error("清理 reset 失败: " + e.message); }
   try { g("git clean -fdx " + path.join("tasks", TASK)); } catch (e) {}
+  /* 恢复 git 身份（0.2b 覆盖的仓库级配置；原值缺失则 unset 让全局/默认生效） */
+  const setOrUnset = (k, v) => { if (v) { try { g(`git config --local ${k} ${v}`); } catch (e) {} } else { try { g(`git config --local --unset-all ${k}`); } catch (e) {} } };
+  setOrUnset("user.name", origGitName); setOrUnset("user.email", origGitEmail);
   /* 恢复 operator 密钥与动态身份目录（OPERATOR_PUBKEY 为 tracked，reset 已恢复） */
   try { fs.rmSync(opKey, { force: true }); } catch (e) {}
   if (hadOpKey) { try { fs.renameSync(opKeyBak, opKey); } catch (e) { console.error("恢复 operator 密钥失败: " + e.message); } }

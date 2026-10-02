@@ -60,7 +60,8 @@ console.log("用例4: --once 死进程 → 执行重启命令 → marker 出现"
   const marker = path.join(LOGS, "test-restarted.marker");
   fs.rmSync(marker, { force: true });
   const cmdFile = path.join(LOGS, "test-restart.cmd");
-  // 重启命令内容按平台生成：Windows cmd 批处理 / POSIX shell（keepalive.sh 用 bash -c 执行）
+  // 重启命令按平台生成：Windows 走 keepalive.cmd(ps1)，--cmd 传可执行路径；
+  // POSIX 走 keepalive.sh，--cmd 语义为命令字符串（bash -c 执行），直接传内容。
   const cmdBody = process.platform === "win32"
     ? `@echo off\necho restarted > "${marker}"\n`
     : `echo restarted > "${marker}"\n`;
@@ -68,7 +69,8 @@ console.log("用例4: --once 死进程 → 执行重启命令 → marker 出现"
   const pf = path.join(LOGS, "test-restart.pid");
   fs.writeFileSync(pf, "99999998");
   const logFile = path.join(LOGS, "test-keepalive.log");
-  const r = runK(`--once --pid-file "${pf}" --cmd "${cmdFile}" --log-file "${logFile}"`);
+  const cmdArg = process.platform === "win32" ? `"${cmdFile}"` : `'${cmdBody.trim()}'`;
+  const r = runK(`--once --pid-file "${pf}" --cmd ${cmdArg} --log-file "${logFile}"`);
   // 重启命令为异步执行（nohup/Start-Process 对齐 ps1），marker 生成容忍 ≤5s 竞态
   let markerOk = false;
   for (let i = 0; i < 25 && !markerOk; i++) {
