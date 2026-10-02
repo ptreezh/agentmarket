@@ -32,6 +32,8 @@ INTERVAL=30
 MAX_RESTARTS=5
 RESTART_CMD=""
 DRY_RUN=false
+CHECK_ONLY=false
+ONCE=false
 
 # ---------- 颜色输出 ----------
 if [[ -t 1 ]]; then
@@ -53,6 +55,8 @@ while [[ $# -gt 0 ]]; do
     --max-restarts) MAX_RESTARTS="$2"; shift 2 ;;
     --cmd)          RESTART_CMD="$2"; shift 2 ;;
     --dry-run)      DRY_RUN=true; shift ;;
+    --check-only)   CHECK_ONLY=true; shift ;;
+    --once)         ONCE=true; shift ;;
     --help|-h)
       sed -n '2,30p' "$0"
       exit 0
@@ -183,10 +187,16 @@ restart_process() {
 # ---------- 主循环 ----------
 CONSECUTIVE_FAILURES=0
 
-while true; do
+# 单轮检查/重启；--check-only 按 PID 状态返回 0/1/2（与 keepalive.ps1 对齐）
+run_once() {
+  local pid cmd
   pid=$(read_pid)
 
   if [[ -z "$pid" ]]; then
+    if [[ "$CHECK_ONLY" == "true" ]]; then
+      echo "[CHECK] no pid file: $PID_FILE"
+      return 2
+    fi
     warn "PID 文件不存在或为空: $PID_FILE"
     cmd=$(get_restart_cmd)
     if [[ -n "$cmd" ]]; then
@@ -199,11 +209,19 @@ while true; do
     fi
   elif is_alive "$pid"; then
     CONSECUTIVE_FAILURES=0
+    if [[ "$CHECK_ONLY" == "true" ]]; then
+      echo "[CHECK] alive pid=$pid"
+      return 0
+    fi
     # 进程正常运行，静默（每 10 轮输出一次心跳）
     if (( $(date +%s) % 300 < INTERVAL )); then
       log "心跳: PID=$pid 运行中"
     fi
   else
+    if [[ "$CHECK_ONLY" == "true" ]]; then
+      echo "[CHECK] dead pid=$pid"
+      return 1
+    fi
     warn "进程已崩溃: PID=$pid 不存在"
     cmd=$(get_restart_cmd)
     if [[ -n "$cmd" ]]; then
@@ -215,6 +233,15 @@ while true; do
       err "无重启命令，无法自动恢复"
       ((CONSECUTIVE_FAILURES++))
     fi
+  fi
+  return 0
+}
+
+while true; do
+  run_once
+  local rc=$?
+  if [[ "$ONCE" == "true" ]]; then
+    exit $rc
   fi
 
   # 连续失败过多，延长检查间隔

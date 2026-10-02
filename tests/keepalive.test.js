@@ -17,8 +17,11 @@ const ROOT = process.cwd();
 const LOGS = path.join(ROOT, "logs");
 fs.mkdirSync(LOGS, { recursive: true });
 
+// 平台分支：Windows 走 keepalive.cmd（→ .ps1），其他平台走 bash keepalive.sh
+const KEEPALIVE = process.platform === "win32" ? "keepalive.cmd" : "bash keepalive.sh";
+
 function runK(args) {
-  try { return { code: 0, out: g(`keepalive.cmd ${args}`) }; }
+  try { return { code: 0, out: g(`${KEEPALIVE} ${args}`) }; }
   catch (e) { return { code: e.status ?? 1, out: ((e.stdout || "") + (e.stderr || "")).trim() }; }
 }
 
@@ -57,10 +60,15 @@ console.log("用例4: --once 死进程 → 执行重启命令 → marker 出现"
   const marker = path.join(LOGS, "test-restarted.marker");
   fs.rmSync(marker, { force: true });
   const cmdFile = path.join(LOGS, "test-restart.cmd");
-  fs.writeFileSync(cmdFile, `@echo off\necho restarted > "${marker}"\n`, "utf-8");
+  // 重启命令内容按平台生成：Windows cmd 批处理 / POSIX shell（keepalive.sh 用 bash -c 执行）
+  const cmdBody = process.platform === "win32"
+    ? `@echo off\necho restarted > "${marker}"\n`
+    : `echo restarted > "${marker}"\n`;
+  fs.writeFileSync(cmdFile, cmdBody, "utf-8");
   const pf = path.join(LOGS, "test-restart.pid");
   fs.writeFileSync(pf, "99999998");
-  const r = runK(`--once --pid-file "${pf}" --cmd "${cmdFile}" --log-file "${LOGS}\\test-keepalive.log"`);
+  const logFile = path.join(LOGS, "test-keepalive.log");
+  const r = runK(`--once --pid-file "${pf}" --cmd "${cmdFile}" --log-file "${logFile}"`);
   check("marker 已生成", fs.existsSync(marker), `code=${r.code} out=${r.out}`);
 }
 

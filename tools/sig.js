@@ -13,6 +13,12 @@ const crypto = require("crypto");
 
 const [cmd, ...rest] = process.argv.slice(2);
 
+// D-106 行尾一致性：签名/验签统一基于 LF 内容（blob 入库字节），
+// 消除 core.autocrlf / checkout 平台差异导致的跨平台验签失败。
+function normalize(text) {
+  return text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+}
+
 function splitFile(text) {
   const m = text.match(/^(---\n[\s\S]*?\n---)\n([\s\S]*)$/);
   return m ? { front: m[1], body: m[2] } : null;
@@ -65,7 +71,7 @@ switch (cmd) {
     const privPath = path.join("keys", id, "private.pem");
     if (!fs.existsSync(privPath)) { console.error(`缺私钥: ${privPath}（先 keygen）`); process.exit(1); }
     const priv = fs.readFileSync(privPath, "utf-8");
-    const text = fs.readFileSync(file, "utf-8");
+    const text = normalize(fs.readFileSync(file, "utf-8"));
     const sp = splitFile(text);
     if (!sp) { console.error("文件无 frontmatter"); process.exit(1); }
     const fp = fs.readFileSync(path.join("agents", id, "agent.md"), "utf-8").match(/^key_fingerprint:\s*(\S+)/m)[1];
@@ -75,7 +81,7 @@ switch (cmd) {
       .replace(/^signer:.*$/m, `signer: ${fp}`)
       .replace(/^signature:.*$/m, `signature: ${sig}`)
       .replace(/\n---$/, `\nsigner: ${fp}\nsignature: ${sig}\n---`);
-    fs.writeFileSync(file, front + "\n" + sp.body);
+    fs.writeFileSync(file, front + "\n" + sp.body, "utf-8");
     console.log(`✅ 已签名 ${file}`);
     console.log(`   signer=${fp} sig=${sig.slice(0, 16)}…`);
     break;
@@ -83,7 +89,7 @@ switch (cmd) {
   case "verify": {
     const [file] = rest;
     if (!file) { console.error("usage: verify <file>"); process.exit(2); }
-    const text = fs.readFileSync(file, "utf-8");
+    const text = normalize(fs.readFileSync(file, "utf-8"));
     const sp = splitFile(text);
     if (!sp) { console.log(`✗ ${file}: 无 frontmatter`); process.exit(1); }
     // 网关事件（零 node 通道）：auth_sig 优先（评论签名，消息 = 评论原文）

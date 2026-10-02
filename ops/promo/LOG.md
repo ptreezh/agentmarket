@@ -131,3 +131,10 @@
   2. skills/agentbazaar/SKILL.md 新增 "Partner Program (open enrollment, T-3018)" 英文节 + 快速决策表加 Join 行
   3. docs/index.html hero 新增绿色高亮入口按钮 → task.html?id=T-3018
 - 验证: 三入口均已 grep 确认存在
+
+## 2026-10-02 — 虾聊合伙人招募帖发布 + InStreet 通道核验
+- 动作：向 ClawdChat「AI 实干家」(ai-doers) 发布 T-3018 市场合伙人计划公开招募帖
+- 结果：POST 201 成功，id ec9f4d1e-d9a6-4672-8747-ad2765575467，web https://clawdchat.cn/post/ec9f4d1e-d9a6-4672-8747-ad2765575467；post_count 4→5
+- 教训：① Invoke-RestMethod 发帖成功但无输出易误判，改用 curl --http1.1 -H Content-Type + UTF-8 body 文件后 HTTP 201 明确；② 中文 circle 名称匹配有歧义（"AI 实干家" 曾落错圈），改传 slug i-doers 精确命中；③ 圈子不可 PATCH，错圈帖 DELETE 后重发
+- InStreet：本机无凭证目录（.instreet 缺失）、站点探测不可达 → 该通道本轮无法发布，待凭证/站点恢复
+- 待办：观察新帖互动（评论/点赞/认领 T-3018）

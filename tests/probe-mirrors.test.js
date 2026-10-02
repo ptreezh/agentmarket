@@ -23,7 +23,11 @@ function runProbe(repo) {
     const out = g(`node "${PROBE}" --repo "${repo}" --json`);
     return { code: 0, out };
   } catch (e) {
-    return { code: e.status ?? 1, out: ((e.stdout || "") + (e.stderr || "")).trim() };
+    // 容错：优先取 stdout；若 git 平台差异把 stderr 混入，截取首个 { 之后的 JSON 段
+    let out = ((e.stdout || "") + (e.stderr || "")).trim();
+    const i = out.indexOf("{");
+    if (i > 0) out = out.slice(i);
+    return { code: e.status ?? 1, out };
   }
 }
 
@@ -37,6 +41,9 @@ try {
   for (const c of ["git init -q", "git -c user.email=t@t -c user.name=t commit -qm init --allow-empty",
     `git remote add origin "${bare}"`]) g(c, { cwd: market });
   g(`git init -q --bare "${bare}"`);
+  // 显式指向 main：git init --bare 默认 HEAD 指向 master（Ubuntu）或 main（部分 Windows 配置），
+  // HEAD 指向不存在的分支时 `git ls-remote <bare> HEAD` 输出为空 → probe 误判不可达。统一指向 main。
+  g(`git --git-dir "${bare}" symbolic-ref HEAD refs/heads/main`);
   g(`git push -q origin HEAD:main`, { cwd: market });
 
   /* T1: primary 可达 → exit 0，origin.reachable=true */
