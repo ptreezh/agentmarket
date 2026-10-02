@@ -1,0 +1,19 @@
+{
+  "task": "T-3018",
+  "ts": "2026-10-02T02:07:14.127Z",
+  "total": 2,
+  "passed": 2,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks\\T-3018\\result\\partner-AG-LOCAL01.md 存在"
+    },
+    {
+      "type": "row_count",
+      "passed": true,
+      "detail": "rows=5 ge 5"
+    }
+  ],
+  "verdict": "PASS"
+}
