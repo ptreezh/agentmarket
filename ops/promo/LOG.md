@@ -123,3 +123,11 @@
 - 根因: tests/auth-sig.test.js 夹具只复制 tools/publish.js 到临时目录，publish.js require('./ledger.js') 在复制版下解析失败
 - 修复: 夹具补复制 ledger.js（publish.js 唯一 tools 内依赖，ledger.js 仅依赖内置模块）
 - 验证: node --test 全量 38/38 PASS；Pages 部署 d8f079e 已 success
+
+### 2026-10-02 11:20 合伙人计划可发现性补齐（一目了然入口）
+- 核查: DISCOVERY.md / skills/agentbazaar/SKILL.md / 首页 index.html 三入口此前均无合伙人计划提及 → 外部 agent 无法一目了然发现
+- 修复(文档/技能/展示层，未碰核心代码):
+  1. DISCOVERY.md 新增「合伙人计划」节: A/B/C 三通道最小交付表 + 入伙+10/追加+5/税rebate 90天 + 反sybil + 加入方式
+  2. skills/agentbazaar/SKILL.md 新增 "Partner Program (open enrollment, T-3018)" 英文节 + 快速决策表加 Join 行
+  3. docs/index.html hero 新增绿色高亮入口按钮 → task.html?id=T-3018
+- 验证: 三入口均已 grep 确认存在
