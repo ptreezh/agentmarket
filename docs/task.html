@@ -210,7 +210,7 @@ function renderTask(task, data) {
       <div class="task-meta">
         <span>📊 ${t('common.complexity')}: ${task.complexity}</span>
         <span>💰 ${t('common.budget')}: ${task.budget}</span>
-        <span>📅 ${t('common.deadline')}: ${task.deadline ? new Date(task.deadline).toLocaleString() : '-'}</span>
+        <span>📅 ${t('common.deadline')}: ${task.deadline ? fmtT(task.deadline) : '-'}</span>
         <span>🔒 ${t('task.sensitivity')}: ${task.sens || 'L0'}</span>
       </div>
     </div>
@@ -228,8 +228,8 @@ function renderTask(task, data) {
           <div class="info-item"><span class="info-label">Publisher:</span><span class="info-value"><a href="agent.html?id=${task.publisher}">${task.publisher}</a></span></div>
           <div class="info-item"><span class="info-label">Winner:</span><span class="info-value">${task.winner ? '<a href="agent.html?id=' + task.winner + '">' + task.winner + '</a>' : '-'}</span></div>
           <div class="info-item"><span class="info-label">Payment:</span><span class="info-value">${task.payment !== null ? task.payment + ' credits' : '-'}</span></div>
-          <div class="info-item"><span class="info-label">Created:</span><span class="info-value">${task.created_at ? new Date(task.created_at).toLocaleString('zh-CN') : '-'}</span></div>
-          <div class="info-item"><span class="info-label">Completed:</span><span class="info-value">${task.completed_at ? new Date(task.completed_at).toLocaleString('zh-CN') : '-'}</span></div>
+          <div class="info-item"><span class="info-label">Created:</span><span class="info-value">${task.created_at ? fmtT(task.created_at) : '-'}</span></div>
+          <div class="info-item"><span class="info-label">Completed:</span><span class="info-value">${task.completed_at ? fmtT(task.completed_at) : '-'}</span></div>
         </div>
       </div>
     </div>
@@ -334,7 +334,7 @@ function renderTask(task, data) {
       <div class="tl-item ${step.done ? 'done' : (isActive ? 'active' : '')}">
         <div class="tl-dot"></div>
         <div class="tl-title">${step.label}</div>
-        ${step.time ? '<div class="tl-time">' + new Date(step.time).toLocaleString('zh-CN') + '</div>' : ''}
+        ${step.time ? '<div class="tl-time">' + fmtT(step.time) + '</div>' : ''}
         <div class="tl-desc">${step.desc}</div>
       </div>
     `;
@@ -363,6 +363,19 @@ function escHtml(s) {
   const div = document.createElement('div');
   div.textContent = s || '';
   return div.innerHTML;
+}
+
+// Format AB time values: created_at is a 14-digit YYYYMMDDHHMMSS number;
+// completed_at/deadline are ISO strings. new Date() on the 14-digit number
+// mis-parses it as a millisecond epoch (shows year 2612) — always use fmtT.
+function fmtT(v) {
+  if (!v) return '-';
+  const s = String(v);
+  if (/^\d{14}$/.test(s)) {
+    return s.slice(0,4) + '-' + s.slice(4,6) + '-' + s.slice(6,8) + ' ' + s.slice(8,10) + ':' + s.slice(10,12) + ':' + s.slice(12,14);
+  }
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? '-' : d.toLocaleString('zh-CN');
 }
 
 loadTask();

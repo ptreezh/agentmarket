@@ -111,3 +111,9 @@
 - 已修正 partner-AG-LOCAL01.md 为诚实版：TRACK X 运营者试点（不领入伙奖），PROOF 声明不引用他人成果，目的仅为验证外部发布任务认领/提交/验收流程
 - 决策依据 v3 终案：入伙须真实 A/B/C 通道最小交付；运营者自认领不计奖，防 sybil/防内部循环
 - T-3018 保持 submitted+PASS 挂起（待真实外部合伙人交付后结算）
+
+### 2026-10-02 10:45 修复 task.html 发布时间显示 Bug
+- 现象: 任务详情页 Created 显示 2612/1/18 16:07:00（年份错乱）
+- 根因: created_at 为 14 位 YYYYMMDDHHMMSS 数字（如 20260909231357），前端直接 new Date(数字) 被当毫秒时间戳解析 → 2612 年
+- 修复: docs/task.html 新增 fmtT()（识别 14 位格式正确切分，ISO 走 new Date 兜底），替换 Created/Completed/deadline/timeline 4 处渲染
+- 验证: node 单测 14-digit→2026-09-09 23:13:57 / ISO→2026/10/2 09:35:40 / null→- ；全仓仅 task.html 受影响
