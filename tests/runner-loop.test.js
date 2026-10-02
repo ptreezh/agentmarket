@@ -36,7 +36,8 @@ function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
   const origGitName = (() => { try { return g("git config --local user.name"); } catch (e) { return ""; } })();
   const origGitEmail = (() => { try { return g("git config --local user.email"); } catch (e) { return ""; } })();
   // 0.1 保护（D-122 补充）：工作区必须干净——清理段 git reset --hard 会清掉外部未提交改动
-  const dirty = g("git status --porcelain");
+  // 过滤测试副产品：loop 认领历史任务（T-3012/3013…）产生的未跟踪 result/ 不视为 dirty（测试隔离副作用）
+  const dirty = g("git status --porcelain").split("\n").map(l => l.trim()).filter(l => l && !/^\?\?\s+tasks\/[^/]+\/result\/?$/.test(l)).join("\n");
   if (dirty) {
     console.error("⚠️ 工作区有未提交改动，跳过 runner-loop 测试（避免清理段误伤外部改动）：\n" + dirty);
     process.exit(0);
@@ -70,6 +71,14 @@ function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
   fs.mkdirSync(path.dirname(opKey), { recursive: true });
   fs.writeFileSync(opKey, tmpOpPriv.export({ type: "pkcs8", format: "pem" }), { mode: 0o600 });
   fs.writeFileSync("OPERATOR_PUBKEY", tmpOpPub.export({ type: "spki", format: "pem" }));
+  // 0.3b 临时公钥提交进 HEAD：loop 的 fetchWithFailover 会 git reset --hard origin/main，
+  //     工作区未提交的临时公钥会被清除→恢复为真实公钥，与临时私钥失配（settled 验签失败根因，D-132）
+  g(`git add OPERATOR_PUBKEY && git commit -q -m "test(runner-loop): temp operator pubkey (0.3b)"`);
+  // 0.3c 立即校验临时私钥写入成功（防静默失败→settled 用旧私钥签名导致验签失败）
+  const fpOf = (pem) => "SHA256:" + require("crypto").createHash("sha256").update(require("crypto").createPublicKey(require("crypto").createPrivateKey(pem)).export({ type: "spki", format: "der" })).digest("base64");
+  const tmpPrivFp = fpOf(fs.readFileSync(opKey, "utf-8"));
+  const tmpPubFp = "SHA256:" + require("crypto").createHash("sha256").update(require("crypto").createPublicKey(fs.readFileSync("OPERATOR_PUBKEY", "utf-8")).export({ type: "spki", format: "der" })).digest("base64");
+  console.log(`[diag-0.3c] opKey fp=${tmpPrivFp} pubFp=${tmpPubFp} match=${tmpPrivFp === tmpPubFp} bakExists=${fs.existsSync(opKeyBak)}`);
 
   // 1. 发布 T-3003（CSV 聚合，断言 file_exists result/result.json）
   const taskDir = taskDirFor();
@@ -147,8 +156,31 @@ acceptance:
   check("loop 自动结算成功（operator 签名，T1）", settledOk, "loop 未显示 结算: ✅");
   const settledFile = fs.existsSync(evDir) ? fs.readdirSync(evDir).find((f) => f.startsWith("settled-")) : null;
   if (settledFile) {
+    const sp = path.join(evDir, settledFile);
     try {
-      g(`node tools/sig.js verify "${path.join(evDir, settledFile).replace(/\\/g, "/")}"`);
+      // 诊断：dump 签名信息 + operator 密钥指纹，定位 verify 失败差异
+      const raw = fs.readFileSync(sp, "utf-8");
+      const opNow = fs.existsSync("OPERATOR_PUBKEY") ? fs.readFileSync("OPERATOR_PUBKEY", "utf-8") : "(missing)";
+      const opFpNow = opNow.startsWith("-----") ? "SHA256:" + require("crypto").createHash("sha256").update(require("crypto").createPublicKey(opNow).export({ type: "spki", format: "der" })).digest("base64") : opNow;
+      const sFp = (raw.match(/^signer:\s*(\S+)/m) || [])[1];
+      const sSig = (raw.match(/^signature:\s*(\S+)/m) || [])[1];
+      console.log(`[diag] settled=${settledFile}`);
+      console.log(`[diag] signer=${sFp}`);
+      console.log(`[diag] OPERATOR_PUBKEY fp now=${opFpNow} match=${opFpNow === sFp}`);
+      console.log(`[diag] sig len=${sSig ? sSig.length : 0} opKey exists=${fs.existsSync(path.join("keys", "operator", "private.pem"))}`);
+      const bm = raw.replace(/\r\n/g, "\n").replace(/\r/g, "\n").match(/^(---\n[\s\S]*?\n---)\n([\s\S]*)$/);
+      const manual = bm ? require("crypto").verify(null, Buffer.from(bm[2], "utf-8"), require("crypto").createPublicKey(opNow), Buffer.from(sSig || "", "hex")) : "no-split";
+      console.log(`[diag] manual verify(body)=${manual} body=${JSON.stringify(bm ? bm[2] : null)}`);
+      // 用临时私钥重签 body 再自验（排除密钥/内容问题）
+      const opPrivPem = fs.existsSync(path.join("keys", "operator", "private.pem")) ? fs.readFileSync(path.join("keys", "operator", "private.pem"), "utf-8") : "";
+      if (opPrivPem && bm) {
+        const resign = require("crypto").sign(null, Buffer.from(bm[2], "utf-8"), require("crypto").createPrivateKey(opPrivPem));
+        console.log(`[diag] resign-verify=${require("crypto").verify(null, Buffer.from(bm[2], "utf-8"), require("crypto").createPublicKey(opNow), resign)}`);
+        const derivedPub = require("crypto").createPublicKey(require("crypto").createPrivateKey(opPrivPem)).export({ type: "spki", format: "der" });
+        const derivedFp = "SHA256:" + require("crypto").createHash("sha256").update(derivedPub).digest("base64");
+        console.log(`[diag] derived-priv-pub fp=${derivedFp} match-op=${derivedFp === opFpNow}`);
+      }
+      g(`node tools/sig.js verify "${sp.replace(/\\/g, "/")}"`);
       check("settled 事件签名有效（operator）", true, "");
     } catch (e) { check("settled 事件签名有效（operator）", false, "verify 输出: " + (e.stderr || e.stdout || "") + " | " + e.message); }
   } else {
@@ -173,6 +205,8 @@ acceptance:
   }
   fs.rmSync(BARE, { recursive: true, force: true });
   fs.rmSync(taskDir, { recursive: true, force: true });
+  /* 恢复 tracked 的历史任务目录（T-3003 为真实平台任务，测试发布后需还原 HEAD 版本，避免工作区 dirty 导致后续本地 SKIP） */
+  try { g("git checkout -- " + path.join("tasks", TASK)); } catch (e) {}
 
   console.log(failed === 0 ? "\n✅ 全部通过" : `\n❌ ${failed} 项失败`);
   process.exit(failed === 0 ? 0 : 1);
