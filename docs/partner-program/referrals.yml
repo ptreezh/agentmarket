@@ -1,0 +1,5 @@
+# referrals.yml — 合伙人引荐登记（运营者维护，rebate.js 读取）
+# 格式：两空格缩进 "合伙人AG-ID: [引荐的任务号或agent-id, ...]"
+# 归属规则：引荐的任务每笔结算税额按 90 天内 100% / 之后 50% 返还合伙人（D-130d）
+partners:
+  # AG-EXAMPLE: [T-9999, AG-NEW01]

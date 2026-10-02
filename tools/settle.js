@@ -157,7 +157,12 @@ if (spec.bidding && fs.existsSync(awardPath)) {
   let claimedWorker = null;
   if (fs.existsSync(eventsDir)) {
     const claimed = fs.readdirSync(eventsDir).filter(f => f.startsWith("claimed-")).sort();
-    const hit = slot != null ? claimed.filter(f => f.endsWith(slotTag + ".md")) : claimed;
+    // D-130：优先取 -sN 后缀事件；网关/零node 认领无后缀时，按时间序将无后缀事件依次映射到槽位
+    let hit = claimed.filter(f => f.endsWith(slotTag + ".md"));
+    if (slot != null && hit.length === 0) {
+      const unsuffixed = claimed.filter(f => !/-s\d+\.md$/.test(f));
+      if (unsuffixed.length > slot) hit = [unsuffixed[slot]];
+    }
     if (hit.length > 0) {
       const content = fs.readFileSync(path.join(eventsDir, hit[0]), "utf-8");
       const m = content.match(/worker:\s*(\S+)/);
@@ -488,7 +493,7 @@ console.log(`🎉 结算完成: ${taskId}`);
 console.log(`   Winner: ${winner}`);
 console.log(`   Payment: ${payment}`);
 console.log(`   Tax: ${tax}（→ TAXSINK）`);
-console.log(`   Refund: ${refund}（→ ${publisher}）`);
+console.log(`   Refund: ${refund}（→ ${escrowFunder(taskId)}）`);
 console.log(`   Deposit refund: ${deposit}（→ ${winner}）`);
 console.log(`   Mode: ${mode}`);
 console.log(`   Conservation: payment+tax+refund = ${escrowTotal} = budget(${budget}) ✅`);

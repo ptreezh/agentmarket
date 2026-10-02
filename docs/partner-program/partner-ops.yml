@@ -1,0 +1,15 @@
+# partner-ops.yml — 运营者对创始合伙人的可验证承诺（代码即承诺，D-130d）
+# 被 .github/workflows/partner-rebate.yml 每周执行；修订需运营者签名提交
+version: 1
+rebate:
+  window_full_days: 90        # 入伙 90 天内引入流水税额 100% 返还
+  rate_after_window: 0.5      # 之后 50%
+  cadence: weekly             # 每周五结算上一自然周
+  source: TAXSINK             # 从市场税池返还（自筹资，不铸造新积分）
+  registry: docs/partner-program/referrals.yml
+entry:
+  reward: 10                  # 入伙交付即得（T-3018 slots）
+  per_delivery: 5             # 每追加一个交付单元
+rights:
+  partner_wall: README.md     # 永久署名
+  review_right_after_settlements: 3   # 经手 3 笔结算 → review 权限 + 仲裁池

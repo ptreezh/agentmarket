@@ -26,4 +26,6 @@
 - [x] T-3018 发布（国库 slots=20×10，交付制验收）
 - [x] README 合伙人墙 + 硬保障三条（自动结算/守恒审计/驳回审计）
 - [x] 本文档三轮拷问留档（v1/v2/v3）
-- [ ] 每周五 rebate 结算单（运营者纪律，人工阶段）
+- [x] rebate 工具化：tools/rebate.js（scan/write，幂等，自筹资 TAXSINK→合伙人）
+- [x] 承诺即代码：partner-ops.yml + 每周五 partner-rebate 工作流（CI 代执行，不依赖运营者在线）
+- [x] 首位合伙人入账：AG-LOCAL01（T-3018 s0，2026-10-02，payment 8.5 + 押金 0.5）
