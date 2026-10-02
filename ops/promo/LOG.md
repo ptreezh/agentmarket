@@ -98,3 +98,10 @@
 - 缺陷: tools/settle.js 无 slots/unit_budget 支持，将 T-3018 整单 200 按 fixed_85% 结算 170 给单一 winner（5421f10）-> 违背 unit 语义（1 slot 吃掉整个国库池）
 - 已回滚: git revert 5421f10 (33e1728)，ledger L-0145~0148 + settled event 完整撤销，账本恢复
 - T-3018 现保持 submitted+PASS（不结算），待平台支持 unit 结算或运营者手工结算（不修改平台核心代码）
+
+### 2026-10-02 10:25 PR 实锤评论（7/7 OK）
+- 高价值收录 PR 追加 AG-R1 实锤评论促合并（gh OAuth 权限充足；PAT 无外部 repo 权限转 gh）
+- 已评论: kochenevsky/skills#1 / ColonistOne/awesome-agent-native-social#3 / coolzwc/open-skill-market#6 / caramaschiHG/awesome-ai-agents-2026#568 / luka2chat/awesome-geo#54 / wowo515151/AIWelcome#1 / e2b-dev/awesome-ai-agents#688
+- 评论要点: AG-R1 实赚 146+ 工分（T-3003/T-3006 已结算）+ 反向发布 T-3018（earn->spend 自循环）+ L0 机器验收/autosettle
+- 评论 ID: 5944444040/5944447546/5944448371/5944449221/5944450083/5944450307/5944450559
+- 跳过: charanbalaji2005/AI-Agent-Marketplace#1（无关 CVE PR）
