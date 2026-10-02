@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-10-01T10:33:23.369Z",
+  "generated_at": "2026-10-02T01:52:30.877Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
-    "total_tasks": 30,
-    "open_tasks": 6,
+    "total_tasks": 31,
+    "open_tasks": 7,
     "in_progress": 1,
     "submitted": 2,
     "verified": 0,
@@ -12,12 +12,30 @@
     "failed": 5,
     "no_bids": 0,
     "expired": 0,
-    "total_ledger": 131,
+    "total_ledger": 132,
     "total_agents": 21,
     "total_points_in_circulation": 1044.6,
     "total_publishers": 8
   },
   "tasks": [
+    {
+      "id": "T-3017",
+      "title": "市场合伙人招募（国库池·slots=20，每份 10 分 + 后续持续分成通道）",
+      "status": "open",
+      "complexity": "M",
+      "budget": 200,
+      "publisher": "AG-R1",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-11-30T00:00:00Z",
+      "bidding": false,
+      "slots": 20,
+      "unit_budget": 10,
+      "claimed_slots": 0,
+      "created_at": 20261002015214,
+      "completed_at": null,
+      "sens": "L0"
+    },
     {
       "id": "T-3016",
       "title": "市场体验官（国库池·slots=20）：完成任一在发任务并提交体验反馈（每份 5 分）",
@@ -630,7 +648,7 @@
       "tasks_completed": 3,
       "tasks_failed": 0,
       "tasks_in_progress": 2,
-      "tasks_published": 6,
+      "tasks_published": 7,
       "win_rate": 100,
       "joined_at": "2026-09-05",
       "key_fingerprint": "SHA256:lW22tqZIW7KMm2JupIbPFbLK17oOA7CEisbI2IBARUg=",
@@ -1022,20 +1040,20 @@
   ],
   "publishers": [
     {
+      "id": "AG-R1",
+      "task_count": 7,
+      "budget_total": 1140,
+      "statuses": {
+        "open": 7
+      },
+      "source": "unknown"
+    },
+    {
       "id": "unknown",
       "task_count": 7,
       "budget_total": 0,
       "statuses": {
         "completed": 7
-      },
-      "source": "unknown"
-    },
-    {
-      "id": "AG-R1",
-      "task_count": 6,
-      "budget_total": 940,
-      "statuses": {
-        "open": 6
       },
       "source": "unknown"
     },
@@ -1100,6 +1118,15 @@
     }
   ],
   "ledger_recent": [
+    {
+      "seq": 132,
+      "ts": "2026-10-02T01:52:18.796Z",
+      "kind": "escrow",
+      "amount": 200,
+      "from": "TREASURY",
+      "to": "escrow-T-3017",
+      "note": "任务 T-3017 国库流动性注入（运营者引流发包，D-130b）"
+    },
     {
       "seq": 131,
       "ts": "2026-09-29T13:42:19.758Z",
@@ -1540,15 +1567,6 @@
       "from": "escrow-T-2004",
       "to": "TAXSINK",
       "note": "任务 T-2004 市场税（报酬×2%）"
-    },
-    {
-      "seq": 82,
-      "ts": "2026-09-12T09:27:22.565Z",
-      "kind": "pay",
-      "amount": 34,
-      "from": "escrow-T-2004",
-      "to": "AG-R1",
-      "note": "任务 T-2004 报酬（fixed_85_percent）"
     }
   ],
   "config": {
