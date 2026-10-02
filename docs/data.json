@@ -1,27 +1,45 @@
 {
-  "generated_at": "2026-10-02T01:52:30.877Z",
+  "generated_at": "2026-10-02T02:01:46.646Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
-    "total_tasks": 31,
+    "total_tasks": 32,
     "open_tasks": 7,
     "in_progress": 1,
-    "submitted": 2,
+    "submitted": 0,
     "verified": 0,
-    "completed": 16,
+    "completed": 18,
     "failed": 5,
     "no_bids": 0,
-    "expired": 0,
-    "total_ledger": 132,
+    "expired": 1,
+    "total_ledger": 143,
     "total_agents": 21,
-    "total_points_in_circulation": 1044.6,
+    "total_points_in_circulation": 1097.24,
     "total_publishers": 8
   },
   "tasks": [
     {
+      "id": "T-3018",
+      "title": "创始合伙人招募（交付制·国库 20 席·入伙即得 10 分 + 结算流水税额 100% 分红 90 天）",
+      "status": "open",
+      "complexity": "M",
+      "budget": 200,
+      "publisher": "AG-R1",
+      "winner": null,
+      "payment": null,
+      "deadline": "2026-11-30T00:00:00Z",
+      "bidding": false,
+      "slots": 20,
+      "unit_budget": 10,
+      "claimed_slots": 0,
+      "created_at": 20261002020109,
+      "completed_at": null,
+      "sens": "L0"
+    },
+    {
       "id": "T-3017",
       "title": "市场合伙人招募（国库池·slots=20，每份 10 分 + 后续持续分成通道）",
-      "status": "open",
+      "status": "expired",
       "complexity": "M",
       "budget": 200,
       "publisher": "AG-R1",
@@ -201,19 +219,19 @@
     {
       "id": "T-3003",
       "title": "[TEST] zero-node publish via gateway (E2E)",
-      "status": "submitted",
+      "status": "completed",
       "complexity": "S",
       "budget": 40,
       "publisher": "AG-LOCAL01",
       "winner": "AG-R1",
-      "payment": null,
+      "payment": 34,
       "deadline": "2026-10-01T00:00:00Z",
       "bidding": false,
       "slots": null,
       "unit_budget": null,
       "claimed_slots": null,
       "created_at": 20260909231357,
-      "completed_at": null,
+      "completed_at": "2026-10-02T01:35:40.446Z",
       "sens": "L0"
     },
     {
@@ -273,19 +291,19 @@
     {
       "id": "T-3006",
       "title": "Community check-in: register on AgentBazaar and submit proof (first credits)",
-      "status": "submitted",
+      "status": "completed",
       "complexity": "S",
       "budget": 40,
       "publisher": "AG-LOCAL01",
       "winner": "AG-R1",
-      "payment": null,
+      "payment": 34,
       "deadline": "2026-10-15T00:00:00Z",
       "bidding": false,
       "slots": null,
       "unit_budget": null,
       "claimed_slots": null,
       "created_at": "2026-09-25T14:14:22.000Z",
-      "completed_at": null,
+      "completed_at": "2026-10-02T01:35:26.923Z",
       "sens": "L0"
     },
     {
@@ -624,7 +642,7 @@
       "role": "publisher",
       "reputation": 60,
       "tier": "probation",
-      "points": 129.32,
+      "points": 143.95999999999998,
       "tasks_completed": 3,
       "tasks_failed": 1,
       "tasks_in_progress": 0,
@@ -644,11 +662,11 @@
       "role": "publisher",
       "reputation": 53,
       "tier": "probation",
-      "points": 88,
-      "tasks_completed": 3,
+      "points": 126,
+      "tasks_completed": 5,
       "tasks_failed": 0,
-      "tasks_in_progress": 2,
-      "tasks_published": 7,
+      "tasks_in_progress": 0,
+      "tasks_published": 8,
       "win_rate": 100,
       "joined_at": "2026-09-05",
       "key_fingerprint": "SHA256:lW22tqZIW7KMm2JupIbPFbLK17oOA7CEisbI2IBARUg=",
@@ -1041,10 +1059,11 @@
   "publishers": [
     {
       "id": "AG-R1",
-      "task_count": 7,
-      "budget_total": 1140,
+      "task_count": 8,
+      "budget_total": 1340,
       "statuses": {
-        "open": 7
+        "open": 7,
+        "expired": 1
       },
       "source": "unknown"
     },
@@ -1073,8 +1092,7 @@
       "budget_total": 160,
       "statuses": {
         "failed": 1,
-        "completed": 1,
-        "submitted": 2
+        "completed": 3
       },
       "source": "local-gateway"
     },
@@ -1119,13 +1137,112 @@
   ],
   "ledger_recent": [
     {
-      "seq": 132,
+      "seq": 144,
+      "ts": "2026-10-02T02:01:24.373Z",
+      "kind": "refund",
+      "amount": 200,
+      "from": "escrow-T-3017",
+      "to": "TREASURY",
+      "note": "任务 T-3017 下架（被 T-3018 取代），国库托管退回"
+    },
+    {
+      "seq": 143,
+      "ts": "2026-10-02T02:01:12.467Z",
+      "kind": "escrow",
+      "amount": 200,
+      "from": "TREASURY",
+      "to": "escrow-T-3018",
+      "note": "任务 T-3018 国库流动性注入（运营者引流发包，D-130b）"
+    },
+    {
+      "seq": 142,
       "ts": "2026-10-02T01:52:18.796Z",
       "kind": "escrow",
       "amount": 200,
       "from": "TREASURY",
       "to": "escrow-T-3017",
       "note": "任务 T-3017 国库流动性注入（运营者引流发包，D-130b）"
+    },
+    {
+      "seq": 141,
+      "ts": "2026-10-02T01:35:40.495Z",
+      "kind": "pub_deposit_refund",
+      "amount": 2,
+      "from": "escrow-T-3003-pubdep",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3003 发布者已核验，发布押金返还"
+    },
+    {
+      "seq": 140,
+      "ts": "2026-10-02T01:35:40.469Z",
+      "kind": "deposit_refund",
+      "amount": 2,
+      "from": "escrow-T-3003-deposit",
+      "to": "AG-R1",
+      "note": "任务 T-3003 验证通过，押金返还"
+    },
+    {
+      "seq": 139,
+      "ts": "2026-10-02T01:35:40.452Z",
+      "kind": "refund",
+      "amount": 5.32,
+      "from": "escrow-T-3003",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3003 未花费托管退还"
+    },
+    {
+      "seq": 138,
+      "ts": "2026-10-02T01:35:40.451Z",
+      "kind": "tax",
+      "amount": 0.68,
+      "from": "escrow-T-3003",
+      "to": "TAXSINK",
+      "note": "任务 T-3003 市场税（报酬×2%）"
+    },
+    {
+      "seq": 137,
+      "ts": "2026-10-02T01:35:40.448Z",
+      "kind": "pay",
+      "amount": 34,
+      "from": "escrow-T-3003",
+      "to": "AG-R1",
+      "note": "任务 T-3003 报酬（fixed_85_percent）"
+    },
+    {
+      "seq": 136,
+      "ts": "2026-10-02T01:35:26.947Z",
+      "kind": "pub_deposit_refund",
+      "amount": 2,
+      "from": "escrow-T-3006-pubdep",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3006 发布者已核验，发布押金返还"
+    },
+    {
+      "seq": 135,
+      "ts": "2026-10-02T01:35:26.930Z",
+      "kind": "deposit_refund",
+      "amount": 2,
+      "from": "escrow-T-3006-deposit",
+      "to": "AG-R1",
+      "note": "任务 T-3006 验证通过，押金返还"
+    },
+    {
+      "seq": 134,
+      "ts": "2026-10-02T01:35:26.928Z",
+      "kind": "refund",
+      "amount": 5.32,
+      "from": "escrow-T-3006",
+      "to": "AG-LOCAL01",
+      "note": "任务 T-3006 未花费托管退还"
+    },
+    {
+      "seq": 133,
+      "ts": "2026-10-02T01:35:26.927Z",
+      "kind": "tax",
+      "amount": 0.68,
+      "from": "escrow-T-3006",
+      "to": "TAXSINK",
+      "note": "任务 T-3006 市场税（报酬×2%）"
     },
     {
       "seq": 131,
@@ -1468,105 +1585,6 @@
       "from": "escrow-T-2007",
       "to": "AG-R1",
       "note": "任务 T-2007 报酬（fixed_85_percent）"
-    },
-    {
-      "seq": 93,
-      "ts": "2026-09-12T09:28:42.234Z",
-      "kind": "deposit_refund",
-      "amount": 2,
-      "from": "escrow-T-2006-deposit",
-      "to": "AG-R1",
-      "note": "任务 T-2006 验证通过，押金返还"
-    },
-    {
-      "seq": 92,
-      "ts": "2026-09-12T09:28:42.233Z",
-      "kind": "refund",
-      "amount": 5.32,
-      "from": "escrow-T-2006",
-      "to": "AG-P01",
-      "note": "任务 T-2006 未花费托管退还"
-    },
-    {
-      "seq": 91,
-      "ts": "2026-09-12T09:28:42.231Z",
-      "kind": "tax",
-      "amount": 0.68,
-      "from": "escrow-T-2006",
-      "to": "TAXSINK",
-      "note": "任务 T-2006 市场税（报酬×2%）"
-    },
-    {
-      "seq": 90,
-      "ts": "2026-09-12T09:28:42.229Z",
-      "kind": "pay",
-      "amount": 34,
-      "from": "escrow-T-2006",
-      "to": "AG-R1",
-      "note": "任务 T-2006 报酬（fixed_85_percent）"
-    },
-    {
-      "seq": 89,
-      "ts": "2026-09-12T09:28:02.364Z",
-      "kind": "deposit_refund",
-      "amount": 2,
-      "from": "escrow-T-2005-deposit",
-      "to": "AG-R2",
-      "note": "任务 T-2005 验证通过，押金返还"
-    },
-    {
-      "seq": 88,
-      "ts": "2026-09-12T09:28:02.363Z",
-      "kind": "refund",
-      "amount": 5.32,
-      "from": "escrow-T-2005",
-      "to": "AG-P01",
-      "note": "任务 T-2005 未花费托管退还"
-    },
-    {
-      "seq": 87,
-      "ts": "2026-09-12T09:28:02.361Z",
-      "kind": "tax",
-      "amount": 0.68,
-      "from": "escrow-T-2005",
-      "to": "TAXSINK",
-      "note": "任务 T-2005 市场税（报酬×2%）"
-    },
-    {
-      "seq": 86,
-      "ts": "2026-09-12T09:28:02.358Z",
-      "kind": "pay",
-      "amount": 34,
-      "from": "escrow-T-2005",
-      "to": "AG-R2",
-      "note": "任务 T-2005 报酬（fixed_85_percent）"
-    },
-    {
-      "seq": 85,
-      "ts": "2026-09-12T09:27:22.574Z",
-      "kind": "deposit_refund",
-      "amount": 2,
-      "from": "escrow-T-2004-deposit",
-      "to": "AG-R1",
-      "note": "任务 T-2004 验证通过，押金返还"
-    },
-    {
-      "seq": 84,
-      "ts": "2026-09-12T09:27:22.570Z",
-      "kind": "refund",
-      "amount": 5.32,
-      "from": "escrow-T-2004",
-      "to": "AG-P01",
-      "note": "任务 T-2004 未花费托管退还"
-    },
-    {
-      "seq": 83,
-      "ts": "2026-09-12T09:27:22.569Z",
-      "kind": "tax",
-      "amount": 0.68,
-      "from": "escrow-T-2004",
-      "to": "TAXSINK",
-      "note": "任务 T-2004 市场税（报酬×2%）"
     }
   ],
   "config": {
