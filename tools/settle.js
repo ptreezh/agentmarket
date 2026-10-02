@@ -80,6 +80,32 @@ const budget = spec.budget;
 const publisher = spec.publisher;
 const taxRate = 0.02; // 从 market-config.json 读取，当前 2%
 
+// D-130 槽位参数：slots>1 的任务必须 --slot N，按 unit_budget 逐槽守恒结算
+const slotArgIdx = process.argv.indexOf("--slot");
+const slotArg = slotArgIdx >= 0 ? process.argv[slotArgIdx + 1] : null;
+const slots = Number(spec.slots || 1);
+const unitBudget = Number(spec.unit_budget || 0);
+if (slots > 1 && (slotArg == null || !/^\d+$/.test(slotArg) || Number(slotArg) >= slots)) {
+  console.error(`❌ 众包任务（slots=${slots}）必须 --slot <0..${slots - 1}>：整单结算会把 ${budget} 总额付给单个槽位（D-130 禁止）`);
+  process.exit(1);
+}
+const slot = slots > 1 ? Number(slotArg) : null;
+const slotTag = slot == null ? "" : "-s" + slot;
+
+// D-130b 国库退款路由：escrow 出资方是 TREASURY 时，refund 回 TREASURY 而非 publisher
+function escrowFunder(taskId) {
+  const ld = path.join("ledger");
+  if (!fs.existsSync(ld)) return publisher;
+  for (const f of fs.readdirSync(ld).filter(x => /^L-\d{4}\.md$/.test(x))) {
+    const c = fs.readFileSync(path.join(ld, f), "utf8");
+    if (/^kind:\s*escrow/m.test(c) && new RegExp("^to:\\s*escrow-" + taskId + "\\s*$", "m").test(c)) {
+      const m = c.match(/^from:\s*(\S+)$/m);
+      return m ? m[1] : publisher;
+    }
+  }
+  return publisher;
+}
+
 // 1. 检查验证通过
 const verifyPath = path.join(taskDir, "result", "verify-result.json");
 if (!fs.existsSync(verifyPath)) {
@@ -93,12 +119,15 @@ if (!verifyResult.verdict || verifyResult.verdict !== "PASS") {
 }
 console.log(`✅ 验证通过：${verifyResult.passed}/${verifyResult.total} 断言通过`);
 
-// 2. 检查是否已结算
+// 2. 检查是否已结算（D-130：slots 任务按槽位幂等检查）
 const eventsDir = path.join(taskDir, "events");
 if (fs.existsSync(eventsDir)) {
   const settled = fs.readdirSync(eventsDir).filter(f => f.startsWith("settled-"));
-  if (settled.length > 0) {
-    console.error(`❌ 任务已结算：${settled[0]}`);
+  const dup = slot == null
+    ? settled.length > 0
+    : settled.some(f => f.endsWith(slotTag + ".md"));
+  if (dup) {
+    console.error(`❌ ${slot == null ? "任务" : "槽位 s" + slot} 已结算`);
     process.exit(1);
   }
 }
@@ -124,39 +153,40 @@ if (spec.bidding && fs.existsSync(awardPath)) {
   mode = award.mode || "vickrey";
   console.log(`📋 竞价任务：winner=${winner}, payment=${payment}（${mode}）`);
 } else {
-  // 普通任务：预算 × 85%
-  // 从 claimed 事件读取 worker
+  // 普通任务：预算 × 85%；D-130 slots 任务按槽位取 worker、unit_budget 计酬
   let claimedWorker = null;
   if (fs.existsSync(eventsDir)) {
     const claimed = fs.readdirSync(eventsDir).filter(f => f.startsWith("claimed-")).sort();
-    if (claimed.length > 0) {
-      const content = fs.readFileSync(path.join(eventsDir, claimed[0]), "utf-8");
+    const hit = slot != null ? claimed.filter(f => f.endsWith(slotTag + ".md")) : claimed;
+    if (hit.length > 0) {
+      const content = fs.readFileSync(path.join(eventsDir, hit[0]), "utf-8");
       const m = content.match(/worker:\s*(\S+)/);
       if (m) claimedWorker = m[1];
     }
   }
   if (!claimedWorker) {
-    console.error(`❌ 无法确定中标者：未找到 claimed 事件`);
+    console.error(`❌ 无法确定中标者：未找到${slot == null ? "" : "槽位 s" + slot + " 的"} claimed 事件`);
     process.exit(1);
   }
   winner = claimedWorker;
-  payment = Math.round(budget * 0.85 * 100) / 100;
-  mode = "fixed_85_percent";
-  console.log(`📋 普通任务：winner=${winner}, payment=${payment}（预算×85%）`);
+  payment = Math.round((slot != null ? unitBudget : budget) * 0.85 * 100) / 100;
+  mode = slot != null ? "fixed_85_percent_slot" : "fixed_85_percent";
+  console.log(`📋 普通任务：winner=${winner}, payment=${payment}（${slot == null ? "预算" : "unit_budget"}×85%）`);
 }
 
-// 4. 计算各项
+// 4. 计算各项（D-130：slots 任务按 unit_budget 守恒）
+const effBudget = slot != null ? unitBudget : budget;
 const tax = Math.round(payment * taxRate * 100) / 100;
-const refund = Math.round((budget - payment - tax) * 100) / 100;
-const deposit = Math.round(budget * 0.05 * 100) / 100;
+const refund = Math.round((effBudget - payment - tax) * 100) / 100;
+const deposit = Math.round(effBudget * 0.05 * 100) / 100;
 
 // 5. 守恒验证
 const escrowTotal = Math.round((payment + tax + refund) * 100) / 100;
-if (escrowTotal !== budget) {
-  console.error(`❌ 守恒验证失败：payment(${payment}) + tax(${tax}) + refund(${refund}) = ${escrowTotal} ≠ budget(${budget})`);
+if (escrowTotal !== effBudget) {
+  console.error(`❌ 守恒验证失败：payment(${payment}) + tax(${tax}) + refund(${refund}) = ${escrowTotal} ≠ ${slot == null ? "budget" : "unit_budget"}(${effBudget})`);
   process.exit(1);
 }
-console.log(`✅ 守恒验证通过：payment(${payment}) + tax(${tax}) + refund(${refund}) = budget(${budget})`);
+console.log(`✅ 守恒验证通过：payment(${payment}) + tax(${tax}) + refund(${refund}) = ${slot == null ? "budget" : "unit_budget"}(${effBudget})${slot == null ? "" : "（槽位 s" + slot + "）"}`);
 
 // 6. 写账本
 const now = new Date().toISOString();
@@ -200,16 +230,17 @@ console.log(`   💰 税: TAXSINK +${tax}`);
 
 // 6c. 退款（refund）
 if (refund > 0) {
+  const refundTo = escrowFunder(taskId); // D-130b：国库出资的任务退款回 TREASURY，防国库资金漏给个人
   ledger.writeEntry({
     kind: "refund",
     amount: refund,
     from: `escrow-${taskId}`,
-    to: publisher,
-    note: `任务 ${taskId} 未花费托管退还`,
+    to: refundTo,
+    note: `任务 ${taskId} 未花费托管退还${slot != null ? "（槽位 s" + slot + "）" : ""}${refundTo === "TREASURY" ? "（国库出资，回笼 TREASURY）" : ""}`,
     signer: "operator",
     privKeyPath: operatorPriv
   });
-  console.log(`   💰 退款: ${publisher} +${refund}`);
+  console.log(`   💰 退款: ${refundTo} +${refund}`);
 }
 
 // 6d. 押金返还（deposit_refund）
@@ -224,9 +255,9 @@ ledger.writeEntry({
 });
 console.log(`   💰 押金返还: ${winner} +${deposit}`);
 
-// 6e. 发布押金返还（pub_deposit_refund）——发布者按时手动核验，押金返还（SPEC-AUTOSETTLE-20260912 G4）
+// 6e. 发布押金返还（pub_deposit_refund）——发布者按时手动核验，押金返还（SPEC-AUTOSETTLE-20260912 G4；D-130 逐槽按 unit 计）
 try {
-  const pubDep = Math.round(budget * 0.05 * 100) / 100;
+  const pubDep = Math.round(effBudget * 0.05 * 100) / 100;
   let hasPubDep = false;
   const ld = path.join("ledger");
   if (fs.existsSync(ld)) {
@@ -253,8 +284,8 @@ try {
 }
 
 // 7. 写 settled 事件
-const settledPath = path.join(eventsDir, `settled-${now.replace(/[:.]/g, "")}.md`);
-const settledBody = `task: ${taskId}
+const settledPath = path.join(eventsDir, `settled-${now.replace(/[:.]/g, "")}${slotTag}.md`);
+const settledBody = `task: ${taskId}${slot == null ? "" : "\nslot: " + slot}
 winner: ${winner}
 payment: ${payment}
 tax: ${tax}
@@ -262,8 +293,8 @@ refund: ${refund}
 deposit_refund: ${deposit}
 mode: ${mode}
 settled_at: ${now}
-budget: ${budget}
-conservation: payment+tax+refund=${escrowTotal}=budget
+budget: ${effBudget}
+conservation: payment+tax+refund=${escrowTotal}=${slot == null ? "budget" : "unit_budget"}
 `;
 const settledNote = "任务结算完成，守恒验证通过。\n"; // 含尾部换行，与 sig.js splitFile body 一致（D-112 v2）
 const settledSig = signOperator(settledNote).replace(/^ed25519:/, ""); // 事件签名纯 hex，覆盖正文（D-112）

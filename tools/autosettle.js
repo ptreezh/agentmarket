@@ -101,6 +101,18 @@ function eventTsFromFile(taskDir, fname) {
   return null;
 }
 function statusOf(spec, events, taskDir) {
+  // D-130 slots：逐槽判定——有待结算槽位=submitted；全槽结算=completed；未满员仍可认领=open
+  const slots = Number(spec.slots || 0);
+  if (slots > 1) {
+    if (events.some(f => f.startsWith("cancelled-"))) return "cancelled";
+    const settledS = events.filter(f => /^settled-.*-s\d+\.md$/.test(f)).map(f => (f.match(/-s(\d+)\.md$/) || [])[1]);
+    if (settledS.length >= slots) return "completed";
+    const submittedS = events.filter(f => /^submitted-.*-s\d+\.md$/.test(f)).map(f => (f.match(/-s(\d+)\.md$/) || [])[1]);
+    const pending = submittedS.filter(s => !settledS.includes(s) && !events.some(f => new RegExp("^rejected-.*-s" + s + "\\.md$").test(f)));
+    if (pending.length > 0) return "submitted";
+    if (settledS.length > 0 || submittedS.length > 0) return "in_progress";
+    return "open";
+  }
   if (events.some(f => f.startsWith("settled-"))) return "completed";
   if (events.some(f => f.startsWith("forfeited-"))) return "failed";
   if (events.some(f => f.startsWith("auto-failed-"))) return "failed";   // 幂等：自动核验 FAIL 不再重复
@@ -185,7 +197,55 @@ function actReminder(taskId, taskDir, submittedTs) {
   console.log(`  📨 ${taskId}: review-reminder 已发送`);
 }
 
+function actAutoReviewSlots(taskId, taskDir, spec, slots) {
+  const events = listEvents(taskDir);
+  const settledS = events.filter(f => /^settled-.*-s\d+\.md$/.test(f)).map(f => (f.match(/-s(\d+)\.md$/) || [])[1]);
+  const rejectedS = events.filter(f => /^rejected-.*-s(\d+)\.md$/.test(f)).map(f => (f.match(/-s(\d+)\.md$/) || [])[1]);
+  const pending = events.filter(f => /^submitted-.*-s(\d+)\.md$/.test(f)).map(f => (f.match(/-s(\d+)\.md$/) || [])[1])
+    .filter(s => !settledS.includes(s) && !rejectedS.includes(s));
+  if (!pending.length) return { ok: true, note: "无待结算槽位" };
+  const vrPath = path.join(taskDir, "result", "verify-result.json");
+  if (!fs.existsSync(vrPath)) {
+    try { execSync(`node tools/verify.js "${taskDir}"`, { encoding: "utf-8", stdio: "pipe", cwd: ROOT }); }
+    catch (e) { /* exit!=0 → FAIL */ }
+  }
+  let verdict = "FAIL";
+  if (fs.existsSync(vrPath)) {
+    try { verdict = JSON.parse(fs.readFileSync(vrPath, "utf-8")).verdict === "PASS" ? "PASS" : "FAIL"; } catch (e) {}
+  }
+  if (verdict === "PASS") {
+    if (!escrowFunded(taskId)) {
+      console.warn(`  ⚠️ ${taskId}: 无预算托管（escrow-${taskId}），跳过自动结算，需人工补记托管`);
+      return { skipped: true };
+    }
+    for (const s of pending) {
+      const opNote = `自动核验 ${taskId} slot=${s}: PASS（发布者 ${CFG.review_window_h}h 未 review，D-130 逐槽结算）`;
+      const { sig, fp } = signOperator(opNote);
+      const eSigLine = fp ? `signer: ${fp}\nsignature: ${sig}` : "signature: (unsigned)";
+      writeEvent(taskDir, `auto-settled-${nowTag()}-s${s}.md`,
+        ["event: auto-settled", `task: ${taskId}`, `slot: ${s}`, `trigger: review_window_expired`, `note: ${opNote}`, eSigLine], opNote);
+      commitPush(`autosettle: ${taskId} slot=${s} auto-settled`);
+      try { execSync(`node tools/settle.js "${taskId}" --slot ${s}`, { encoding: "utf-8", stdio: "pipe", cwd: ROOT }); }
+      catch (e) { console.warn(`  [warn] settle ${taskId} slot=${s}: ${e.message}`); }
+    }
+    console.log(`  ✅ ${taskId}: 逐槽自动结算完成（PASS × ${pending.length}）`);
+    return { ok: true, verdict: "PASS" };
+  }
+  for (const s of pending) {
+    const opNote = `自动核验 ${taskId} slot=${s}: FAIL（发布者 ${CFG.review_window_h}h 未 review）`;
+    const { sig, fp } = signOperator(opNote);
+    const eSigLine = fp ? `signer: ${fp}\nsignature: ${sig}` : "signature: (unsigned)";
+    writeEvent(taskDir, `auto-failed-${nowTag()}-s${s}.md`,
+      ["event: auto-failed", `task: ${taskId}`, `slot: ${s}`, `trigger: review_window_expired`, `note: ${opNote}`, eSigLine], opNote);
+  }
+  commitPush(`autosettle: ${taskId} auto-failed × ${pending.length} slots`);
+  console.log(`  ❌ ${taskId}: 逐槽自动核验 FAIL（× ${pending.length}）`);
+  return { ok: true, verdict: "FAIL" };
+}
+
 function actAutoReview(taskId, taskDir, spec) {
+  const slotsN = Number(spec.slots || 0);
+  if (slotsN > 1) return actAutoReviewSlots(taskId, taskDir, spec, slotsN);
   const budget = spec.budget || 40;
   const publisher = spec.publisher || "unknown";
   // 1. 跑 verify（若尚无结果）
