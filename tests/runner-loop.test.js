@@ -150,7 +150,7 @@ acceptance:
     try {
       g(`node tools/sig.js verify "${path.join(evDir, settledFile).replace(/\\/g, "/")}"`);
       check("settled 事件签名有效（operator）", true, "");
-    } catch (e) { check("settled 事件签名有效（operator）", false, e.message); }
+    } catch (e) { check("settled 事件签名有效（operator）", false, "verify 输出: " + (e.stderr || e.stdout || "") + " | " + e.message); }
   } else {
     check("settled 事件存在", false, "loop 未完成结算");
   }

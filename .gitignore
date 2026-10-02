@@ -6,6 +6,9 @@
 .DS_Store
 keys/
 
+# 文档抓取缓存（飞书 token 命名的临时文件，非仓库内容）
+doc-fetch-resources/
+
 # ????????/keepalive ???
 logs/
 

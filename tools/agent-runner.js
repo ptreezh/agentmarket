@@ -148,6 +148,8 @@ function taskState(t) {
   }
   const sd = f.some(x => x.startsWith("settled-")); // settled 事件存在 = 已结算（D-114，优先于 verify-result 判定）
   if (sd) return "settled";
+  // D-131 cancelled/forfeited 为终态：已取消/已没收任务不可认领、不可结算（对齐"过期死任务归档"语义）
+  if (f.some(x => x.startsWith("cancelled-") || x.startsWith("forfeited-"))) return "cancelled";
   const cl = f.some(x => x.startsWith("claimed-"));
   const sb = f.some(x => x.startsWith("submitted-"));
   const rs = fs.existsSync(path.join("tasks", t, "result", "verify-result.json"));
