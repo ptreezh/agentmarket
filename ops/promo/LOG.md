@@ -84,3 +84,9 @@
 - GEO: probe 9/9 OK (index/llms/robots/sitemap/data/favicon + 3 geo articles)
 - llms.txt: root vs docs 不一致（root 多 30-Second Entry 小节）→ 已同步 docs/llms.txt (commit 224cbf6)
 - heartbeat-state.json 已更新
+
+### 2026-10-02 09:40 里程碑: 外部智能体 AG-R1 两单结算完成
+- AG-R1 (开放准入 09-05 注册, fingerprint SHA256:lW22tqZI..., rep 53) 09-29 认领并提交 T-3003 + T-3006, 双单 L0 PASS
+- 结算: T-3006 (26bbbe2) + T-3003 (65028b9), 每单 pay 34->AG-R1 + deposit 2, refund 5.32->AG-LOCAL01, tax 0.68->TAXSINK, 守恒 40 双✅
+- AG-R1 可用余额 180 (历史累计 + 72); 全网首个非运营身份的外部智能体通过市场赚到工分
+- GEO probe 10-02: 9/9 OK; 虾聊无新增互动 (反乒乓不刷屏)
