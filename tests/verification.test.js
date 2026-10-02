@@ -47,6 +47,16 @@ function makeTask(opts) {
 }
 function cleanup(dir) { try { fs.rmSync(dir, { recursive: true, force: true }); } catch {} }
 
+/* verification 脚本按平台生成：Windows 用 .cmd（cmd /c），其他平台用 .sh（sh 执行） */
+const W32 = process.platform === "win32";
+const VSCRIPT = W32 ? "v.cmd" : "v.sh";
+const V0 = W32 ? "@exit /b 0\r\n" : "exit 0\n";
+const V1 = W32 ? "@exit /b 1\r\n" : "exit 1\n";
+const MARKER_SCRIPT = W32 ? "marker.cmd" : "marker.sh";
+const MARKER_CONTENT = W32 ? "@echo boom > marker.txt\r\n" : "echo boom > marker.txt\n";
+const QUIET_SCRIPT = W32 ? "quiet.cmd" : "quiet.sh";
+const QUIET_CONTENT = W32 ? "@exit /b 0\r\n" : "# noop\n";
+
 let failed = 0;
 function check(name, cond, detail) {
   if (cond) console.log(`  ✅ ${name}`);
@@ -73,10 +83,10 @@ console.log("T2: script exit 0 → PASS");
 {
   const dir = makeTask({
     acceptance: ["file_exists, path: result/ok.txt"],
-    verification: "  script: v.cmd\n  timeout: 30",
+    verification: `  script: ${VSCRIPT}\n  timeout: 30`,
     files: [
       { path: "result/ok.txt", content: "x" },
-      { path: "v.cmd", content: "@exit /b 0\r\n" },
+      { path: VSCRIPT, content: V0 },
     ],
   });
   const r = runVerify(dir);
@@ -93,10 +103,10 @@ console.log("T3: script exit 1 → FAIL");
 {
   const dir = makeTask({
     acceptance: ["file_exists, path: result/ok.txt"],
-    verification: "  script: v.cmd\n  timeout: 30",
+    verification: `  script: ${VSCRIPT}\n  timeout: 30`,
     files: [
       { path: "result/ok.txt", content: "x" },
-      { path: "v.cmd", content: "@exit /b 1\r\n" },
+      { path: VSCRIPT, content: V1 },
     ],
   });
   const r = runVerify(dir);
@@ -174,10 +184,10 @@ console.log("T7: L0 失败 → 短路不执行 verification");
 {
   const dir = makeTask({
     acceptance: ["file_exists, path: result/missing.txt"],
-    verification: "  script: marker.cmd\n  timeout: 30",
+    verification: `  script: ${MARKER_SCRIPT}\n  timeout: 30`,
     files: [
       { path: "result/ok.txt", content: "x" },
-      { path: "marker.cmd", content: "@echo boom > marker.txt\r\n" },
+      { path: MARKER_SCRIPT, content: MARKER_CONTENT },
     ],
   });
   const r = runVerify(dir);
@@ -214,10 +224,10 @@ console.log("T9: exit 0 空输出 → PASS");
 {
   const dir = makeTask({
     acceptance: ["file_exists, path: result/ok.txt"],
-    verification: "  script: quiet.cmd\n  timeout: 30",
+    verification: `  script: ${QUIET_SCRIPT}\n  timeout: 30`,
     files: [
       { path: "result/ok.txt", content: "x" },
-      { path: "quiet.cmd", content: "@exit /b 0\r\n" },
+      { path: QUIET_SCRIPT, content: QUIET_CONTENT },
     ],
   });
   const r = runVerify(dir);
