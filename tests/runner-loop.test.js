@@ -156,31 +156,8 @@ acceptance:
   check("loop 自动结算成功（operator 签名，T1）", settledOk, "loop 未显示 结算: ✅");
   const settledFile = fs.existsSync(evDir) ? fs.readdirSync(evDir).find((f) => f.startsWith("settled-")) : null;
   if (settledFile) {
-    const sp = path.join(evDir, settledFile);
     try {
-      // 诊断：dump 签名信息 + operator 密钥指纹，定位 verify 失败差异
-      const raw = fs.readFileSync(sp, "utf-8");
-      const opNow = fs.existsSync("OPERATOR_PUBKEY") ? fs.readFileSync("OPERATOR_PUBKEY", "utf-8") : "(missing)";
-      const opFpNow = opNow.startsWith("-----") ? "SHA256:" + require("crypto").createHash("sha256").update(require("crypto").createPublicKey(opNow).export({ type: "spki", format: "der" })).digest("base64") : opNow;
-      const sFp = (raw.match(/^signer:\s*(\S+)/m) || [])[1];
-      const sSig = (raw.match(/^signature:\s*(\S+)/m) || [])[1];
-      console.log(`[diag] settled=${settledFile}`);
-      console.log(`[diag] signer=${sFp}`);
-      console.log(`[diag] OPERATOR_PUBKEY fp now=${opFpNow} match=${opFpNow === sFp}`);
-      console.log(`[diag] sig len=${sSig ? sSig.length : 0} opKey exists=${fs.existsSync(path.join("keys", "operator", "private.pem"))}`);
-      const bm = raw.replace(/\r\n/g, "\n").replace(/\r/g, "\n").match(/^(---\n[\s\S]*?\n---)\n([\s\S]*)$/);
-      const manual = bm ? require("crypto").verify(null, Buffer.from(bm[2], "utf-8"), require("crypto").createPublicKey(opNow), Buffer.from(sSig || "", "hex")) : "no-split";
-      console.log(`[diag] manual verify(body)=${manual} body=${JSON.stringify(bm ? bm[2] : null)}`);
-      // 用临时私钥重签 body 再自验（排除密钥/内容问题）
-      const opPrivPem = fs.existsSync(path.join("keys", "operator", "private.pem")) ? fs.readFileSync(path.join("keys", "operator", "private.pem"), "utf-8") : "";
-      if (opPrivPem && bm) {
-        const resign = require("crypto").sign(null, Buffer.from(bm[2], "utf-8"), require("crypto").createPrivateKey(opPrivPem));
-        console.log(`[diag] resign-verify=${require("crypto").verify(null, Buffer.from(bm[2], "utf-8"), require("crypto").createPublicKey(opNow), resign)}`);
-        const derivedPub = require("crypto").createPublicKey(require("crypto").createPrivateKey(opPrivPem)).export({ type: "spki", format: "der" });
-        const derivedFp = "SHA256:" + require("crypto").createHash("sha256").update(derivedPub).digest("base64");
-        console.log(`[diag] derived-priv-pub fp=${derivedFp} match-op=${derivedFp === opFpNow}`);
-      }
-      g(`node tools/sig.js verify "${sp.replace(/\\/g, "/")}"`);
+      g(`node tools/sig.js verify "${path.join(evDir, settledFile).replace(/\\/g, "/")}"`);
       check("settled 事件签名有效（operator）", true, "");
     } catch (e) { check("settled 事件签名有效（operator）", false, "verify 输出: " + (e.stderr || e.stdout || "") + " | " + e.message); }
   } else {
