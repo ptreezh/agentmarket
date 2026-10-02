@@ -69,7 +69,13 @@ console.log("用例4: --once 死进程 → 执行重启命令 → marker 出现"
   fs.writeFileSync(pf, "99999998");
   const logFile = path.join(LOGS, "test-keepalive.log");
   const r = runK(`--once --pid-file "${pf}" --cmd "${cmdFile}" --log-file "${logFile}"`);
-  check("marker 已生成", fs.existsSync(marker), `code=${r.code} out=${r.out}`);
+  // 重启命令为异步执行（nohup/Start-Process 对齐 ps1），marker 生成容忍 ≤5s 竞态
+  let markerOk = false;
+  for (let i = 0; i < 25 && !markerOk; i++) {
+    if (fs.existsSync(marker)) { markerOk = true; break; }
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 200);
+  }
+  check("marker 已生成", markerOk, `code=${r.code} out=${r.out}`);
 }
 
 console.log(failed === 0 ? "\n✅ 全部通过" : `\n❌ ${failed} 项失败`);

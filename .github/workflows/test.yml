@@ -22,4 +22,6 @@ jobs:
         with:
           node-version: 20
       - name: Run full test suite
-        run: node --test tests/*.test.js
+        # 串行执行：runner-loop 测试会临时替换 OPERATOR_PUBKEY / 占用 mock-llm 端口，
+        # 与其它测试文件共享全局仓库状态，并行并发会导致偶发跨文件冲突（flaky）。
+        run: node --test --test-concurrency=1 tests/*.test.js

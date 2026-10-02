@@ -23,13 +23,14 @@ function runProbe(repo) {
     const out = g(`node "${PROBE}" --repo "${repo}" --json`);
     return { code: 0, out };
   } catch (e) {
-    // 容错：优先取 stdout；若 git 平台差异把 stderr 混入，截取首个 { 之后的 JSON 段
+    // 容错：优先取 stdout；若 git 平台差异把 stderr 混入，截取首个 { 到最后一个 } 的 JSON 段
     let out = ((e.stdout || "") + (e.stderr || "")).trim();
     const i = out.indexOf("{");
-    if (i > 0) out = out.slice(i);
+    if (i >= 0) { const j = out.lastIndexOf("}"); if (j > i) out = out.slice(i, j + 1); }
     return { code: e.status ?? 1, out };
   }
 }
+function tryJson(s) { try { return JSON.parse(s); } catch (e) { return null; } }
 
 console.log("probe-mirrors.test.js (A4 镜像探活)");
 let fx = null;
@@ -78,8 +79,8 @@ try {
   /* T6: 非 git 目录 → 不崩溃，exit 非 0 且有 ts 输出 */
   const plain = path.join(fx, "plain"); fs.mkdirSync(plain);
   const r6 = runProbe(plain);
-  const j6 = JSON.parse(r6.out);
-  check("T6 非 git 目录不崩溃", j6 && j6.ts, `code=${r6.code} out=${r6.out.slice(0, 100)}`);
+  const j6 = tryJson(r6.out);
+  check("T6 非 git 目录不崩溃", r6.code !== 0 && j6 && j6.ts, `code=${r6.code} out=${r6.out.slice(0, 120)}`);
 
   console.log(`\n结果: ${failed === 0 ? "全部通过 ✅" : failed + " 个失败 ❌"} (${passed}✅/${failed}❌)`);
 } finally {

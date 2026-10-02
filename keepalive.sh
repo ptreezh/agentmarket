@@ -239,8 +239,9 @@ run_once() {
 
 while true; do
   run_once
-  local rc=$?
-  if [[ "$ONCE" == "true" ]]; then
+  rc=$?
+  # 单轮模式（--once / --check-only）：检查一轮后立即以本轮状态码退出
+  if [[ "$ONCE" == "true" || "$CHECK_ONLY" == "true" ]]; then
     exit $rc
   fi
 

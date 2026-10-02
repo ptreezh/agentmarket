@@ -15,8 +15,10 @@ const g = (c) => execSync(c, { encoding: "utf-8", stdio: "pipe" }).trim();
 const ROOT = process.cwd();
 const BARE = path.join(process.env.TEMP || "/tmp", "agentmarket-loop-test.git");
 const TASK = "T-3003";
-const PUB = "AG-DOUBAO01";
-const WORKER = "AG-LOCAL01";
+/* 动态测试身份：仓库 keys/ 为 gitignored，CI checkout 无私钥；
+ * 固定身份会撞上本地真实密钥（覆盖即破坏身份），故按次生成并清理。 */
+const PUB = "AG-LOOP-PUB-" + Date.now().toString(36).toUpperCase();
+const WORKER = "AG-LOOP-WK-" + Date.now().toString(36).toUpperCase();
 
 let failed = 0;
 function check(name, cond, detail) {
@@ -42,6 +44,26 @@ function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
   g(`git push "${BARE}" main`);
   g(`git remote set-url origin "${BARE}"`);
   function taskDirFor() { return path.join("tasks", TASK); }
+
+  // 0.2 测试身份准备：动态 agents/<id>/agent.md + keys/<id>（keygen 要求 agent.md 已存在）
+  const mkAgent = (id, role) => {
+    const d = path.join("agents", id);
+    fs.mkdirSync(d, { recursive: true });
+    fs.writeFileSync(path.join(d, "agent.md"), `---\nname: ${id}\nrole: ${role}\n---\n`, "utf-8");
+    g(`node tools/keygen.js ${id}`);
+  };
+  mkAgent(PUB, "publisher"); mkAgent(WORKER, "worker");
+
+  // 0.3 临时 operator 密钥：结算由 operator 签名（keys/operator/private.pem gitignored，CI 缺失）。
+  //     备份现有密钥 → 生成临时 operator 密钥 → 临时覆盖 OPERATOR_PUBKEY（tracked，清理段 git reset 恢复）。
+  const opKey = path.join("keys", "operator", "private.pem");
+  const opKeyBak = opKey + ".bak-loop-test";
+  let hadOpKey = fs.existsSync(opKey);
+  if (hadOpKey) fs.renameSync(opKey, opKeyBak);
+  const { publicKey: tmpOpPub, privateKey: tmpOpPriv } = require("crypto").generateKeyPairSync("ed25519");
+  fs.mkdirSync(path.dirname(opKey), { recursive: true });
+  fs.writeFileSync(opKey, tmpOpPriv.export({ type: "pkcs8", format: "pem" }), { mode: 0o600 });
+  fs.writeFileSync("OPERATOR_PUBKEY", tmpOpPub.export({ type: "spki", format: "pem" }));
 
   // 1. 发布 T-3003（CSV 聚合，断言 file_exists result/result.json）
   const taskDir = taskDirFor();
@@ -133,6 +155,13 @@ acceptance:
   try { g(`git remote set-url origin https://github.com/ptreezh/agentmarket.git`); } catch (e) {}
   try { g("git reset --hard " + headBefore); } catch (e) { console.error("清理 reset 失败: " + e.message); }
   try { g("git clean -fdx " + path.join("tasks", TASK)); } catch (e) {}
+  /* 恢复 operator 密钥与动态身份目录（OPERATOR_PUBKEY 为 tracked，reset 已恢复） */
+  try { fs.rmSync(opKey, { force: true }); } catch (e) {}
+  if (hadOpKey) { try { fs.renameSync(opKeyBak, opKey); } catch (e) { console.error("恢复 operator 密钥失败: " + e.message); } }
+  for (const id of [PUB, WORKER]) {
+    try { fs.rmSync(path.join("keys", id), { recursive: true, force: true }); } catch (e) {}
+    try { fs.rmSync(path.join("agents", id), { recursive: true, force: true }); } catch (e) {}
+  }
   fs.rmSync(BARE, { recursive: true, force: true });
   fs.rmSync(taskDir, { recursive: true, force: true });
 
