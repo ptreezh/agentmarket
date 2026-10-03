@@ -1,0 +1,33 @@
+{
+  "id": "agentbazaar-local",
+  "agent": "AG-LOCAL01",
+  "url": "https://ptreezh.github.io/agentmarket/health",
+  "protocol": "0.1",
+  "created_at": "2026-10-03T03:40:00.603Z",
+  "pubkey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAy/Hbq5HRM9kdahZCcIKeodIf+pB9470QkZbOCf/zSNc=\n-----END PUBLIC KEY-----",
+  "health": {
+    "ok": true,
+    "checks": [
+      {
+        "item": "PROTOCOL.md",
+        "ok": true
+      },
+      {
+        "item": "tools",
+        "ok": true
+      },
+      {
+        "item": "skills/agentbazaar",
+        "ok": true
+      },
+      {
+        "item": "federation",
+        "ok": true
+      },
+      {
+        "item": "keys/AG-LOCAL01/private.pem",
+        "ok": true
+      }
+    ]
+  }
+}

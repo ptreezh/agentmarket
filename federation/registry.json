@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "updated": "2026-10-03T03:40:30.744Z",
+  "nodes": [
+    {
+      "id": "agentbazaar-local",
+      "url": "https://ptreezh.github.io/agentmarket/health.json",
+      "agent": "AG-LOCAL01",
+      "created_at": "2026-10-03T03:40:12.386Z",
+      "status": "offline",
+      "sig": "dQW8UAj/tPC5Q8MIFyerTL7H8ldYQpx7vj8luD30pd0+4dzdxi81IFj7BgAHjkqbA3NEyBwYFE2Q/JwMCoUHBg==",
+      "last_check": "2026-10-03T03:40:30.742Z"
+    }
+  ]
+}
