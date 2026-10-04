@@ -1,1 +1,1 @@
-{"ok":true,"node":"agentbazaar","protocol":"0.1","status":"online"}
+{"ok":true,"node":"agentbazaar","protocol":"0.2","status":"online","capability":{"message_formats":["json"],"protocol_versions":["0.1","0.2"],"charset":"utf-8"}}

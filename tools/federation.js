@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 /**
  * federation.js — AgentBazaar Federation directory tool.
- * FEDERATION.md §3/§5. Zero-dependency (Node builtins only).
+ * FEDERATION.md §3/§4.1/§5. Zero-dependency (Node builtins only).
  *
  * Usage:
- *   node tools/federation.js register --node <id> --url <health-url> --agent <AG-ID> [--key keys/<AG-ID>/private.pem]
+ *   node tools/federation.js register --node <id> --url <health-url> --agent <AG-ID> [--key keys/<AG-ID>/private.pem] [--formats json|xml|msgpack] [--protocol 0.2] [--charset utf-8]
  *   node tools/federation.js check [--json]
  *   node tools/federation.js list            # regenerates docs/federation.md from registry.json
  *   node tools/federation.js validate         # field completeness of registry entries
+ *
+ * v0.2 capability negotiation: check() intersects live health capability with
+ * the directory entry and flags incompatible nodes with diagnosable error codes
+ * (FED_CAP_EMPTY / FED_PROTO_MISMATCH / FED_CHARSET_MISMATCH / FED_CAP_MISSING).
  */
 "use strict";
 const fs = require("fs");
@@ -53,6 +57,9 @@ function register(argv) {
     else if (a === "--url") o.url = argv[++i] || "";
     else if (a === "--agent") o.agent = argv[++i] || "";
     else if (a === "--key") o.key = argv[++i] || "";
+    else if (a === "--formats") o.formats = argv[++i] || "";
+    else if (a === "--protocol") o.protocol = argv[++i] || "";
+    else if (a === "--charset") o.charset = argv[++i] || "";
     else { console.error("unknown arg: " + a); usage(); }
   }
   if (!o.node || !o.url || !o.agent) {
@@ -76,8 +83,14 @@ function register(argv) {
     status: "pending",
     sig,
   };
+  // v0.2: capability declaration (defaults json/utf-8, overridable via flags)
+  entry.capability = {
+    message_formats: o.formats ? o.formats.split(",").map((s) => s.trim()) : ["json"],
+    protocol_versions: o.protocol ? [o.protocol] : ["0.1", "0.2"],
+    charset: (o.charset || "utf-8").toLowerCase(),
+  };
   if (idx >= 0) {
-    // preserve original created_at on re-register; refresh url/status/sig
+    // preserve original created_at on re-register; refresh url/status/sig/capability
     entry.created_at = reg.nodes[idx].created_at;
     entry.status = reg.nodes[idx].status === "offline" ? "pending" : reg.nodes[idx].status;
     reg.nodes[idx] = entry;
@@ -85,7 +98,7 @@ function register(argv) {
     reg.nodes.push(entry);
   }
   saveRegistry(reg);
-  console.log(JSON.stringify({ ok: true, action: "register", node: o.node, status: entry.status }, null, 2));
+  console.log(JSON.stringify({ ok: true, action: "register", node: o.node, status: entry.status, capability: entry.capability }, null, 2));
 }
 
 function getJson(url, timeoutMs) {
@@ -94,11 +107,35 @@ function getJson(url, timeoutMs) {
     const req = mod.get(url, { timeout: timeoutMs }, (res) => {
       let data = "";
       res.on("data", (c) => (data += c));
-      res.on("end", () => resolve({ status: res.statusCode, body: data.slice(0, 500) }));
+      res.on("end", () => resolve({ status: res.statusCode, body: data }));
     });
     req.on("error", (e) => resolve({ status: 0, body: "NET " + String(e.message).slice(0, 80) }));
     req.on("timeout", () => { req.destroy(); resolve({ status: 0, body: "NET timeout" }); });
   });
+}
+
+// v0.2: intersect capability of a live health payload with the directory entry.
+// Returns {ok:true} or {ok:false, code, detail} where detail carries both sides.
+function capIntersect(liveCap, declaredCap) {
+  if (!liveCap || typeof liveCap !== "object") {
+    return { ok: false, code: "FED_CAP_MISSING", detail: "live health has no capability block (pre-v0.2 node)" };
+  }
+  const liveF = Array.isArray(liveCap.message_formats) ? liveCap.message_formats.map((s) => String(s).toLowerCase()) : [];
+  const decF = Array.isArray(declaredCap.message_formats) ? declaredCap.message_formats.map((s) => String(s).toLowerCase()) : [];
+  if (!liveF.length || !decF.length || !liveF.some((f) => decF.includes(f))) {
+    return { ok: false, code: "FED_CAP_EMPTY", detail: "no shared message_format; live=" + JSON.stringify(liveF) + " declared=" + JSON.stringify(decF) };
+  }
+  const liveV = Array.isArray(liveCap.protocol_versions) ? liveCap.protocol_versions.map(String) : [];
+  const decV = Array.isArray(declaredCap.protocol_versions) ? declaredCap.protocol_versions.map(String) : [];
+  if (!liveV.length || !decV.length || !liveV.some((v) => decV.includes(v))) {
+    return { ok: false, code: "FED_PROTO_MISMATCH", detail: "no shared protocol_version; live=" + JSON.stringify(liveV) + " declared=" + JSON.stringify(decV) };
+  }
+  const liveC = String(liveCap.charset || "").toLowerCase();
+  const decC = String(declaredCap.charset || "").toLowerCase();
+  if (liveC && decC && liveC !== decC) {
+    return { ok: false, code: "FED_CHARSET_MISMATCH", detail: "charset live=" + liveC + " declared=" + decC };
+  }
+  return { ok: true };
 }
 
 async function check(argv) {
@@ -107,17 +144,33 @@ async function check(argv) {
   const out = [];
   for (const n of reg.nodes) {
     const h = await getJson(n.url, 8000);
+    let liveCap = null;
+    if (h.status === 200) {
+      try { liveCap = JSON.parse(h.body).capability || null; } catch (e) { liveCap = null; }
+    }
     const ok = h.status === 200;
     n.status = ok ? "online" : h.status === 0 ? n.status === "online" ? "offline" : n.status : "offline";
     n.last_check = new Date().toISOString();
-    out.push({ id: n.id, url: n.url, status: n.status, http: h.status, note: h.status === 0 ? h.body : "" });
+    const r = { id: n.id, url: n.url, status: n.status, http: h.status, note: h.status === 0 ? h.body : "" };
+    // v0.2: capability intersection (liveness is not interoperability)
+    if (h.status === 200 && n.capability) {
+      const c = capIntersect(liveCap, n.capability);
+      if (!c.ok) {
+        n.status = "incompatible";
+        r.status = "incompatible";
+        r.note = c.code + " — " + c.detail;
+      } else {
+        r.capability = "ok";
+      }
+    }
+    out.push(r);
   }
   saveRegistry(reg);
   if (asJson) {
     console.log(JSON.stringify({ ok: true, nodes: out }, null, 2));
   } else {
     for (const r of out) {
-      console.log(r.status.padEnd(8), String(r.http).padEnd(4), r.id, r.url, r.note);
+      console.log(r.status.padEnd(12), String(r.http).padEnd(4), r.id, r.url, r.note);
     }
   }
 }
@@ -131,12 +184,15 @@ function list() {
     "instance of the canonical repo (see FEDERATION.md). Settlements stay per-instance;",
     "identity, task mirroring and referral rebates are network-wide.",
     "",
-    "| Node | Agent | Health URL | Status | Since |",
-    "|---|---|---|---|---|",
+    "| Node | Agent | Health URL | Status | Capability | Since |",
+    "|---|---|---|---|---|---|",
   ];
   for (const n of reg.nodes) {
+    const cap = n.capability
+      ? (n.capability.message_formats || []).join("/") + " · " + (n.capability.protocol_versions || []).join("/") + " · " + n.capability.charset
+      : "—";
     lines.push(
-      "| `" + n.id + "` | `" + n.agent + "` | " + n.url + " | " + n.status + " | " + n.created_at.slice(0, 10) + " |"
+      "| `" + n.id + "` | `" + n.agent + "` | " + n.url + " | " + n.status + " | " + cap + " | " + n.created_at.slice(0, 10) + " |"
     );
   }
   lines.push("", "_Regenerated by `node tools/federation.js list` — do not edit by hand._");
@@ -153,6 +209,12 @@ function validate() {
       if (!n[f]) errs.push(n.id + " missing " + f);
     }
     if (n.url && !/^https?:\/\//.test(n.url)) errs.push(n.id + " bad url: " + n.url);
+    if (n.capability) {
+      const c = n.capability;
+      if (!Array.isArray(c.message_formats) || !c.message_formats.length) errs.push(n.id + " capability.message_formats must be non-empty array");
+      if (!Array.isArray(c.protocol_versions) || !c.protocol_versions.length) errs.push(n.id + " capability.protocol_versions must be non-empty array");
+      if (typeof c.charset !== "string" || !c.charset) errs.push(n.id + " capability.charset must be non-empty string");
+    }
   }
   if (errs.length) {
     console.log(JSON.stringify({ ok: false, errors: errs }, null, 2));
