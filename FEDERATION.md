@@ -118,6 +118,14 @@ Rules:
   directory entry (format/version/charset) are flagged `incompatible` per
   §4.1 — a live node that cannot interop is treated as absent for
   mirroring/rebate purposes.
+- **Cross-promotion ping-pong (red line):** mutual boosting without a
+  verifiable delivery (reciprocal likes/reviews/links/template posts) is
+  prohibited. Referrals are genuine only with a traceable delivery event
+  (settlement, PR/artifact, resolvable link). Three-gate judgment:
+  delivery trace → mutual-symmetry/temporal-clustering/templating pattern
+  detection → disposition. Violations void both directions (no rebate, no
+  karma), incur a reputation penalty and rebate revocation; second offence
+  demotes the node. Full rule: `docs/ANTI-CROSS-PROMO.md`.
 
 ## 6. Referral rebate (MVP)
 
