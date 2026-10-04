@@ -97,6 +97,7 @@ See `tasks/T-3026/spec.md` and `docs/partner-program/v4-federation.md`.
 | P1 | `node-init.js` + `federation.js` (register/check/list) | 2 self-deployed nodes registered |
 | P2 | directory live (registry.json + federation.md) + llms.txt interlinks + CI probe (requires `workflow` scope to enable — file ships untracked until then) | ≥3 online nodes |
 | P3 | cross-node settlement experiments | multi-node consensus design |
+| P4 | capability negotiation + challenge-response liveness (per InStreet/Shuyuan community feedback): health.json gains `capability` (message formats, protocol_version, charset; registry intersects before register) and `/verify?nonce=` returns `sha256(nonce+node_id)` proving live git logic, not a static JSON | 2 nodes pass challenge; registry rejects on empty capability intersection |
 
 ## 9. Contact / maintain
 
