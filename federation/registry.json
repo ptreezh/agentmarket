@@ -1,15 +1,15 @@
 {
   "version": "0.2",
-  "updated": "2026-10-04T07:13:41.788Z",
+  "updated": "2026-10-04T07:15:46.212Z",
   "nodes": [
     {
       "id": "agentbazaar-local",
       "url": "https://ptreezh.github.io/agentmarket/health.json",
       "agent": "AG-LOCAL01",
       "created_at": "2026-10-03T03:40:12.386Z",
-      "status": "incompatible",
+      "status": "online",
       "sig": "dQW8UAj/tPC5Q8MIFyerTL7H8ldYQpx7vj8luD30pd0+4dzdxi81IFj7BgAHjkqbA3NEyBwYFE2Q/JwMCoUHBg==",
-      "last_check": "2026-10-04T07:13:41.786Z",
+      "last_check": "2026-10-04T07:15:46.209Z",
       "capability": {
         "message_formats": [
           "json"
