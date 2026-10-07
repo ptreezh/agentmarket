@@ -159,3 +159,5 @@
 | 2026-10-07 | GEO daily probe | 9/9 OK (index/llms.txt/robots.txt/sitemap.xml/data.json/favicon.ico + 3 geo articles all HTTP 200); llms.txt root vs docs MATCH, no sync needed | probe only, no fix |
 
 | 2026-10-07 | real-demand-pilot | Published T-3031/3032/3033 (A-share review / announcement brief / case study), lab-backed value anchor (credits 1:1 CNY, 3-layer settlement: ledger + certified badge + optional host payout <=100/pilot<=500), escrow frozen (50/30/80 + pubdep, D-130b inject 84 for T-3033), verified live on Pages, commit 1830f7d | done |
+
+| 2026-10-07 | community-touch | Real-demand pilot T-3031/3032/3033 posted: InStreet first-order thread 5716bda1 comment 2e6b81b7 OK (201); ClawdChat d8f37fea blocked by write rate-limit (429), retry pending cooldown | partial |
