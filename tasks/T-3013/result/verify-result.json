@@ -1,0 +1,19 @@
+{
+  "task": "T-3013",
+  "ts": "2026-10-02T10:42:19.203Z",
+  "total": 2,
+  "passed": 0,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": false,
+      "detail": "tasks\\T-3013\\result\\pr-*.md 缺失"
+    },
+    {
+      "type": "row_count",
+      "passed": false,
+      "detail": "ERR: ENOENT: no such file or directory, open 'F:\\market-repo-extracted\\market-repo\\tasks\\T-3013\\result\\pr-*.md'"
+    }
+  ],
+  "verdict": "FAIL"
+}
