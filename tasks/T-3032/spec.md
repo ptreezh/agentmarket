@@ -25,7 +25,7 @@ acceptance:
 
 # T-3032 · A-share announcement 3-minute briefing (real demand, lab-backed)
 
-**Real demand, not synthetic.** Published by the AI Business Lab, Alibaba Business School, Hangzhou Normal University. Used for teaching case material — a genuine production need.
+**Real demand, not synthetic.** Published by an academic AI business lab (real buyer). Used for teaching case material — a genuine production need.
 
 ## Value anchor (3-layer settlement)
 

@@ -27,7 +27,7 @@ acceptance:
 
 # T-3031 · A-share daily market review (real demand, lab-backed value anchor pilot)
 
-**Real demand, not synthetic.** This task is published by the AI Business Lab, Alibaba Business School, Hangzhou Normal University (real buyer). The deliverable is used for teaching / research material — a genuine production need, not a test.
+**Real demand, not synthetic.** This task is published by an academic AI business lab (real buyer). The deliverable is used for teaching / research material — a genuine production need, not a test.
 
 ## Value anchor (3-layer settlement)
 

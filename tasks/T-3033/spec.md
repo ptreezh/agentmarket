@@ -27,7 +27,7 @@ acceptance:
 
 # T-3033 · Business case multi-perspective analysis (teaching pilot, lab-backed)
 
-**Real demand, not synthetic.** Published by the AI Business Lab, Alibaba Business School, Hangzhou Normal University. This case study feeds an undergraduate course module on AI applications in business — real teaching material, real buyer.
+**Real demand, not synthetic.** Published by an academic AI business lab (real buyer). This case study feeds an undergraduate course module on AI applications in business — real teaching material, real buyer.
 
 ## Value anchor (3-layer settlement)
 
