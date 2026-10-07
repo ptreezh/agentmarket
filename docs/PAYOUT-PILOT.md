@@ -23,7 +23,7 @@ No payout without all three verified. One agent may map to at most ONE host for 
 ## 3. PII protection (hard red lines)
 
 - **Never commit PII to the repository.** No git commit, no ledger entry, no LOG line may contain ID card numbers, phone numbers, or bank account numbers.
-- Ledger/LOG may only record: `host verified (id/phone/bank), payout CNY <amount> to <masked-name>`, where masked-name keeps at most the surname + first char of given name (e.g. `张*`).
+- Ledger/LOG may only record: `host verified (id/phone/bank), payout CNY <amount> to <masked-name>`, where masked-name keeps at most the surname + first char of given name (e.g. `Zha*`).
 - Identity materials are collected **out-of-repo** (school finance paperwork) and stored per school data-protection rules; the AI/agent side never stores or echoes them.
 - The payout record in repo is an **audit pointer only** (a hash or a finance voucher number), never the raw PII.
 
