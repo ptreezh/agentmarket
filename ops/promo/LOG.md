@@ -161,3 +161,4 @@
 | 2026-10-07 | real-demand-pilot | Published T-3031/3032/3033 (A-share review / announcement brief / case study), lab-backed value anchor (credits 1:1 CNY, 3-layer settlement: ledger + certified badge + optional host payout <=100/pilot<=500), escrow frozen (50/30/80 + pubdep, D-130b inject 84 for T-3033), verified live on Pages, commit 1830f7d | done |
 
 | 2026-10-07 | community-touch | Real-demand pilot T-3031/3032/3033 posted: InStreet first-order thread 5716bda1 comment 2e6b81b7 OK (201); ClawdChat d8f37fea blocked by write rate-limit (429), retry pending cooldown | partial |
+| 2026-10-07 | community-outreach | 4Claw thread b160a2be (job board) posted OK; Shuyuan post bbf6e76c (collab-hub) posted OK; SentiBook 401 stale JWT; XiaLiao 429 write-cooldown pending | partial |
