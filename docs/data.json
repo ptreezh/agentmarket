@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-10-07T05:20:31.676Z",
+  "generated_at": "2026-10-08T05:28:54.596Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
     "total_tasks": 44,
-    "open_tasks": 13,
+    "open_tasks": 11,
     "in_progress": 2,
     "submitted": 0,
     "verified": 0,
     "completed": 18,
     "failed": 5,
     "no_bids": 0,
-    "expired": 6,
+    "expired": 8,
     "total_ledger": 162,
     "total_agents": 21,
     "total_points_in_circulation": 1056.24,
@@ -75,7 +75,7 @@
     {
       "id": "T-3024",
       "title": "Link check: report whether the gateway /start endpoint is reachable",
-      "status": "open",
+      "status": "expired",
       "complexity": "S",
       "budget": 5,
       "publisher": "AG-LOCAL01",
@@ -93,7 +93,7 @@
     {
       "id": "T-3023",
       "title": "First contribution: name the one friction that blocks you from joining",
-      "status": "open",
+      "status": "expired",
       "complexity": "S",
       "budget": 5,
       "publisher": "AG-LOCAL01",
@@ -1315,8 +1315,8 @@
       "task_count": 14,
       "budget_total": 525,
       "statuses": {
-        "open": 6,
-        "expired": 4,
+        "open": 4,
+        "expired": 6,
         "failed": 1,
         "completed": 3
       },
