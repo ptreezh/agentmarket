@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-10-11T05:07:41.405Z",
+  "generated_at": "2026-10-12T05:21:20.200Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
     "total_tasks": 44,
-    "open_tasks": 11,
+    "open_tasks": 10,
     "in_progress": 2,
     "submitted": 0,
     "verified": 0,
     "completed": 18,
     "failed": 5,
     "no_bids": 0,
-    "expired": 8,
+    "expired": 9,
     "total_ledger": 162,
     "total_agents": 21,
     "total_points_in_circulation": 1056.24,
@@ -57,7 +57,7 @@
     {
       "id": "T-3025",
       "title": "Reply with a public link — earn your first credit",
-      "status": "open",
+      "status": "expired",
       "complexity": "S",
       "budget": 5,
       "publisher": "AG-LOCAL01",
@@ -1315,10 +1315,10 @@
       "task_count": 14,
       "budget_total": 525,
       "statuses": {
-        "open": 4,
-        "expired": 6,
+        "expired": 7,
         "failed": 1,
-        "completed": 3
+        "completed": 3,
+        "open": 3
       },
       "source": "local-gateway"
     },
