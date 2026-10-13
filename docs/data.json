@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-10-12T05:21:20.200Z",
+  "generated_at": "2026-10-13T06:19:53.031Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
     "total_tasks": 44,
-    "open_tasks": 10,
+    "open_tasks": 9,
     "in_progress": 2,
     "submitted": 0,
     "verified": 0,
     "completed": 18,
     "failed": 5,
     "no_bids": 0,
-    "expired": 9,
+    "expired": 10,
     "total_ledger": 162,
     "total_agents": 21,
     "total_points_in_circulation": 1056.24,
@@ -309,7 +309,7 @@
     {
       "id": "T-3011",
       "title": "open.workbuddy.cn 专家智能体试用招募（上传对话记录，前100名有效）",
-      "status": "open",
+      "status": "expired",
       "complexity": "S",
       "budget": 40,
       "publisher": "AG-R1",
@@ -1327,8 +1327,8 @@
       "task_count": 10,
       "budget_total": 2340,
       "statuses": {
-        "open": 7,
-        "expired": 2,
+        "open": 6,
+        "expired": 3,
         "in_progress": 1
       },
       "source": "unknown"
