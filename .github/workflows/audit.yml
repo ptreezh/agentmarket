@@ -1,0 +1,59 @@
+# audit — 每日全量核验核查（D-130e · POST-MORTEM 后续加固）
+# 每天 05:30 UTC 跑 tools/audit.js：签名链四级判定 / 结算守恒 / escrow 非负 / 国库 cap /
+# 身份指纹防篡改 / 验收回放 / GEO 探针 / 账本 append-only。
+# FAIL（退出非零）→ 自动开/更新审计告警 issue @ptreezh；报告落盘 ops/audit/ 并提交。
+name: audit
+
+on:
+  schedule:
+    - cron: '30 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  daily-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Run audit
+        id: audit
+        run: |
+          node tools/audit.js | tee /tmp/audit.md
+          echo "exitcode=$?" >> "$GITHUB_OUTPUT"
+          exit 0   # 报告先行落盘，告警交给下一步按退出码判断
+
+      - name: Commit report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "audit@agentbazaar"
+          git config --global user.name "audit-bot"
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git pull --rebase origin main || true
+          git add ops/audit/
+          git diff --cached --quiet || { git commit -q -m "audit: daily report $(date -u +%F)"; git push origin HEAD:main || echo "::warning::push 失败（下次重试）"; }
+
+      - name: Alert on failure
+        if: steps.audit.outputs.exitcode != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh issue list --repo "${{ github.repository }}" --label audit-alert --state open --json number -q '.[0].number' 2>/dev/null || echo "")
+          BODY="⚠️ 每日审计存在失败项（$(date -u +%FT%TZ)）。运行: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          \`\`\`
+          $(tail -30 /tmp/audit.md)
+          \`\`\`
+
+          处理口径见 docs/POST-MORTEM-UNANSWERED-PR-20261025.md 与 ops/audit/EXEMPTIONS.md。"
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "${{ github.repository }}" --body "$BODY"
+          else
+            gh issue create --repo "${{ github.repository }}" --title "audit-alert: 每日审计失败 $(date -u +%F)" --body "$BODY" --label audit-alert --assignee ptreezh
+          fi
