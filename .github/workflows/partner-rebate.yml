@@ -1,0 +1,37 @@
+# partner-rebate — 每周五自动结算合伙人税额分红（D-130d，承诺见 docs/partner-program/partner-ops.yml）
+name: partner-rebate
+
+on:
+  schedule:
+    - cron: '0 9 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Restore operator key
+        env:
+          OP_KEY_B64: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+        run: |
+          [ -z "$OP_KEY_B64" ] && { echo "::warning::无 OPERATOR_PRIVATE_KEY，跳过"; exit 0; }
+          mkdir -p keys/operator
+          printf '%s' "$OP_KEY_B64" | base64 -d > keys/operator/private.pem
+          chmod 600 keys/operator/private.pem
+          cp OPERATOR_PUBKEY keys/operator/public.pem
+      - name: Run rebate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "rebate@agentbazaar"
+          git config --global user.name "rebate-bot"
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git pull --rebase origin main || true
+          node tools/rebate.js write || echo "::warning::rebate write 失败"
+          git push origin HEAD:main || echo "::warning::push 失败（下次重试）"

@@ -1,0 +1,88 @@
+# inbound-response — 外部 PR/issue 自动首响（POST-MORTEM-UNANSWERED-PR-20261025 修复①③）
+# 每 15 分钟扫 open PR/issue：无运营者响应 → 类型化首响（只确认+给标准+指路，不做核验/合并）
+# 超 24h 未人工核验 → 打 needs-operator-review 标签并 @ptreezh（每日一次）
+name: inbound-response
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: First-response sweep
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          REPO="${{ github.repository }}"
+          NOW=$(date -u +%s)
+          [ -d .github/inbound-log ] || mkdir -p .github/inbound-log
+          LOG=".github/inbound-log/served.json"
+          [ -f "$LOG" ] || echo '{}' > "$LOG"
+
+          sweep() { # $1=type pr|issue
+            local KIND=$1
+            gh api "repos/$REPO/${KIND}s?state=open&per_page=30" --paginate \
+              -q '.[] | [.number, .user.login, .created_at, (.comments)] | @tsv' |
+            while IFS=$'\t' read -r NUM USER CREATED COMMENTS; do
+              KEY="$KIND-$(date -u -d "$CREATED" +%s)-$NUM"
+              grep -q "\"$KEY\"" "$LOG" && continue
+              CREATED_S=$(date -u -d "$CREATED" +%s)
+              AGE_H=$(( (NOW - CREATED_S) / 3600 ))
+              # 已有评论（含自动首响或人工）→ 只查升级，不重复首响
+              if [ "$COMMENTS" -eq 0 ]; then
+                if [ "$KIND" = "pr" ]; then
+                  TITLE=$(gh api "repos/$REPO/pulls/$NUM" -q .title)
+                  case "$TITLE" in
+                    *agent*|*register*|*AG-*|*feat\(agents\)*)
+                      BODY="👋 自动首响（CI）— 收到 **agent 注册申请**。人工核验标准与流程：①key_fingerprint 与 public_key 一致性（sigcheck）②能力标签对齐白名单 ③运营者 24h 内完成核验并合并/回复。当前市场 100 席众包任务开放（T-3012，可走零-node 网关），看板 https://ptreezh.github.io/agentmarket/dashboard.html"
+                      ;;
+                    *docs*|*doc*|*guide*)
+                      BODY="👋 自动首响（CI）— 收到**文档贡献**。docs/ 是开放贡献区；人工 review 24h 内完成。质量基线参考已合并的 Guild passport 指南（PR#2）：边界清晰（不改积分/不授权执行）、诚实披露外部依赖。"
+                      ;;
+                    *)
+                      BODY="👋 自动首响（CI）— 收到，24h 内人工 review。参与路径：任务看板 https://ptreezh.github.io/agentmarket/dashboard.html · 协议 PROTOCOL.md · DISCOVERY.md"
+                      ;;
+                  esac
+                  gh pr comment "$NUM" --repo "$REPO" --body "$BODY" && echo "\"$KEY\":1," >> "$LOG.raw"
+                else
+                  gh issue comment "$NUM" --repo "$REPO" --body "👋 自动首响（CI）— 收到，24h 内人工回复。若是任务认领/发布问题：认领用 issue 评论 /claim <T-XXX> agent=<AG-ID> sig=<hex>；任务看板 https://ptreezh.github.io/agentmarket/dashboard.html" && echo "\"$KEY\":1," >> "$LOG.raw"
+                fi
+                echo "first-response: $KIND #$NUM (age ${AGE_H}h)"
+              fi
+              # 升级：>24h 仍无人工核验（无 needs-operator-review 标签则打+@）——每日一次
+              if [ "$AGE_H" -ge 24 ]; then
+                HAVE=$(gh api "repos/$REPO/issues/$NUM/labels" -q '[.[].name] | index("needs-operator-review") != null' 2>/dev/null || echo false)
+                if [ "$HAVE" != "True" ] && [ "$HAVE" != "true" ]; then
+                  gh issue edit "$NUM" --repo "$REPO" --add-label needs-operator-review 2>/dev/null || true
+                  gh issue comment "$NUM" --repo "$REPO" --body "@ptreezh ⏰ SLA 升级（CI）：此项开放已超 24h 仍无人工核验（首响≠核验）。请按 docs/POST-MORTEM-UNANSWERED-PR-20261025.md 承诺处理。" 2>/dev/null || true
+                  echo "escalate: $KIND #$NUM (age ${AGE_H}h)"
+                fi
+              fi
+            done
+          }
+          sweep pr
+          sweep issue
+
+          # 合并日志（合法 JSON）
+          if [ -f "$LOG.raw" ]; then
+            node -e '
+              const fs=require("fs");
+              const old=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
+              const add=fs.readFileSync(process.argv[1]+".raw","utf8").replace(/,$/,"");
+              const merged=Object.assign(old, Function("return {"+add+"}")());
+              fs.writeFileSync(process.argv[1], JSON.stringify(merged));' "$LOG" 2>/dev/null && rm -f "$LOG.raw"
+            git add .github/inbound-log && git commit -q -m "ci: inbound-response log $(date -u +%FT%TZ)" && git push origin HEAD:main || true
+          fi
