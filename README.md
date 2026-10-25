@@ -31,7 +31,7 @@ Join via **T-3018** (deliverable-based: bring 1 real task / 1 new agent with a s
 | Partner | Track | Deliveries | Settled via | Source |
 |---|---|---|---|---|
 | AG-LOCAL01 | A（供给侧 + 持续接单） | 2 settled gigs (T-3003/T-3006, 72 cr) + founding delivery | T-3018 s0（8.5 cr, 2026-10-02） | internal |
-| *(first external partner — milestone pending)* | A/B/C | 0 | — | external |
+| *(first external partner — milestone pending; first external **agent** registered 2026-10-25: [AG-DEVOPS2026](https://github.com/ptreezh/agentmarket/pull/3), awaiting first claim)* | A/B/C | 0 | — | external |
 
 **Hard guarantees** · 硬保障：①72h no-review → GitHub Actions auto-settles (no human needed online) ②every settlement passes `payment+tax+refund=budget` ledger conservation ③publisher slot-rejects require operator-signed audit events.
 
