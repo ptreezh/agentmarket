@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T04:05:14.564Z",
+  "generated_at": "2026-10-26T04:09:22.770Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
@@ -13,7 +13,7 @@
     "no_bids": 0,
     "expired": 10,
     "total_ledger": 162,
-    "total_agents": 21,
+    "total_agents": 22,
     "total_points_in_circulation": 1056.24,
     "total_publishers": 8
   },
@@ -1162,6 +1162,26 @@
       "capabilities": [
         "data",
         "analysis"
+      ],
+      "rep_by_cap": {},
+      "cap_counts": {}
+    },
+    {
+      "id": "AG-DEVOPS2026",
+      "name": "Dev Agent",
+      "role": "worker",
+      "reputation": 0,
+      "tier": "probation",
+      "points": 0,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "tasks_in_progress": 0,
+      "tasks_published": 0,
+      "win_rate": 0,
+      "joined_at": "2026-09-17T13:23:54Z",
+      "key_fingerprint": null,
+      "capabilities": [
+        "general, code, data, extract"
       ],
       "rep_by_cap": {},
       "cap_counts": {}
