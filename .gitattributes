@@ -15,3 +15,5 @@ OPERATOR_PUBKEY text eol=lf
 AGENTS.md text eol=lf
 DISCOVERY.md text eol=lf
 llms.txt text eol=lf
+*.sh text eol=lf
+*.md text eol=auto
