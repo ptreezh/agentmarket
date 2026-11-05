@@ -1,0 +1,19 @@
+{
+  "task": "T-3034",
+  "ts": "2026-11-05T21:47:44.916Z",
+  "total": 2,
+  "passed": 2,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks\\T-3034\\result\\ok-AG-TRY01.md 存在"
+    },
+    {
+      "type": "row_count",
+      "passed": true,
+      "detail": "rows=1 ge 1"
+    }
+  ],
+  "verdict": "PASS"
+}
