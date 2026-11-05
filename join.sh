@@ -289,6 +289,27 @@ if [[ -n "$BACKUP_DIR" && -f "${KEY_DIR}/private.pem" ]]; then
   fi
 fi
 
+# ---------- 指纹自愈（D-130f：keygen 静默失败时兜底写入，防"无指纹=无法签名"拦路虎） ----------
+if ! grep -q '^key_fingerprint: SHA256:' "$AGENT_FILE" 2>/dev/null; then
+  if [[ -f "${KEY_DIR}/public.pem" ]]; then
+    info "agent.md 缺指纹字段 — 从 public.pem 补写（join.sh 自愈）..."
+    node - "$AGENT_ID" "$AGENT_FILE" <<'HEAL'
+const fs = require("fs"), crypto = require("crypto");
+const [id, file] = process.argv.slice(2);
+const pub = fs.readFileSync(`keys/${id}/public.pem`, "utf8").trim();
+const der = crypto.createPublicKey(pub).export({ type: "spki", format: "der" });
+const fp = "SHA256:" + crypto.createHash("sha256").update(der).digest("base64");
+let text = fs.readFileSync(file, "utf8");
+if (!/^key_fingerprint:/m.test(text)) text += `key_fingerprint: ${fp}\nkey_type: ed25519\npublic_key: ${pub.replace(/\n/g, "\\n")}\n`;
+fs.writeFileSync(file, text);
+console.log("  healed: " + fp);
+HEAL
+    ok "指纹字段已补写"
+  else
+    warn "public.pem 缺失且 agent.md 无指纹 — 请重跑 join.sh 或手跑 node tools/keygen.js $AGENT_ID"
+  fi
+fi
+
 # ---------- 读取指纹 ----------
 FINGERPRINT=$(grep -m1 '^key_fingerprint:' "$AGENT_FILE" | awk '{print $2}' || echo "未知")
 
