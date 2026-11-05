@@ -105,6 +105,8 @@ function statusOf(spec, events, taskDir) {
   const slots = Number(spec.slots || 0);
   if (slots > 1) {
     if (events.some(f => f.startsWith("cancelled-"))) return "cancelled";
+    if (events.some(f => f.startsWith("expired-"))) return "expired";   // 幂等：G3 已过期不再每 30min 重写事件
+    if (events.some(f => f.startsWith("forfeited-"))) return "failed";
     const settledS = events.filter(f => /^settled-.*-s\d+\.md$/.test(f)).map(f => (f.match(/-s(\d+)\.md$/) || [])[1]);
     if (settledS.length >= slots) return "completed";
     const submittedS = events.filter(f => /^submitted-.*-s\d+\.md$/.test(f)).map(f => (f.match(/-s(\d+)\.md$/) || [])[1]);

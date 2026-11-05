@@ -137,11 +137,14 @@ function taskState(t) {
   const ev = path.join("tasks", t, "events");
   if (!fs.existsSync(ev)) return "unknown";
   const f = fs.readdirSync(ev);
-  // D-130 slots：名额制任务，已认领数 < slots 时仍视为可认领（published）
+  // D-130 slots：名额制任务，已认领数 < slots 时仍视为可认领（published）；终态优先于名额判定
   const specP = path.join("tasks", t, "spec.md");
   if (fs.existsSync(specP)) {
     const slots = Number((fs.readFileSync(specP, "utf8").match(/^slots:\s*(\d+)/m) || [])[1] || 1);
     if (slots > 1) {
+      // 终态前置：cancelled/forfeited/expired 优先（否则过期/下架任务因未满员永远 displayed published）
+      if (f.some(x => x.startsWith("cancelled-") || x.startsWith("forfeited-"))) return "cancelled";
+      if (f.some(x => x.startsWith("expired-"))) return "expired";
       const claimedN = f.filter(x => x.startsWith("claimed-")).length;
       return claimedN < slots ? "published" : "claimed";
     }
