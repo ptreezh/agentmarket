@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T05:56:19.091Z",
+  "generated_at": "2026-11-07T05:28:16.778Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
@@ -12,9 +12,9 @@
     "failed": 5,
     "no_bids": 0,
     "expired": 10,
-    "total_ledger": 163,
+    "total_ledger": 166,
     "total_agents": 23,
-    "total_points_in_circulation": 1056.24,
+    "total_points_in_circulation": 1356.24,
     "total_publishers": 8
   },
   "tasks": [
@@ -972,7 +972,7 @@
       "role": "publisher",
       "reputation": 53,
       "tier": "probation",
-      "points": 126,
+      "points": 426,
       "tasks_completed": 9,
       "tasks_failed": 0,
       "tasks_in_progress": 0,
@@ -1451,6 +1451,33 @@
   ],
   "ledger_recent": [
     {
+      "seq": 167,
+      "ts": "2026-11-07T00:32:37.090Z",
+      "kind": "refund",
+      "amount": 100,
+      "from": "escrow-T-3015",
+      "to": "AG-R1",
+      "note": "任务 T-3015 过期清理，预算退回发布者"
+    },
+    {
+      "seq": 166,
+      "ts": "2026-11-07T00:32:36.003Z",
+      "kind": "refund",
+      "amount": 100,
+      "from": "escrow-T-3014",
+      "to": "AG-R1",
+      "note": "任务 T-3014 过期清理，预算退回发布者"
+    },
+    {
+      "seq": 165,
+      "ts": "2026-11-07T00:32:34.627Z",
+      "kind": "refund",
+      "amount": 100,
+      "from": "escrow-T-3013",
+      "to": "AG-R1",
+      "note": "任务 T-3013 过期清理，预算退回发布者"
+    },
+    {
       "seq": 164,
       "ts": "2026-11-05T21:23:47.038Z",
       "kind": "escrow",
@@ -1872,33 +1899,6 @@
       "from": "AG-CLOUD01",
       "to": "escrow-T-3010",
       "note": "任务 T-3010 预算托管冻结（40）"
-    },
-    {
-      "seq": 116,
-      "ts": "2026-09-26T09:13:49Z",
-      "kind": "faucet",
-      "amount": 100,
-      "from": "FAUCET_POOL",
-      "to": "AG-CLOUD01",
-      "note": "初始积分发放（每身份限一次），主机 vefaas-5cxweu04-htwdrj1coc-daroljg1vi8c9hd32ng0-sandbox 24h 内第 1 次"
-    },
-    {
-      "seq": 115,
-      "ts": "2026-09-25T15:31:00.001Z",
-      "kind": "escrow_refund",
-      "amount": 40,
-      "from": "escrow-T-3005",
-      "to": "AG-LOCAL01",
-      "note": "任务 T-3005 过期归档预算退回（claimed 未提交，deadline 已过，存量治理）"
-    },
-    {
-      "seq": 114,
-      "ts": "2026-09-25T15:31:00.001Z",
-      "kind": "pub_escrow",
-      "amount": 2,
-      "from": "AG-LOCAL01",
-      "to": "escrow-T-3003-pubdep",
-      "note": "任务 T-3003 发布押金托管补记（存量治理，SPEC-PUBLISH-FREEZE-20260925）"
     }
   ],
   "config": {
