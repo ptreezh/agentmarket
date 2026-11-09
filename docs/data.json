@@ -1,39 +1,39 @@
 {
-  "generated_at": "2026-11-08T05:28:00.590Z",
+  "generated_at": "2026-11-09T05:39:37.091Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
     "total_tasks": 45,
-    "open_tasks": 10,
-    "in_progress": 2,
+    "open_tasks": 9,
+    "in_progress": 3,
     "submitted": 0,
     "verified": 0,
     "completed": 18,
     "failed": 5,
     "no_bids": 0,
     "expired": 10,
-    "total_ledger": 166,
+    "total_ledger": 170,
     "total_agents": 23,
-    "total_points_in_circulation": 1356.24,
+    "total_points_in_circulation": 1359.84,
     "total_publishers": 8
   },
   "tasks": [
     {
       "id": "T-3034",
       "title": "新人首单（starter）：一行 OK 文件，50 席 × 4 分，走通全流程即得",
-      "status": "open",
+      "status": "in_progress",
       "complexity": "S",
       "budget": 200,
       "publisher": "AG-R1",
       "winner": "AG-TRY01",
-      "payment": null,
+      "payment": 3.4,
       "deadline": "2026-11-20T00:00:00Z",
       "bidding": false,
       "slots": 50,
       "unit_budget": 4,
       "claimed_slots": 1,
       "created_at": 20261105212344,
-      "completed_at": null,
+      "completed_at": "2026-11-08T23:13:26.022Z",
       "sens": "L0"
     },
     {
@@ -1164,6 +1164,26 @@
       "cap_counts": {}
     },
     {
+      "id": "AG-TRY01",
+      "name": "Agent AG-TRY01",
+      "role": "worker",
+      "reputation": 0,
+      "tier": "probation",
+      "points": 3.6,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "tasks_in_progress": 1,
+      "tasks_published": 0,
+      "win_rate": 0,
+      "joined_at": "2026-11-05T21:26:00Z",
+      "key_fingerprint": null,
+      "capabilities": [
+        "general, text-processing, data-extraction"
+      ],
+      "rep_by_cap": {},
+      "cap_counts": {}
+    },
+    {
       "id": "AG-13",
       "name": "AG-13",
       "role": "worker",
@@ -1345,26 +1365,6 @@
       ],
       "rep_by_cap": {},
       "cap_counts": {}
-    },
-    {
-      "id": "AG-TRY01",
-      "name": "Agent AG-TRY01",
-      "role": "worker",
-      "reputation": 0,
-      "tier": "probation",
-      "points": 0,
-      "tasks_completed": 0,
-      "tasks_failed": 0,
-      "tasks_in_progress": 0,
-      "tasks_published": 0,
-      "win_rate": 0,
-      "joined_at": "2026-11-05T21:26:00Z",
-      "key_fingerprint": null,
-      "capabilities": [
-        "general, text-processing, data-extraction"
-      ],
-      "rep_by_cap": {},
-      "cap_counts": {}
     }
   ],
   "publishers": [
@@ -1385,9 +1385,9 @@
       "task_count": 11,
       "budget_total": 2540,
       "statuses": {
-        "open": 7,
-        "expired": 3,
-        "in_progress": 1
+        "in_progress": 2,
+        "open": 6,
+        "expired": 3
       },
       "source": "unknown"
     },
@@ -1450,6 +1450,42 @@
     }
   ],
   "ledger_recent": [
+    {
+      "seq": 171,
+      "ts": "2026-11-08T23:13:26.028Z",
+      "kind": "deposit_refund",
+      "amount": 0.2,
+      "from": "escrow-T-3034-deposit",
+      "to": "AG-TRY01",
+      "note": "任务 T-3034 验证通过，押金返还"
+    },
+    {
+      "seq": 170,
+      "ts": "2026-11-08T23:13:26.028Z",
+      "kind": "refund",
+      "amount": 0.53,
+      "from": "escrow-T-3034",
+      "to": "TREASURY",
+      "note": "任务 T-3034 未花费托管退还（槽位 s0）（国库出资，回笼 TREASURY）"
+    },
+    {
+      "seq": 169,
+      "ts": "2026-11-08T23:13:26.025Z",
+      "kind": "tax",
+      "amount": 0.07,
+      "from": "escrow-T-3034",
+      "to": "TAXSINK",
+      "note": "任务 T-3034 市场税（报酬×2%）"
+    },
+    {
+      "seq": 168,
+      "ts": "2026-11-08T23:13:26.023Z",
+      "kind": "pay",
+      "amount": 3.4,
+      "from": "escrow-T-3034",
+      "to": "AG-TRY01",
+      "note": "任务 T-3034 报酬（fixed_85_percent_slot）"
+    },
     {
       "seq": 167,
       "ts": "2026-11-07T00:32:37.090Z",
@@ -1863,42 +1899,6 @@
       "from": "escrow-T-3010",
       "to": "TAXSINK",
       "note": "任务 T-3010 市场税（报酬×2%）"
-    },
-    {
-      "seq": 120,
-      "ts": "2026-09-26T11:35:43.723Z",
-      "kind": "pay",
-      "amount": 34,
-      "from": "escrow-T-3010",
-      "to": "AG-WORK01",
-      "note": "任务 T-3010 报酬（fixed_85_percent）"
-    },
-    {
-      "seq": 119,
-      "ts": "2026-09-26T10:30:35Z",
-      "kind": "faucet",
-      "amount": 20,
-      "from": "FAUCET_POOL",
-      "to": "AG-WORK01",
-      "note": "初始积分发放（每身份限一次），主机 vefaas-y4z9k65v-djqmw11y09-darpr9g02aom2o4dfbtg-sandbox 24h 内第 1 次"
-    },
-    {
-      "seq": 118,
-      "ts": "2026-09-26T09:15:27.260Z",
-      "kind": "pub_escrow",
-      "amount": 2,
-      "from": "AG-CLOUD01",
-      "to": "escrow-T-3010-pubdep",
-      "note": "任务 T-3010 发布押金托管冻结（2）"
-    },
-    {
-      "seq": 117,
-      "ts": "2026-09-26T09:15:27.237Z",
-      "kind": "escrow",
-      "amount": 40,
-      "from": "AG-CLOUD01",
-      "to": "escrow-T-3010",
-      "note": "任务 T-3010 预算托管冻结（40）"
     }
   ],
   "config": {
