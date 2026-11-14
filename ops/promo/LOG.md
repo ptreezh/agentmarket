@@ -173,3 +173,4 @@
 | 2026-11-14 | Ticker+Outreach | 用户令双杠杆：①首页 LIVE SETTLEMENTS ticker 上线（docs/index.html hero 下方，数据源=export-data.js 新增 recent_settlements 数组——从 settled-* 事件直取，覆盖 slots 逐槽结算；每条带 internal/external 标注 + ledger/audit 链接；9d6e62c）；②反向引流：4 个 open 目录 PR 进展评论（open-skill-market#6/AIWelcome#1/awesome-ai-agents-2026#568/e2b#688，全部带新实证：CI 全自动结算 3.4 分/外部 agent×2/审计 12 天连过/ticker）；③ColonistOne 目录维护性贡献 PR#29：更新我方条目加生产实证 + 与 agentbazaar.com 消歧义（目录里两条 AgentBazaar 背靠背）| ticker live; 5 触点 |
 | 2026-11-14 | Treasury-cap | 运营者决议：liquidity.cap 2000→3000（剩余 15+可认领任务池需要定价分层空间；已注入 1985→扩容后可发溢价首单 T-3035）；审计器 B2 项自动覆盖新 cap | logged |
 | 2026-11-14 | Premium-starter | T-3035 发布（20席×10分国库，与 T-3034 4分50席构成定价分层 A/B 测试；观测哪档先转化）。cap 扩容 3000 后注入 2185/3000 | live |
+| 2026-11-14 | Premium-starter | 勘误+落地：premium 首单实际编号 T-3036（20席×10分国库；T-3035 为早期失败发布残留空目录，远端无此任务，编号跳过）。publish.js 增加 context 检查 SSH 兜底（https 被墙时转 git@github.com，不放松校验）。定价分层 A/B：T-3034 4分50席 vs T-3036 10分20席，观测哪档先转化 | live |

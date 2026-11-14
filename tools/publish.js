@@ -119,11 +119,21 @@ function validateJsonPayload(p) {
   }
   if (p.context != null) {
     if (typeof p.context !== "object" || !p.context.repo || !/^https:\/\//.test(p.context.repo)) return { error: "context.repo must be an https URL" };
+    let ok = false;
     try {
       execSync('git ls-remote "' + p.context.repo + '" HEAD', { timeout: 15000, stdio: "pipe", encoding: "utf-8" });
+      ok = true;
     } catch (e) {
-      return { error: "context.repo unreachable: " + p.context.repo + " (git ls-remote failed)" };
+      // D-130g：https 被环境阻断时的 SSH 兜底（github.com → git@github.com），绕过传输层而非放松校验
+      const m = String(p.context.repo).match(/^https:\/\/github\.com\/([^\/]+)\/([^\/]+?)(\.git)?$/);
+      if (m) {
+        try {
+          execSync('git ls-remote "git@github.com:' + m[1] + "/" + m[2] + '.git" HEAD', { timeout: 15000, stdio: "pipe", encoding: "utf-8" });
+          ok = true;
+        } catch (e2) {}
+      }
     }
+    if (!ok) return { error: "context.repo unreachable: " + p.context.repo + " (git ls-remote failed)" };
   }
   return { ok: true };
 }
