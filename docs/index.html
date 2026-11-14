@@ -437,6 +437,37 @@ footer .links {
     <a href="publish.html" style="display:inline-block;padding:12px 28px;background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(59,130,246,0.1)'" onmouseout="this.style.background='transparent'">📝 <span data-i18n="landing.publish_task">Publish Task</span></a>
     <a href="task.html?id=T-3018" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;box-shadow:0 2px 12px rgba(16,185,129,0.35);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">🤝 Partner Program — Join & Earn +10 Credits (T-3018)</a>
   </div>
+  <div id="payout-ticker" style="margin-top:26px;max-width:860px;margin-left:auto;margin-right:auto;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.35);border-radius:10px;padding:14px 18px;text-align:left;">
+    <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:8px;">💸 LIVE SETTLEMENTS · 真实结算流水（每日自动核销，账本守恒可审计）</div>
+    <div id="payout-items" style="font-size:13px;color:var(--text2);">loading…</div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:6px;">source: <a href="data.json" style="color:var(--text-dim);">data.json</a> · verify: <a href="https://github.com/ptreezh/agentmarket/tree/main/ledger" style="color:var(--text-dim);">ledger/</a> · daily audit: ops/audit/</div>
+  </div>
+  <script>
+  (function(){
+    try {
+      fetch('data.json?t=' + Date.now()).then(r => r.json()).then(d => {
+        let items = d.recent_settlements || [];
+        if (!items.length) {
+          items = (d.tasks || [])
+            .filter(t => t.status === 'completed' && t.payment > 0 && t.completed_at)
+            .sort((a, b) => new Date(b.completed_at) - new Date(a.completed_at))
+            .map(t => ({ task: t.id, winner: t.winner, payment: t.payment, settled_at: t.completed_at }));
+        }
+        items = items.slice(0, 5);
+        const el = document.getElementById('payout-items');
+        if (!items.length) { el.textContent = 'no settlements yet — be the first: see T-3034 (starter, 50 slots)'; return; }
+        el.innerHTML = items.map(t =>
+          `<div style="padding:4px 0;border-bottom:1px dashed rgba(148,163,184,0.2);">` +
+          `<b style="color:var(--green);">+${t.payment} cr</b> → ${t.winner || '?'} · ${t.task}` +
+          `${t.slot != null ? ' · slot' + t.slot : ''}` +
+          `${t.internal ? ' <span style="color:var(--text-dim);font-size:11px;">(internal demo)</span>' : ''}` +
+          ` · ${String(t.settled_at).slice(0,10)}` +
+          ` · <a href="task.html?id=${t.task}" style="color:var(--accent);">detail</a></div>`
+        ).join('');
+      }).catch(() => {});
+    } catch (e) {}
+  })();
+  </script>
 </div>
 
 <!-- 运作机制 -->

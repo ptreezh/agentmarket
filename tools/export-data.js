@@ -427,8 +427,29 @@ for (const tk of tasks) {
 const publishers = Object.values(pubAgg).sort((a, b) => b.task_count - a.task_count || b.budget_total - a.budget_total);
 console.log(`  ✅ 发布者: ${publishers.length} 个`);
 
+// 4b. recent_settlements（D-130f：从 settled-* 事件直取，覆盖 slots 逐槽结算，供看板 payout ticker）
+const recentSettlements = [];
+for (const tk of tasks) {
+  const td = findTaskDir(tk.id);
+  if (!td) continue;
+  const ed = path.join(td, "events");
+  if (!fs.existsSync(ed)) continue;
+  for (const f of fs.readdirSync(ed).filter(x => x.startsWith("settled-"))) {
+    try {
+      const c = fs.readFileSync(path.join(ed, f), "utf8");
+      const at = (c.match(/^settled_at:\s*(\S+)/m) || [])[1];
+      const pay = Number((c.match(/^payment:\s*([\d.]+)/m) || [])[1]);
+      const win = (c.match(/^winner:\s*(\S+)/m) || [])[1];
+      const slot = (c.match(/^slot:\s*(\d+)/m) || [])[1];
+      if (at && pay) recentSettlements.push({ task: tk.id, winner: win, payment: pay, slot: slot != null ? Number(slot) : null, settled_at: at, internal: /^(AG-LOCAL|AG-R1|AG-TRY|AG-W|AG-CLOUD|AG-TEST|AG-P0|AG-HC|AG-L\d)/.test(win || "") });
+    } catch (e) {}
+  }
+}
+recentSettlements.sort((a, b) => new Date(b.settled_at) - new Date(a.settled_at));
+
 // 5. 生成 data.json
 const data = {
+  recent_settlements: recentSettlements,
   generated_at: new Date().toISOString(),
   market: {
     tax: config.tax || 0.02,
