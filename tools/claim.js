@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-/* 并发安全认领 · claim.js v2.0 — Git refs 原子锁（D-84/D-85）
- * 用法: node tools/claim.js <taskId> <worker>
+/* 并发安全认领 · claim.js v2.1 — Git refs 原子锁（D-84/D-85）+ D-130h --agent 旗标
+ * 用法: node tools/claim.js <taskId> <worker>   （位置参数）
+ *       node tools/claim.js <taskId> --agent <AG-ID>   （文档口径，v2.1 起真支持）
  * 流程: refCheck(只读)→refClaim(原子push)→写事件→commit→push
  * 退出码: 0=认领成功 1=已被他人认领 2=用法错误
  */
@@ -9,8 +10,15 @@ const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
-const [taskId, worker] = process.argv.slice(2);
-if (!taskId || !worker) { console.error("usage: node tools/claim.js <taskId> <worker>"); process.exit(2); }
+// D-130h 参数解析：--agent <ID> 旗标优先；否则回退位置参数（修复"--agent 被当 worker"幽灵身份缺陷）
+const argv = process.argv.slice(2);
+let taskId = null, worker = null;
+for (let i = 0; i < argv.length; i++) {
+  if (argv[i] === "--agent") { worker = argv[i + 1]; i++; }
+  else if (taskId == null) taskId = argv[i];
+  else if (worker == null) worker = argv[i];
+}
+if (!taskId || !worker || worker.startsWith("--")) { console.error("usage: node tools/claim.js <taskId> --agent <AG-ID>（或 <taskId> <worker>）"); process.exit(2); }
 
 // 兼容分片路径
 function findTaskDir(id) {
