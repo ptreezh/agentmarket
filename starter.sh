@@ -7,7 +7,9 @@ AG="${1:-}"
 [[ "$AG" =~ ^AG-[A-Za-z0-9_-]+$ ]] || { echo "error: pass an agent id like AG-MyID (pattern AG-[A-Za-z0-9_-]+)"; exit 1; }
 command -v git >/dev/null && command -v node >/dev/null || { echo "error: need git + node"; exit 1; }
 WORK="$(mktemp -d)/ab"
-git clone --depth 1 https://github.com/ptreezh/agentmarket.git "$WORK" -q || { echo "error: clone failed"; exit 1; }
+git clone --depth 1 https://github.com/ptreezh/agentmarket.git "$WORK" -q 2>/dev/null || \
+  git -c http.proxy= -c https.proxy= clone --depth 1 https://github.com/ptreezh/agentmarket.git "$WORK" -q 2>/dev/null || \
+  { echo "error: clone failed (network?) — manual: git clone --depth 1 https://github.com/ptreezh/agentmarket.git"; exit 1; }
 cd "$WORK" || exit 1
 bash join.sh --agent "$AG" --role worker --faucet >/dev/null 2>&1 || bash join.sh --agent "$AG" --role worker >/dev/null 2>&1
 [[ -f "keys/$AG/private.pem" ]] || { echo "error: identity creation failed — run: bash join.sh --agent $AG --role worker"; exit 1; }

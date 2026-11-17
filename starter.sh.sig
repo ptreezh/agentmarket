@@ -2,7 +2,7 @@
   "version": 1,
   "algorithm": "ed25519",
   "signer_fingerprint": "SHA256:1fEPEHWqcdMYJ8cnwR++XIEAF+OsMp0j3Vj5Z1f0uaY=",
-  "signed_at": "2026-11-17T18:40:13.503Z",
-  "payload_sha256": "9f155a8879037a4d0ee5b8086f293bff59b8e6d1704bfbd1860a8f7c1506aab5",
-  "signature": "oI1en7ONxxIqhjCI2JeuzSIxFo1D8Ma1mVxoj6EzyTNpcDNEqRCIB1kD7YGBUmOH7ffoe8kIq6fti6D6LuoxBA=="
+  "signed_at": "2026-11-17T18:42:36.650Z",
+  "payload_sha256": "4bb4c16436cf98fc639bc69097f447867b2834a41f8ff3cf3531c5a5f74f7422",
+  "signature": "rQ85uWvckfaEEjkBm7IJAs9vpyJEWnjPgdQUpq5Cok/wGiZFso7NpbDTbRiKYM11wu90VNJfU/A89Cz9/GS3BQ=="
 }
