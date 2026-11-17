@@ -174,3 +174,4 @@
 | 2026-11-14 | Treasury-cap | 运营者决议：liquidity.cap 2000→3000（剩余 15+可认领任务池需要定价分层空间；已注入 1985→扩容后可发溢价首单 T-3035）；审计器 B2 项自动覆盖新 cap | logged |
 | 2026-11-14 | Premium-starter | T-3035 发布（20席×10分国库，与 T-3034 4分50席构成定价分层 A/B 测试；观测哪档先转化）。cap 扩容 3000 后注入 2185/3000 | live |
 | 2026-11-14 | Premium-starter | 勘误+落地：premium 首单实际编号 T-3036（20席×10分国库；T-3035 为早期失败发布残留空目录，远端无此任务，编号跳过）。publish.js 增加 context 检查 SSH 兜底（https 被墙时转 git@github.com，不放松校验）。定价分层 A/B：T-3034 4分50席 vs T-3036 10分20席，观测哪档先转化 | live |
+| 2026-11-18 | One-command | starter.sh v2 落地实测：一条命令（raw URL）完成 建档/密钥/指纹自愈/claim T-3036（回退T-3034）/提交/推送。测试驱动修复 2 个上游真 bug：①claim.js v2.1 支持 --agent 旗标——此前文档口径 `claim.js <T> --agent <ID>` 实际把 worker 解析成字面量"--agent"（幽灵身份，AGENTS.md/广告全按此口径=外部必踩，1152d8a）；②fresh clone 无 result/ 空目录致交付写入失败（mkdir -p 兜底）。AG-TRY02 演示单已补全（verify 2/2）。注：raw.githubusercontent.com 在本机被墙无法测 URL 分发层，逻辑层已 bare-mirror 实测；外部网络正常 | verified+fixed+pushed |
