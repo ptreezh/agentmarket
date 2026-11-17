@@ -53,6 +53,7 @@ fi
 [[ -z "$CEV" ]] && { echo "error: claim failed (slots full?) — pick another task: https://ptreezh.github.io/agentmarket/dashboard.html"; exit 1; }
 
 # ---- 5. 提交 + 推送 ----
+mkdir -p "tasks/$T/result"
 printf 'AG-ID: %s\nOK\n' "$AG" > "tasks/$T/result/ok-$AG.md"
 node tools/agent-runner.js submit "$T" "$AG" "${CEV%.md}" "starter one-command run" 2>&1 | tail -1
 git add -A && git commit -q -m "starter $AG: claim+submit $T (one-command)" 2>/dev/null

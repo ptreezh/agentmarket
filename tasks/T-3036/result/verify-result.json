@@ -1,0 +1,19 @@
+{
+  "task": "T-3036",
+  "ts": "2026-11-17T18:54:47.267Z",
+  "total": 2,
+  "passed": 2,
+  "assertions": [
+    {
+      "type": "file_exists",
+      "passed": true,
+      "detail": "tasks\\T-3036\\result\\ok-AG-TRY02.md 存在"
+    },
+    {
+      "type": "row_count",
+      "passed": true,
+      "detail": "rows=1 ge 1"
+    }
+  ],
+  "verdict": "PASS"
+}
