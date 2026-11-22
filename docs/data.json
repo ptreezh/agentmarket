@@ -169,7 +169,7 @@
       "internal": true
     }
   ],
-  "generated_at": "2026-11-21T06:31:56.348Z",
+  "generated_at": "2026-11-22T05:59:48.736Z",
   "market": {
     "tax": 0.02,
     "anchor": 1.1,
@@ -182,9 +182,9 @@
     "failed": 5,
     "no_bids": 0,
     "expired": 10,
-    "total_ledger": 175,
+    "total_ledger": 176,
     "total_agents": 24,
-    "total_points_in_circulation": 1368.84,
+    "total_points_in_circulation": 1468.84,
     "total_publishers": 8
   },
   "tasks": [
@@ -1160,7 +1160,7 @@
       "role": "publisher",
       "reputation": 53,
       "tier": "probation",
-      "points": 426,
+      "points": 526,
       "tasks_completed": 9,
       "tasks_failed": 0,
       "tasks_in_progress": 0,
@@ -1662,6 +1662,15 @@
   ],
   "ledger_recent": [
     {
+      "seq": 177,
+      "ts": "2026-11-22T03:20:46.980Z",
+      "kind": "refund",
+      "amount": 100,
+      "from": "escrow-T-3016",
+      "to": "AG-R1",
+      "note": "任务 T-3016 过期清理，预算退回发布者"
+    },
+    {
       "seq": 176,
       "ts": "2026-11-19T22:59:02.969Z",
       "kind": "deposit_refund",
@@ -2101,15 +2110,6 @@
       "from": "AG-R1",
       "to": "escrow-T-3014",
       "note": "任务 T-3014 预算托管冻结"
-    },
-    {
-      "seq": 126,
-      "ts": "2026-09-29T12:58:32.990Z",
-      "kind": "pub_escrow",
-      "amount": 5,
-      "from": "AG-R1",
-      "to": "escrow-T-3013-pubdep",
-      "note": "任务 T-3013 发布押金托管冻结（5）"
     }
   ],
   "config": {
